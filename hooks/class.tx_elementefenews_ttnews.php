@@ -45,6 +45,12 @@
 				$links	.= $parentObject->cObj->stdWrap($parentObject->cObj->getTypoLink($label, $lConf['feEdit.']['delRecord.']['pidFeNews'], $piVars), $lConf['feEdit.']['delRecord.']);
 			}
 
+			// Hide author when checkbox "anonymous record" is set:
+			if ($row['tx_elementefenews_author'] == 1) {
+				$markerArray['###NEWS_AUTHOR###']		= '';
+				$markerArray['###NEWS_EMAIL###']		= '';
+			}
+
 			// Wrap output
 			if ($links != '') {
 				$markerArray['###FE_FUNCTIONS###']		= $parentObject->cObj->stdWrap($links, $lConf['feEdit.']);

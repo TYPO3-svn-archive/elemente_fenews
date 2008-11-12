@@ -29,6 +29,7 @@
             <label index="elemente_fenews.pi_flexform.renderFields.imagetitletext">Image TITLE-text</label>
             <label index="elemente_fenews.pi_flexform.renderFields.links">Links</label>
             <label index="elemente_fenews.pi_flexform.renderFields.news_files">Files</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.tx_elementefenews_author">Anonymous author</label>
             <label index="elemente_fenews.pi_flexform.requiredFields.label">Required fields:</label>
             <label index="elemente_fenews.pi_flexform.useCaptcha.label">Use Captcha library:</label>
             <label index="elemente_fenews.pi_flexform.damConfig">DAM settings:</label>
@@ -74,6 +75,7 @@
             <label index="elemente_fenews.pi_flexform.renderFields.imagetitletext">TITLE-Text des Bildes</label>
             <label index="elemente_fenews.pi_flexform.renderFields.links">Links</label>
             <label index="elemente_fenews.pi_flexform.renderFields.news_files">Dateien</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.tx_elementefenews_author">Anonymer Autor</label>
             <label index="elemente_fenews.pi_flexform.requiredFields.label">Pflichtfelder:</label>
             <label index="elemente_fenews.pi_flexform.useCaptcha.label">Nutze Captcha:</label>
             <label index="elemente_fenews.pi_flexform.damConfig">DAM:</label>

@@ -41,7 +41,7 @@
 			}
 			de {
 				tx-elementefenews-editRecord = Bearbeite Eintrag
-				tx-elementefenews-delRecord = Lösche Eintrag
+				tx-elementefenews-delRecord = LÃ¶sche Eintrag
 			}
 		}
 
@@ -91,6 +91,10 @@
 
 			.tx-elementefenews-del em {
 				display: none;
+			}
+			
+			.tx-elementefenews-pi1 .htmlarea li {
+				list-style: none !important;
 			}
 		)
 	}

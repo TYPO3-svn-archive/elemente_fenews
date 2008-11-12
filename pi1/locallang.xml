@@ -14,9 +14,10 @@
 			<label index="l_archivedate">Archive date</label>
 			<label index="l_author">Author</label>
 			<label index="l_author_email">Email address</label>
+			<label index="l_tx_elementefenews_author">Hide my name and email address</label>
 			<label index="l_short">Subtitle</label>
             <label index="l_bodytext">Text</label>
-            <label index="l_keywords">Keywords</label>
+            <label index="l_keywords">Keywords (comma separated)</label>
             <label index="l_category">Category</label>
             <label index="l_current_image">Current image</label>
             <label index="l_image">Image</label>
@@ -52,9 +53,10 @@
             <label index="l_archivedate">Archivdatum</label>
             <label index="l_author">Name</label>
             <label index="l_author_email">Mail-Adresse</label>
+            <label index="l_tx_elementefenews_author">Meinen Namen und meine E-Mail Adresse verbergen</label>
             <label index="l_short">Untertitel</label>
             <label index="l_bodytext">Text</label>
-            <label index="l_keywords">Stichworte</label>
+            <label index="l_keywords">Stichworte (komma-separiert)</label>
             <label index="l_category">Kategorie</label>
             <label index="l_current_image">Aktuelles Bild</label>
             <label index="l_image">Bild</label>
