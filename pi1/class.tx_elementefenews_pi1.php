@@ -852,10 +852,10 @@
 			// Content
 			$arrContent = array();
 			// HTML content
-			$markerArray['###USER_NEWS###']	= str_replace(array('<font face="Verdana,Arial" size="1">', '<font face="Verdana,Arial" size="1" color="red">', '</font>'), array('<strong>', '', ''), t3lib_div::view_array($arrHTML));
+			$markerArray['###ACCOUNT###']	= str_replace(array('<font face="Verdana,Arial" size="1">', '<font face="Verdana,Arial" size="1" color="red">', '</font>'), array('<strong>', '', ''), t3lib_div::view_array($arrHTML));
 			$arrContent['html']				= $this->cObj->substituteMarkerArray($tmplHTML, $markerArray);
 			// Plain text
-			$markerArray['###USER_NEWS###']	= $plainText;
+			$markerArray['###ACCOUNT###']	= $plainText;
 			$arrContent['plain']			= $this->cObj->substituteMarkerArray($tmplPlain, $markerArray);
 
 			// Return
