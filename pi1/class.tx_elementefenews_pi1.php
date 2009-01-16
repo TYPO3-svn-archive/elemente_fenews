@@ -97,21 +97,21 @@
 			$requiredFields					= $requiredFields?t3lib_div::trimExplode(',', $requiredFields):'title,author,author_email,bodytext';
 
 			$this->renderFields				= array(
-				'title'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'archivedate'				=> array('render' => 0, 'req' => 1, 'file' => 0, 'sort' => 0), // if archivedate is set, it has always to be filled in!
-				'author'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'author_email'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'tx_elementefenews_author'	=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'short'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'bodytext'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'keywords'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'category'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'image'						=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0),
-				'imagecaption'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'imagealttext'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'imagetitletext'			=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'links'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0),
-				'news_files'				=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0)
+				'title'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'archivedate'				=> array('render' => 0, 'req' => 1, 'file' => 0, 'sort' => 0, 'htmlsp' => 0), // if archivedate is set, it has always to be filled in!
+				'author'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'author_email'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'tx_elementefenews_author'	=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'short'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'bodytext'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'keywords'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'category'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'image'						=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0, 'htmlsp' => 0),
+				'imagecaption'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'imagealttext'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'imagetitletext'			=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'links'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
+				'news_files'				=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0, 'htmlsp' => 0)
 			);
 			
 			if (is_array($renderFields)) {
@@ -239,7 +239,7 @@
 			if ($this->piVars['edit'] == 1) {
 				$editUID										= $this->piVars['edit']==1?$this->piVars['uid']:0;// Set flag/uid to differ between new/edit record mode
 				// Check for use of categories
-				if ($this->renderFields['category'] == 1) {
+				if ($this->renderFields['category']['render'] == 1) {
 					$res										= $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query('tt_news.*, tt_news_cat.uid AS catUid, tt_news_cat.shortcut', 'tt_news', 'tt_news_cat_mm', 'tt_news_cat', ' AND tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
 					$this->piVars								= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 				} else {
@@ -247,7 +247,7 @@
 					$this->piVars								= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 				}
 				// If shortcut is set, put it into the value for redirect after saving the news
-				$this->piVars['category']						= $this->piVars['shortcut']>0?$this->piVars['catUid'].'|'.$this->piVars['shortcut']:$this->piVars['catUid'];
+				$this->piVars['category']						= $this->piVars['shortcut']!=0?$this->piVars['catUid'].'|'.$this->piVars['shortcut']:$this->piVars['catUid'];
 			}
 
 			// Marker
@@ -267,7 +267,7 @@
 					$fieldSubpart								= $this->cObj->getSubpart($subpart, '###'.$fieldUpper.'###');
 					$fieldArray['###PREFIX_ID###']				= $this->prefixId;
 					$fieldArray['###LABEL_'.$fieldUpper.'###']	= $this->pi_getLL('l_'.$field, '', 1);
-					$fieldArray['###VALUE_'.$fieldUpper.'###']	= $this->piVars[$field]?$this->piVars[$field]:'';
+					$fieldArray['###VALUE_'.$fieldUpper.'###']	= $this->piVars[$field]?($conf['htmlsp']==1?htmlspecialchars($this->piVars[$field]):$this->piVars[$field]):'';
 					$fieldArray['###CHECKED_'.$fieldUpper.'###']= $this->piVars[$field]?'checked="checked"':'';
 					$fieldArray['###REQMARKER###']				= $conf['req']==1?$this->spanReplace($this->pi_getLL('l_required', '', 1), ' class="hili"'):'';
 					// Render category selector
@@ -498,7 +498,7 @@
 			unset($this->piVars['ayear']);
 			unset($this->piVars['submit']);
 			foreach($this->piVars as $field => $input) {
-				$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(trim($input), 'tt_news');
+				$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news');
 			}
 
 			// loginUser?
@@ -520,7 +520,7 @@
 				}
 				unset($arrNews['_TRANSFORM_bodytext']); // Unset not needed field
 			} else {
-				$arrNews['bodytext']		= str_replace('\r\n', chr(10), $this->piVars['bodytext']);
+				$arrNews['bodytext']		= str_replace('\r\n', chr(10), htmlspecialchars($this->piVars['bodytext']));
 			}
 
 			// Image handling
