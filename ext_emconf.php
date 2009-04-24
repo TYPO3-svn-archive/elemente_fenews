@@ -17,7 +17,7 @@
 		'author_email' => 'steiling@elemente.ms',
 		'author_company' => 'elemente websolutions',
 		'shy' => '',
-		'dependencies' => 'taskcenter,tt_news',
+		'dependencies' => 'tt_news',
 		'conflicts' => '',
 		'priority' => '',
 		'module' => '',
@@ -28,7 +28,7 @@
 		'modify_tables' => '',
 		'clearCacheOnLoad' => 0,
 		'lockType' => '',
-		'version' => '1.0.0',
+		'version' => '1.0.2',
 		'constraints' => array(
 			'depends' => array(
 				'taskcenter' => '',

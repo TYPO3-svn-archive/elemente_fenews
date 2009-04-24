@@ -452,6 +452,9 @@
 		 *	@return		Void (redirection to defined page)
 		 */
 		function saveForm() {
+## DEBUG
+## $GLOBALS['TYPO3_DB']->store_lastBuiltQuery = 1;
+			
 			// New or edit record
 			$newsUID						= $this->piVars['edit']>0?intval($this->piVars['edit']):false;
 
@@ -527,6 +530,7 @@
 			if (!empty($_FILES[$this->prefixId]['name']['image'])) {
 				if ($this->damUse == 1) {
 					$damUidImg				= $this->handleDAM($this->arrUploads['image']['path']);
+					$arrNews['tx_damnews_dam_images'] = 1;
 				} else {
 					$arrNews['image']		= $GLOBALS['TYPO3_DB']->quoteStr($this->arrUploads['image']['hash'], 'tt_news');
 				}
@@ -539,6 +543,7 @@
 			if (!empty($_FILES[$this->prefixId]['name']['news_files'])) {
 				if ($this->damUse == 1) {
 					$damUidFile				= $this->handleDAM($this->arrUploads['news_files']['path']);
+					$arrNews['tx_damnews_dam_media'] = 1;
 				} else {
 					$arrNews['news_files']	= $GLOBALS['TYPO3_DB']->quoteStr($this->arrUploads['news_files']['hash'], 'tt_news');
 				}
@@ -603,6 +608,9 @@
 				$arrMM = array('uid_local' => $damUidFile, 'uid_foreign' => $newsUID, 'tablenames' => 'tt_news', 'ident' => $this->damIdent.'_dam_media', 'sorting' => 0, 'sorting_foreign' => 1);
 				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM);
 			}
+
+## DEBUG
+## echo $GLOBALS['TYPO3_DB']->debug_lastBuiltQuery;
 
 			// Mail: Alert publisher?
 			if ($this->queuePublish == 1) {
@@ -727,18 +735,23 @@
 		 */
 		function handleDAM($file) {
 			// Simulate BeUser
-			$this->setBeUser();
+#			$this->setBeUser();
 
+			// For DAM 1.1 ...
+			// Only hotfix!!!
+			require_once(PATH_txdam.'lib/class.tx_dam_config.php');
+			tx_dam_config::init();
+			
 			// Get meta data
 			$index	= t3lib_div::makeInstance('tx_dam');
-			$meta	= $index->index_autoProcess($file);
-
+			$meta	= $index->index_autoProcess($file, true);
+			
 			// Save meta data
 			$damdb	= t3lib_div::makeInstance('tx_dam_db');
 			$uid	= $damdb->insertRecordRaw($meta['fields']);
 
 			// Kill BeUser
-			$this->unsetBeUser();
+#			$this->unsetBeUser();
 
 			// return
 			return $uid;
