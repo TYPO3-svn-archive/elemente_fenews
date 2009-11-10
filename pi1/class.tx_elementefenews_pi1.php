@@ -735,7 +735,7 @@
 		 */
 		function handleDAM($file) {
 			// Simulate BeUser
-#			$this->setBeUser();
+			$this->setBeUser();
 
 			// For DAM 1.1 ...
 			// Only hotfix!!!
@@ -751,7 +751,7 @@
 			$uid	= $damdb->insertRecordRaw($meta['fields']);
 
 			// Kill BeUser
-#			$this->unsetBeUser();
+			$this->unsetBeUser();
 
 			// return
 			return $uid;
