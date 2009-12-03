@@ -2,8 +2,10 @@
 	plugin.tt_news {
 		# cat=plugin.tt_news/links/20; type=text; label= Starting Point: The PID of the page including the plugin "Frontend News" (needed for "edit record").
   		feEdit.pidFeNews	= 269
+
 		# cat=plugin.tt_news/enable/20; type=int+; label= Edit record: Enable marker "edit record" for extension "Frontend News".
 		feEdit.editRecord	= 1
+
 		# cat=plugin.tt_news/enable/21; type=int+; label= Delete record:  Enable marker "delete record" for extension "Frontend News".
 		feEdit.delRecord	= 1
 
@@ -13,4 +15,11 @@
 			editRecord.wrap	= <span class="tx-elementefenews-edit">|</span>
 			delRecord.wrap	= <span class="tx-elementefenews-del">|</span>
 		}
+	}
+
+	
+# elemente_fenews
+	plugin.tx_elementefenews_pi1 {
+		# cat= //10; type= text; label= Template path: Path to the template file.
+		template = EXT:elemente_fenews/res/tmpl_default.html
 	}

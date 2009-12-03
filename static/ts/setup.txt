@@ -1,5 +1,6 @@
-# Image upload settings ...
+# elemente_fenews
 	plugin.tx_elementefenews_pi1 {
+		template			= {$plugin.tx_elementefenews_pi1.template}
 		mimeInclude			= image/jpeg, image/pjpeg, image/gif
 		extInclude			= jpg, jpeg, gif
 		maxsize				= 1000000

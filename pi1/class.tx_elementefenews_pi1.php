@@ -87,7 +87,7 @@
 
 			// HTML Template
 			$selectTMPL						= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'selectTMPL', 'baseConfig');
-			$selectTMPL						= $selectTMPL?str_replace('/html/', '', $selectTMPL):t3lib_extMgm::siteRelPath('elemente_fenews').'res/tmpl_default.html';
+			$selectTMPL						= $selectTMPL?str_replace('/html/', '', $selectTMPL):$this->conf['template'];
 			$this->mainTMPL					= $this->cObj->fileResource($selectTMPL);
 
 			// Render/ Requierd fields
