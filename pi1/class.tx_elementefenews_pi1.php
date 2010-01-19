@@ -310,6 +310,7 @@
 			if ($this->renderFields['bodytext']['render'] == 1 && $this->enableRTE == 1) {
 				if (!$this->RTEObj) $this->RTEObj				= t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
 				if ($this->RTEObj->isAvailable()) {
+					$this->RTEcounter++; // Bug #6016
 					$this->formName								= $this->prefixId.'-form';
 					$this->PA['itemFormElName']					= $this->prefixId.'[bodytext]';
 					$this->PA['itemFormElValue']				= $this->piVars['bodytext'];
