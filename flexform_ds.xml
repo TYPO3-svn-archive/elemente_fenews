@@ -18,6 +18,7 @@
 								<minitems>1</minitems>
 								<maxitems>1</maxitems>
 								<size>1</size>
+								<show_thumbs>1</show_thumbs>
 							</config>
 						</TCEforms>
 					</storagePID>
@@ -31,6 +32,7 @@
 								<minitems>0</minitems>
 								<maxitems>1</maxitems>
 								<size>1</size>
+								<show_thumbs>1</show_thumbs>
 							</config>
 						</TCEforms>
 					</redirectPID>
@@ -44,6 +46,7 @@
 								<minitems>0</minitems>
 								<maxitems>1</maxitems>
 								<size>1</size>
+								<show_thumbs>1</show_thumbs>
 							</config>
 						</TCEforms>
 					</selectTMPL>
@@ -233,6 +236,48 @@
 				</el>
 			</ROOT>
 		</fieldConfig>
+		<catConfig>
+			<ROOT>
+				<TCEforms>
+					<sheetTitle>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.catConfig</sheetTitle>
+				</TCEforms>
+				<type>array</type>
+				<el>
+					<categoryDefault>
+						<TCEforms>
+							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.categoryDefault</label>
+							<config>
+								<type>select</type>
+								<form_type>user</form_type>
+								<userFunc>tx_ttnews_TCAform_selectTree->renderCategoryFields</userFunc>
+								<treeView>1</treeView>
+								<foreign_table>tt_news_cat</foreign_table>
+								<size>5</size>
+								<autoSizeMax>10</autoSizeMax>
+								<minitems>0</minitems>
+								<maxitems>10</maxitems>
+							</config>
+						</TCEforms>
+					</categoryDefault>
+					<categorySelection>
+						<TCEforms>
+							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.categorySelection</label>
+							<config>
+								<type>select</type>
+								<form_type>user</form_type>
+								<userFunc>tx_ttnews_TCAform_selectTree->renderCategoryFields</userFunc>
+								<treeView>1</treeView>
+								<foreign_table>tt_news_cat</foreign_table>
+								<size>5</size>
+								<autoSizeMax>15</autoSizeMax>
+								<minitems>1</minitems>
+								<maxitems>100</maxitems>
+							</config>
+						</TCEforms>
+					</categorySelection>
+				</el>
+			</ROOT>
+		</catConfig>
 		<damConfig>
 			<ROOT>
 				<TCEforms>
@@ -268,6 +313,7 @@
 								<minitems>0</minitems>
 								<maxitems>1</maxitems>
 								<size>1</size>
+								<show_thumbs>1</show_thumbs>
 							</config>
 						</TCEforms>
 					</damBeUser>
@@ -281,6 +327,7 @@
 								<minitems>0</minitems>
 								<maxitems>1</maxitems>
 								<size>1</size>
+								<show_thumbs>1</show_thumbs>
 							</config>
 						</TCEforms>
   					</damImgPath>
@@ -294,6 +341,7 @@
 								<minitems>0</minitems>
 								<maxitems>1</maxitems>
 								<size>1</size>
+								<show_thumbs>1</show_thumbs>
 							</config>
 						</TCEforms>
   					</damFilePath>
@@ -363,6 +411,7 @@
 								<minitems>0</minitems>
 								<maxitems>1</maxitems>
 								<size>1</size>
+								<show_thumbs>1</show_thumbs>
 							</config>
 						</TCEforms>
 					</queueBeUser>
@@ -376,14 +425,6 @@
 				</TCEforms>
 				<type>array</type>
 				<el>
-					<globalCats>
-						<TCEforms>
-							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.globalCats.label</label>
-							<config>
-								<type>check</type>
-							</config>
-						</TCEforms>
-					</globalCats>
 					<delMode>
 						<TCEforms>
 							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.delMode.label</label>

@@ -152,6 +152,10 @@
  				$this->arrCaptcha['ext']		= 'captcha';
 				$this->arrCaptcha['captcha']	= '<img src="'.t3lib_extMgm::siteRelPath('captcha').'captcha/captcha.php" alt="" />';
 			}
+			
+			// Category settings
+			$this->categoryDefault	 = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryDefault', 'catConfig');
+			$this->categorySelection = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categorySelection', 'catConfig');
 
 			// DAM support
 			$damUse	= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'damUse', 'damConfig');
@@ -173,7 +177,7 @@
 				$this->damFilePath	= $damFilePath>0?$this->getFileMount($damFilePath):false;
 			}
 
-			// "Publish/Mail" options
+			// "Publish" options
 			$this->mailFeedback		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'mailFeedback', 'mailConfig');
 			$this->mailHTML			= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'mailHTML', 'mailConfig');
 			$this->mailFrom			= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'mailFrom', 'mailConfig');
@@ -182,7 +186,6 @@
 			$this->queueBeUser		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'queueBeUser', 'mailConfig');
 
 			// "Render" options
-			$this->globalCats		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'globalCats', 'optionsConfig');
 			$this->enableRTE		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'enableRTE', 'optionsConfig');
 			if ($this->enableRTE == 1) {
 				require_once(t3lib_extMgm::extPath('rtehtmlarea').'pi2/class.tx_rtehtmlarea_pi2.php');
@@ -566,9 +569,19 @@
 				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news', $arrNews);
 				$newsUID = $GLOBALS['TYPO3_DB']->sql_insert_id();
 
+				// DB: Default category
+				$sort = 1;
+				if (!empty($this->categoryDefault)) {
+					$arrCatDef = t3lib_div::trimExplode(',', $this->categoryDefault);
+					foreach ($arrCatDef as $sort => $uidCat) {
+						$arrMM = array('uid_local' => $newsUID, 'uid_foreign' => intval($uidCat), 'sorting' => $sort);
+						$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news_cat_mm', $arrMM);
+					}
+				}
+				
 				// DB: Insert category relation
 				if (!empty($this->piVars['category'])) {
-					$arrMM = array('uid_local' => $newsUID, 'uid_foreign' => intval($arrCat[0]), 'sorting' => 1);
+					$arrMM = array('uid_local' => $newsUID, 'uid_foreign' => intval($arrCat[0]), 'sorting' => $sort);
 					$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news_cat_mm', $arrMM);
 				}
 
@@ -589,9 +602,10 @@
 
 				// DB: Update category relation
 				if (!empty($this->piVars['category'])) {
-					// 1. Delete old relation
+					// 1. Delete old relation, but not categoryDefault!!
 					// TODO: Only one category is taken into account yet ...
-					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tt_news_cat_mm', 'uid_local='.$newsUID);
+					$whereCatDef = !empty($this->categoryDefault)?' AND uid_foreign NOT IN ('.$this->categoryDefault.')':'';
+					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tt_news_cat_mm', 'uid_local='.$newsUID.$whereCatDef);
 					// 2. Add new one
 					$arrMM = array('uid_local' => $newsUID, 'uid_foreign' => intval($arrCat[0]), 'sorting' => 1);
 					$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news_cat_mm', $arrMM);
@@ -887,8 +901,7 @@
 			$tmpl			 = $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_SELECT###');
 			// Get categories
 			$opts 			 = '<option value="">'.$this->pi_getLL('form_select', '', 1).'</option>';
-			$where			 = $this->globalCats!=1?'pid='.$this->storagePID:'1=1'; // FlexForm Option!
-			$res			 = $GLOBALS['TYPO3_DB']->exec_SELECTquery ('uid, title, shortcut', 'tt_news_cat', $where.$this->cObj->enableFields('tt_news_cat'), '', 'title');
+			$res			 = $GLOBALS['TYPO3_DB']->exec_SELECTquery ('uid, title, shortcut', 'tt_news_cat', 'uid IN ('.$this->categorySelection.')'.$this->cObj->enableFields('tt_news_cat'), '', 'title');
 			while (($row	 = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
 				$value		 = $row['shortcut']>0?$row['uid'].'|'.$row['shortcut']:$row['uid']; // if shortcut is set, put it into the value for redirect after saving the news
 				$selected	 = $this->piVars['category']==$value?' selected="selected"':'';

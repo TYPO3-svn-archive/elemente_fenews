@@ -1,7 +1,7 @@
 # Extends tt_news for "edit/delete record hook" ...
 	plugin.tt_news {
 		# cat=plugin.tt_news/links/20; type=text; label= Starting Point: The PID of the page including the plugin "Frontend News" (needed for "edit record").
-  		feEdit.pidFeNews	= 269
+  		feEdit.pidFeNews	= 
 
 		# cat=plugin.tt_news/enable/20; type=int+; label= Edit record: Enable marker "edit record" for extension "Frontend News".
 		feEdit.editRecord	= 1
