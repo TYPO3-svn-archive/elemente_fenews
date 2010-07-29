@@ -831,7 +831,7 @@
 
 			// File list
 			} else {
-				$res = $GLOBALS['TYPO3_DB']->exec_SELECT_query(
+				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 					'image, imagealttext, imagetitletext', 'tt_news', 'tt_news.uid='.$newsUID
 				);
 				// Image
