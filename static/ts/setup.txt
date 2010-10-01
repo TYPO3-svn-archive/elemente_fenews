@@ -23,12 +23,13 @@
 				editRecord		= {$plugin.tt_news.feEdit.editRecord}
 				editRecord {
 					wrap		= {$plugin.tt_news.feEdit.editRecord.wrap}
-					pidFeNews	= {$plugin.tt_news.feEdit.pidFeNews}
+					parameter	= {$plugin.tt_news.feEdit.pidFeNews}
 				}
 				delRecord		= {$plugin.tt_news.feEdit.delRecord}
-				delRecord{
+				delRecord {
 					wrap		= {$plugin.tt_news.feEdit.delRecord.wrap}
-					pidFeNews	= {$plugin.tt_news.feEdit.pidFeNews}
+					parameter	= {$plugin.tt_news.feEdit.pidFeNews}
+					ATagParams	= onclick="if(confirm('Wirklich löschen?')==false) return false;"
 				}
 			}
 		}
