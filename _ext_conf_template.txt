@@ -1,2 +1,0 @@
-# cat=basic/11; type=boolean; label=LLL:EXT:elemente_fenews/locallang.xml:extmng.usecategoryDefault
-	usecategoryDefault=1
