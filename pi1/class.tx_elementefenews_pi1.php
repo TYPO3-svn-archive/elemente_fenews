@@ -592,12 +592,12 @@
 
 				// DB: Delete image DAM relation
 				if (!empty($_FILES[$this->prefixId]['name']['image']) && $this->damUse == 1) {
-					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND ident=\''.$this->damIdent.'_dam_images\'');
+					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_images\'');
 				}
 
 				// DB: Delete file DAM relation
-				if (!empty($_FILES[$this->prefixId]['name']['image']) && $this->damUse == 1) {
-					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND ident=\''.$this->damIdent.'_dam_media\'');
+				if (!empty($_FILES[$this->prefixId]['name']['news_files']) && $this->damUse == 1) {
+					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_media\'');
 				}
 
 				// DB: Update category relation
@@ -662,7 +662,7 @@
 			$GLOBALS['TYPO3_DB']->exec_UPDATEquery('tt_news', 'uid='.intval($this->piVars['uid']), array($this->delMode => 1));
 
 			// DB: If DAM is in use, delete ALL relations
-			if ($this->damUse == 1) $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'uid_foreign='.intval($this->piVars['uid']));
+			if ($this->damUse == 1) $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'tablesnames=\'tt_news\' AND uid_foreign='.intval($this->piVars['uid']));
 
 			// The piVars given backPid
 			$pid = intval($this->piVars['backPid']);
