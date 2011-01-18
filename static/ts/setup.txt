@@ -3,7 +3,7 @@
 		template			= {$plugin.tx_elementefenews_pi1.template}
 		mimeInclude			= image/jpeg, image/pjpeg, image/gif
 		extInclude			= jpg, jpeg, gif
-		maxsize				= 1000000
+		maxsize				= 2048000
 		path				= uploads/pics
 		currentImage {
 			wrap			= <div class="news-list-img">|</div>

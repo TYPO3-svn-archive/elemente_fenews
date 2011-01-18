@@ -235,143 +235,158 @@
 		 *	@return		Rendered form based on a HTML template
 		 */
 		function renderForm($error='') {
-			// Template
-			$subpart											= $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_FORM###');
-
+			$newsOwner												= false;
+			
 			// Edit record mode?
 			if ($this->piVars['edit'] == 1) {
-				$editUID										= $this->piVars['edit']==1?$this->piVars['uid']:0;// Set flag/uid to differ between new/edit record mode
-				// Check for use of categories
+				$editUID											= $this->piVars['edit']==1?$this->piVars['uid']:0;// Set flag/uid to differ between new/edit record mode
+				
+				// Get record / check for use of categories
 				if ($this->renderFields['category']['render'] == 1) {
-					$res										= $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query('tt_news.*, tt_news_cat.uid AS catUid, tt_news_cat.shortcut', 'tt_news', 'tt_news_cat_mm', 'tt_news_cat', ' AND tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
-					$this->piVars								= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+					$res											= $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query('tt_news.*, tt_news_cat.uid AS catUid, tt_news_cat.shortcut', 'tt_news', 'tt_news_cat_mm', 'tt_news_cat', ' AND tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
+					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 				} else {
-					$res										= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
-					$this->piVars								= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+					$res											= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
+					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 				}
+				
 				// If shortcut is set, put it into the value for redirect after saving the news
-				$this->piVars['category']						= $this->piVars['shortcut']!=0?$this->piVars['catUid'].'|'.$this->piVars['shortcut']:$this->piVars['catUid'];
+				$this->piVars['category']							= $this->piVars['shortcut']!=0?$this->piVars['catUid'].'|'.$this->piVars['shortcut']:$this->piVars['catUid'];
+				
+				// Check current user is owner of record
+				$newsOwner											= ($this->piVars['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'])?true:false;	
 			}
-
-			// Marker
-			$markerArray										= array();
-			$markerArray['###PREFIX_ID###']						= $this->prefixId;
-			$markerArray['###FORM_URL###']						= $this->pi_getPageLink($GLOBALS['TSFE']->id);
-			$markerArray['###FORM_EDIT###']						= $editUID;
-			$markerArray['###LABEL_LEGEND###']					= $this->pi_getLL('form_legend', '', 1);
-			$markerArray['###LABEL_SUBMIT###']					= $this->pi_getLL('form_submit', '', 1);
-			$markerArray['###LABEL_RESET###']					= $this->pi_getLL('form_reset', '', 1);
-			$markerArray['###ERROR_MESSAGE###']					= $error;
-
-			// Render fields
-			foreach($this->renderFields as $field => $conf) {
-				$fieldUpper										= strtoupper($field);
-				if ($conf['render'] == 1) {
-					$fieldSubpart								= $this->cObj->getSubpart($subpart, '###'.$fieldUpper.'###');
-					$fieldArray['###PREFIX_ID###']				= $this->prefixId;
-					$fieldArray['###LABEL_'.$fieldUpper.'###']	= $this->pi_getLL('l_'.$field, '', 1);
-					$fieldArray['###VALUE_'.$fieldUpper.'###']	= $this->piVars[$field]?($conf['htmlsp']==1?htmlspecialchars($this->piVars[$field]):$this->piVars[$field]):'';
-					$fieldArray['###CHECKED_'.$fieldUpper.'###']= $this->piVars[$field]?'checked="checked"':'';
-					$fieldArray['###REQMARKER###']				= $conf['req']==1?$this->spanReplace($this->pi_getLL('l_required', '', 1), ' class="hili"'):'';
-					// Render category selector
-					if ($field == 'category') {
-						$fieldArray['###CATEGORY_SELECT###']	= $this->getCategories();
+			
+			// Throw error message if current user is not the owner of record
+			if ($newsOwner == false) {
+				$subpart											= $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_NOACCESS###');
+				$markerArray										= array();
+				$markerArray['###NOACCESS###']						= $this->pi_getLL('l_error_noaccess');
+				
+			} else {
+				// Template
+				$subpart											= $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_FORM###');
+			
+				// Marker
+				$markerArray										= array();
+				$markerArray['###PREFIX_ID###']						= $this->prefixId;
+				$markerArray['###FORM_URL###']						= $this->pi_getPageLink($GLOBALS['TSFE']->id);
+				$markerArray['###FORM_EDIT###']						= $editUID;
+				$markerArray['###LABEL_LEGEND###']					= $this->pi_getLL('form_legend');
+				$markerArray['###LABEL_SUBMIT###']					= $this->pi_getLL('form_submit');
+				$markerArray['###LABEL_RESET###']					= $this->pi_getLL('form_reset');
+				$markerArray['###ERROR_MESSAGE###']					= $error;
+	
+				// Render fields
+				foreach($this->renderFields as $field => $conf) {
+					$fieldUpper										= strtoupper($field);
+					if ($conf['render'] == 1) {
+						$fieldSubpart								= $this->cObj->getSubpart($subpart, '###'.$fieldUpper.'###');
+						$fieldArray['###PREFIX_ID###']				= $this->prefixId;
+						$fieldArray['###LABEL_'.$fieldUpper.'###']	= $this->pi_getLL('l_'.$field, '', 1);
+						$fieldArray['###VALUE_'.$fieldUpper.'###']	= $this->piVars[$field]?($conf['htmlsp']==1?htmlspecialchars($this->piVars[$field]):$this->piVars[$field]):'';
+						$fieldArray['###CHECKED_'.$fieldUpper.'###']= $this->piVars[$field]?'checked="checked"':'';
+						$fieldArray['###REQMARKER###']				= $conf['req']==1?$this->spanReplace($this->pi_getLL('l_required', '', 1), ' class="hili"'):'';
+						// Render category selector
+						if ($field == 'category') {
+							$fieldArray['###CATEGORY_SELECT###']	= $this->getCategories();
+						}
+						// Render archivedate selectors
+						if ($field == 'archivedate') {
+							$fieldArray['###ARCHIVEDATE_SELECT###']	= $this->setArchivedate('adate').' '.$this->setArchivedate('amonth').' '.$this->setArchivedate('ayear');
+						}
+						// Complete subpart substitution
+						$subpartArray['###'.$fieldUpper.'###']		= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
+					} else {
+						$subpartArray['###'.$fieldUpper.'###']		= '';
 					}
-					// Render archivedate selectors
-					if ($field == 'archivedate') {
-						$fieldArray['###ARCHIVEDATE_SELECT###']	= $this->setArchivedate('adate').' '.$this->setArchivedate('amonth').' '.$this->setArchivedate('ayear');
-					}
-					// Complete subpart substitution
-					$subpartArray['###'.$fieldUpper.'###']		= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
+				}
+	
+				// Render current image in edit mode
+				if ($editUID && $this->renderFields['image']['render'] == 1) {
+					$fieldSubpart									= $this->cObj->getSubpart($subpart, '###CURRENT_IMAGE###');
+					$fieldArray['###LABEL_CURRENT_IMAGE###']		= $this->pi_getLL('l_current_image', '', 1);
+					$fieldArray['###VALUE_CURRENT_IMAGE###']		= $this->getCurrentImage($editUID);
+					$subpartArray['###CURRENT_IMAGE###']			= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
 				} else {
-					$subpartArray['###'.$fieldUpper.'###']		= '';
+					$subpartArray['###CURRENT_IMAGE###']			= '';
 				}
-			}
-
-			// Render current image in edit mode
-			if ($editUID && $this->renderFields['image']['render'] == 1) {
-				$fieldSubpart									= $this->cObj->getSubpart($subpart, '###CURRENT_IMAGE###');
-				$fieldArray['###LABEL_CURRENT_IMAGE###']		= $this->pi_getLL('l_current_image', '', 1);
-				$fieldArray['###VALUE_CURRENT_IMAGE###']		= $this->getCurrentImage($editUID);
-				$subpartArray['###CURRENT_IMAGE###']			= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
-			} else {
-				$subpartArray['###CURRENT_IMAGE###']			= '';
-			}
-
-			// loginUser?
-			if ($GLOBALS['TSFE']->loginUser) {
-				$subpartArray['###AUTHOR###']					= ''; // Unset "normal" author field
-				$subpartArray['###AUTHOR_EMAIL###']				= ''; // Unset "normal" email field
-			}
-
-			// Auto hide & auto archive?
-			if ($this->autoEndtime > 0) {
-				$subpartArray['###ARCHIVEDATE###']				= ''; // Unset "normal" email field
-			}
-
-			// Enable htmlAreaRTE?
-			if ($this->renderFields['bodytext']['render'] == 1 && $this->enableRTE == 1) {
-				if (!$this->RTEObj) $this->RTEObj				= t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
-				if ($this->RTEObj->isAvailable()) {
-					$this->RTEcounter++; // Bug #6016
-					$this->formName								= $this->prefixId.'-form';
-					$this->PA['itemFormElName']					= $this->prefixId.'[bodytext]';
-					$this->PA['itemFormElValue']				= $this->piVars['bodytext'];
-					$RTEItem									= $this->RTEObj->drawRTE($this, 'tt_news', 'bodytext', array(), $this->PA, $this->specConf, $this->thisConfig, $this->RTEtypeVal, '', $GLOBALS['TSFE']->id);
-					// "Global" marker array
-					$markerArray['###ADDITIONALJS_PRE###']		= $this->additionalJS_initial.'<script type="text/javascript">'. implode(chr(10), $this->additionalJS_pre).'</script>';
-					$markerArray['###ADDITIONALJS_POST###']		= '<script type="text/javascript">'. implode(chr(10), $this->additionalJS_post).'</script>';
-					$markerArray['###ADDITIONALJS_SUBMIT###']	= 'onsubmit="'.implode(';', $this->additionalJS_submit).'"';
-					// "Field" marker array
-					$fieldSubpart								= $this->cObj->getSubpart($subpart, '###BODYTEXT_RTE###');
-					$fieldArray['###PREFIX_ID###']				= $this->prefixId;
-					$fieldArray['###LABEL_BODYTEXT_RTE###']		= $this->pi_getLL('l_bodytext', '', 1);
-					$fieldArray['###VALUE_BODYTEXT_RTE###']		= $this->piVars['bodytext']?$this->piVars['bodytext']:'';
-					$fieldArray['###REQMARKER###']				= $this->renderFields['bodytext']['req']==1?$this->spanReplace($this->pi_getLL('l_required', '', 1), ' class="hili"'):'';
-					$fieldArray['###RTE_ITEM###']				= $RTEItem;
-					// Complete subpart substitution
-					$subpartArray['###BODYTEXT###']				= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
-					$subpartArray['###BODYTEXT_RTE###']			= ''; // Unset "RTE" bodytext field
+	
+				// loginUser?
+				if ($GLOBALS['TSFE']->loginUser) {
+					$subpartArray['###AUTHOR###']					= ''; // Unset "normal" author field
+					$subpartArray['###AUTHOR_EMAIL###']				= ''; // Unset "normal" email field
 				}
-			} else {
-				$markerArray['###ADDITIONALJS_PRE###']			= '';
-				$markerArray['###ADDITIONALJS_POST###']			= '';
-				$markerArray['###ADDITIONALJS_SUBMIT###']		= '';
-				$subpartArray['###BODYTEXT_RTE###']				= ''; // Unset RTE bodytext field
+	
+				// Auto hide & auto archive?
+				if ($this->autoEndtime > 0) {
+					$subpartArray['###ARCHIVEDATE###']				= ''; // Unset "normal" email field
+				}
+	
+				// Enable htmlAreaRTE?
+				if ($this->renderFields['bodytext']['render'] == 1 && $this->enableRTE == 1) {
+					if (!$this->RTEObj) $this->RTEObj				= t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
+					if ($this->RTEObj->isAvailable()) {
+						$this->RTEcounter++; // Bug #6016
+						$this->formName								= $this->prefixId.'-form';
+						$this->PA['itemFormElName']					= $this->prefixId.'[bodytext]';
+						$this->PA['itemFormElValue']				= $this->piVars['bodytext'];
+						$RTEItem									= $this->RTEObj->drawRTE($this, 'tt_news', 'bodytext', array(), $this->PA, $this->specConf, $this->thisConfig, $this->RTEtypeVal, '', $GLOBALS['TSFE']->id);
+						// "Global" marker array
+						$markerArray['###ADDITIONALJS_PRE###']		= $this->additionalJS_initial.'<script type="text/javascript">'. implode(chr(10), $this->additionalJS_pre).'</script>';
+						$markerArray['###ADDITIONALJS_POST###']		= '<script type="text/javascript">'. implode(chr(10), $this->additionalJS_post).'</script>';
+						$markerArray['###ADDITIONALJS_SUBMIT###']	= 'onsubmit="'.implode(';', $this->additionalJS_submit).'"';
+						// "Field" marker array
+						$fieldSubpart								= $this->cObj->getSubpart($subpart, '###BODYTEXT_RTE###');
+						$fieldArray['###PREFIX_ID###']				= $this->prefixId;
+						$fieldArray['###LABEL_BODYTEXT_RTE###']		= $this->pi_getLL('l_bodytext', '', 1);
+						$fieldArray['###VALUE_BODYTEXT_RTE###']		= $this->piVars['bodytext']?$this->piVars['bodytext']:'';
+						$fieldArray['###REQMARKER###']				= $this->renderFields['bodytext']['req']==1?$this->spanReplace($this->pi_getLL('l_required', '', 1), ' class="hili"'):'';
+						$fieldArray['###RTE_ITEM###']				= $RTEItem;
+						// Complete subpart substitution
+						$subpartArray['###BODYTEXT###']				= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
+						$subpartArray['###BODYTEXT_RTE###']			= ''; // Unset "RTE" bodytext field
+					}
+				} else {
+					$markerArray['###ADDITIONALJS_PRE###']			= '';
+					$markerArray['###ADDITIONALJS_POST###']			= '';
+					$markerArray['###ADDITIONALJS_SUBMIT###']		= '';
+					$subpartArray['###BODYTEXT_RTE###']				= ''; // Unset RTE bodytext field
+				}
+	
+				// Captcha
+				if (!$GLOBALS['TSFE']->loginUser) {
+					$markerArray['###LABEL_CAPTCHA###']				= $this->pi_getLL('l_captcha', '', 1);
+	    			// FreeCap
+	    			if ($this->arrCaptcha['ext'] == 'sr_freecap' && is_object($this->arrCaptcha['captcha'])) {
+	     				$markerArray								= array_merge($markerArray, $this->arrCaptcha['captcha']->makeCaptcha());
+	    				$subpart									= $this->cObj->substituteSubpart($subpart, '###CAPTCHA_INSERT###', '');
+	    			// Captcha
+	    			} else if ($this->arrCaptcha['ext'] == 'captcha') {
+	    				$markerArray['###CAPTCHA_TEXT###']			= $this->pi_getLL('l_captcha_text', '', 1);
+	    				$markerArray['###CAPTCHA_IMAGE###']			= $this->arrCaptcha['captcha'];
+	    				$subpart									= $this->cObj->substituteSubpart($subpart, '###SR_FREECAP_INSERT###', '');
+	    			// No captcha
+	     			} else {
+	    				$subpart									= $this->cObj->substituteSubpart($subpart, '###SR_FREECAP_INSERT###', '');
+	     				$subpart									= $this->cObj->substituteSubpart($subpart, '###CAPTCHA_INSERT###', '');
+	     			}
+				} else {
+					$subpart										= $this->cObj->substituteSubpart($subpart, '###SR_FREECAP_INSERT###', '');
+					$subpart										= $this->cObj->substituteSubpart($subpart, '###CAPTCHA_INSERT###', '');
+				}
+	
+				// Render requird fields info
+				if ($this->requiredFields == 1 || is_array($this->arrCaptcha)) {
+					$markerArray['###REQUIRED_TEXT###']				= $this->spanReplace($this->pi_getLL('l_required_text', '', 1), ' class="hili"');
+				} else {
+					$subpart										= $this->cObj->substituteSubpart($subpart, '###REQUIRED_INFO###', '');
+				}
+	
+				// "Clear" all fields in template an fill in the sorted subpart array: 
+				foreach($subpartArray as $field) $sortedFields .= $field;
+				$subpartArray['###SUBPART_SORTED_FIELDS###']		= $sortedFields;
 			}
-
-			// Captcha
-			if (!$GLOBALS['TSFE']->loginUser) {
-				$markerArray['###LABEL_CAPTCHA###']				= $this->pi_getLL('l_captcha', '', 1);
-    			// FreeCap
-    			if ($this->arrCaptcha['ext'] == 'sr_freecap' && is_object($this->arrCaptcha['captcha'])) {
-     				$markerArray								= array_merge($markerArray, $this->arrCaptcha['captcha']->makeCaptcha());
-    				$subpart									= $this->cObj->substituteSubpart($subpart, '###CAPTCHA_INSERT###', '');
-    			// Captcha
-    			} else if ($this->arrCaptcha['ext'] == 'captcha') {
-    				$markerArray['###CAPTCHA_TEXT###']			= $this->pi_getLL('l_captcha_text', '', 1);
-    				$markerArray['###CAPTCHA_IMAGE###']			= $this->arrCaptcha['captcha'];
-    				$subpart									= $this->cObj->substituteSubpart($subpart, '###SR_FREECAP_INSERT###', '');
-    			// No captcha
-     			} else {
-    				$subpart									= $this->cObj->substituteSubpart($subpart, '###SR_FREECAP_INSERT###', '');
-     				$subpart									= $this->cObj->substituteSubpart($subpart, '###CAPTCHA_INSERT###', '');
-     			}
-			} else {
-				$subpart										= $this->cObj->substituteSubpart($subpart, '###SR_FREECAP_INSERT###', '');
-				$subpart										= $this->cObj->substituteSubpart($subpart, '###CAPTCHA_INSERT###', '');
-			}
-
-			// Render requird fields info
-			if ($this->requiredFields == 1 || is_array($this->arrCaptcha)) {
-				$markerArray['###REQUIRED_TEXT###']				= $this->spanReplace($this->pi_getLL('l_required_text', '', 1), ' class="hili"');
-			} else {
-				$subpart										= $this->cObj->substituteSubpart($subpart, '###REQUIRED_INFO###', '');
-			}
-
-			// "Clear" all fields in template an fill in the sorted subpart array: 
-			foreach($subpartArray as $field) $sortedFields .= $field;
-			$subpartArray['###SUBPART_SORTED_FIELDS###']		= $sortedFields;
 
 			// return
 			return $this->cObj->substituteMarkerArrayCached($subpart, $markerArray, $subpartArray, array());
@@ -534,7 +549,7 @@
 			if (!empty($_FILES[$this->prefixId]['name']['image'])) {
 				if ($this->damUse == 1) {
 					$damUidImg				= $this->handleDAM($this->arrUploads['image']['path']);
-					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - handleDAM', 'elemente_fenews', 2, array('damUidImg' => $damUidImg));
+					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - handleDAM', 'elemente_fenews', 0, array('damUidImg' => $damUidImg));
 					$arrNews['tx_damnews_dam_images'] = 1;
 				} else {
 					$arrNews['image']		= $GLOBALS['TYPO3_DB']->quoteStr($this->arrUploads['image']['hash'], 'tt_news');
@@ -569,7 +584,7 @@
 				// DB: Insert news
 				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news', $arrNews);
 				$newsUID = $GLOBALS['TYPO3_DB']->sql_insert_id();
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: record', 'elemente_fenews', 2, array('newsUID' => $newsUID));
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: record', 'elemente_fenews', 0, array('newsUID' => $newsUID));
 
 				// DB: Default category
 				$sort = 1;
@@ -578,7 +593,7 @@
 					foreach ($arrCatDef as $sort => $uidCat) {
 						$arrMM = array('uid_local' => $newsUID, 'uid_foreign' => intval($uidCat), 'sorting' => $sort);
 						$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news_cat_mm', $arrMM);
-						if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: def cat mm', 'elemente_fenews', 2, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tt_news_cat_mm', $arrMM)));
+						if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: def cat mm', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tt_news_cat_mm', $arrMM)));
 					}
 				}
 				
@@ -586,25 +601,25 @@
 				if (!empty($this->piVars['category'])) {
 					$arrMM = array('uid_local' => $newsUID, 'uid_foreign' => intval($arrCat[0]), 'sorting' => $sort);
 					$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news_cat_mm', $arrMM);
-					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: fe cat mm', 'elemente_fenews', 2, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tt_news_cat_mm', $arrMM)));
+					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: fe cat mm', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tt_news_cat_mm', $arrMM)));
 				}
 
 			// Edit record
 			} else {
 				// DB: Update news
 				$GLOBALS['TYPO3_DB']->exec_UPDATEquery('tt_news', 'uid='.$newsUID, $arrNews);
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: record', 'elemente_fenews', 2, array('sql' => $GLOBALS['TYPO3_DB']->UPDATEquery('tt_news', 'uid='.$newsUID, $arrNews)));
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: record', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->UPDATEquery('tt_news', 'uid='.$newsUID, $arrNews)));
 
 				// DB: Delete image DAM relation
 				if (!empty($_FILES[$this->prefixId]['name']['image']) && $this->damUse == 1) {
 					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_images\'');
-					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: del dam img', 'elemente_fenews', 2, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_images\'')));
+					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: del dam img', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_images\'')));
 				}
 
 				// DB: Delete file DAM relation
 				if (!empty($_FILES[$this->prefixId]['name']['news_files']) && $this->damUse == 1) {
 					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_media\'');
-					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: del dam file', 'elemente_fenews', 2, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_media\'')));
+					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: del dam file', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_media\'')));
 				}
 
 				// DB: Update category relation
@@ -623,14 +638,14 @@
 			if (!empty($_FILES[$this->prefixId]['name']['image']) && $this->damUse == 1) {
 				$arrMM = array('uid_local' => $damUidImg, 'uid_foreign' => $newsUID, 'tablenames' => 'tt_news', 'ident' => $this->damIdent.'_dam_images', 'sorting' => 0, 'sorting_foreign' => 1);
 				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM);
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - dam: insert img', 'elemente_fenews', 2, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tx_dam_mm_ref', $arrMM)));
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - dam: insert img', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tx_dam_mm_ref', $arrMM)));
 			}
 
 			// DB: Insert file DAM relation
 			if (!empty($_FILES[$this->prefixId]['name']['news_files']) && $this->damUse == 1) {
 				$arrMM = array('uid_local' => $damUidFile, 'uid_foreign' => $newsUID, 'tablenames' => 'tt_news', 'ident' => $this->damIdent.'_dam_media', 'sorting' => 0, 'sorting_foreign' => 1);
 				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM);
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - dam: insert file', 'elemente_fenews', 2, array('sql' => $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM)));
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - dam: insert file', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM)));
 			}
 
 			// Mail: Alert publisher?
@@ -670,7 +685,7 @@
 			// DB: If DAM is in use, delete ALL relations
 			if ($this->damUse == 1) {
 				$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'tablesnames=\'tt_news\' AND uid_foreign='.intval($this->piVars['uid']));
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('deleteRecord - dam: delete', 'elemente_fenews', 2, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'tablesnames=\'tt_news\' AND uid_foreign='.intval($this->piVars['uid']))));
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('deleteRecord - dam: delete', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'tablesnames=\'tt_news\' AND uid_foreign='.intval($this->piVars['uid']))));
 			}
 
 			// The piVars given backPid
@@ -773,7 +788,7 @@
 			// Save meta data
 			$damdb	= t3lib_div::makeInstance('tx_dam_db');
 			$uid	= $damdb->insertRecordRaw($meta['fields']);
-			if ($this->conf['debug'] == 1) t3lib_div::devLog('handleDAM - insertRecordRaw', 'elemente_fenews', 2, array('uid' => $uid));
+			if ($this->conf['debug'] == 1) t3lib_div::devLog('handleDAM - insertRecordRaw', 'elemente_fenews', 0, array('uid' => $uid));
 
 			// Kill BeUser
 			$this->unsetBeUser();
@@ -835,7 +850,7 @@
 					'tx_dam_mm_ref.sorting_foreign ASC'
 				);
 				if ($this->conf['debug'] == 1) {
-					t3lib_div::devLog('getCurrentImage - dam: img', 'elemente_fenews', 2, array('sql' => 'tx_dam.file_name, tx_dam.file_path, tx_dam.alt_text',
+					t3lib_div::devLog('getCurrentImage - dam: img', 'elemente_fenews', 0, array('sql' => 'tx_dam.file_name, tx_dam.file_path, tx_dam.alt_text',
 						'tx_dam', 'tx_dam_mm_ref', 'tt_news',
 						'AND tx_dam_mm_ref.tablenames=\'tt_news\' AND tx_dam_mm_ref.sorting_foreign=1 AND tx_dam_mm_ref.ident=\'tx_damnews_dam_images\' AND tx_dam_mm_ref.uid_foreign='.$newsUID,
 						'',
@@ -851,7 +866,7 @@
 			// File list
 			} else {
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('image, imagealttext, imagetitletext', 'tt_news', 'tt_news.uid='.$newsUID);
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('getCurrentImage - normal: img', 'elemente_fenews', 2, array('sql' => $GLOBALS['TYPO3_DB']->SELECTquery('image, imagealttext, imagetitletext', 'tt_news', 'tt_news.uid='.$newsUID)));
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('getCurrentImage - normal: img', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->SELECTquery('image, imagealttext, imagetitletext', 'tt_news', 'tt_news.uid='.$newsUID)));
 				
 				// Image
 				$arrImg				= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);

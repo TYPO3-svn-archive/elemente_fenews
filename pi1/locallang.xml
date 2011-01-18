@@ -35,6 +35,7 @@
             <label index="l_mail_intro_feed">you have submitted a new news. For your information, your data is listed following.</label>
             <label index="l_mail_intro_queue">a user has submitted a new news. Please log into the TYPO3 backend to publish this news.</label>
             <label index="l_mail_regards">Kind regards</label>
+			<label index="l_error_noaccess">You don't have the rights to edit this record!</label>
 			<label index="l_error_message">Input error!</label>
 			<label index="l_error_field">Please fill in field ###FIELD###.</label>
 			<label index="l_error_email">Field ###FIELD### must contain a valid mail-address.</label>
@@ -74,6 +75,7 @@
             <label index="l_mail_intro_feed">Sie haben eine neue News eingestellt. Zur Information können Sie Ihre Angaben nachfolgend einsehen.</label>
             <label index="l_mail_intro_queue">ein Benutzer hat eine neue News eingestellt. Zur Information können Sie diese nachfolgend einsehen. Bitte loggen Sie sich zur Freigabe in TYPO3 ein.</label>
             <label index="l_mail_regards">Mit freundlichen Grüßen</label>
+			<label index="l_error_noaccess">Sie haben nicht die erforderlichen Rechte, um diesen Datensatz bearbeiten zu dürfen.</label>
 			<label index="l_error_message">Eingabefehler!</label>
 			<label index="l_error_field">Bitte füllen Sie das Feld ###FIELD### aus.</label>
 			<label index="l_error_email">Das Feld ###FIELD### muss eine gültige Mail-Adresse sein.</label>
