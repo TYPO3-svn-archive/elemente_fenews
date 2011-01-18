@@ -11,6 +11,7 @@
 			file.maxW		= {$plugin.tt_news.listMaxW}
 		    file.maxH		= {$plugin.tt_news.listMaxH}
 		}
+		debug				= {$plugin.tx_elementefenews_pi1.debug}
 	}
 
 
