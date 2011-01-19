@@ -469,9 +469,6 @@
 		 *	@return		Void (redirection to defined page)
 		 */
 		function saveForm() {
-## DEBUG
-## $GLOBALS['TYPO3_DB']->store_lastBuiltQuery = 1;
-			
 			// New or edit record
 			$newsUID						= $this->piVars['edit']>0?intval($this->piVars['edit']):false;
 
@@ -870,7 +867,7 @@
 				$arrImg				= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 				$imgTmp				= t3lib_div::trimExplode(',', $arrImg['image']);
 				$arrImg['image']	= $imgTmp[0];
-				$lconf['file']		= $this->conf['currentImage.fileListPath'].$arrImg['image'];
+				$lconf['file']		= $this->conf['currentImage.']['fileListPath'].$arrImg['image'];
 				$lconf['altText']	= $arrImg['imagealttext'];
 				$lconf['titleText']	= $arrImg['imagetitletext'];
 				if ($this->conf['debug'] == 1) t3lib_div::devLog('getCurrentImage - normal: img conf', 'elemente_fenews', 0, $lconf);
