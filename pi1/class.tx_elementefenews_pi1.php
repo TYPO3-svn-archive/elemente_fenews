@@ -235,13 +235,12 @@
 		 *	@return		Rendered form based on a HTML template
 		 */
 		function renderForm($error='') {
-			$newsOwner												= false;
+			// Set flag/uid to differ between new/edit record mode
+			$editMode												= $this->piVars['edit']==1?$this->piVars['uid']:0;
 			
-			// Edit record mode?
-			if ($this->piVars['edit'] == 1) {
-				$editUID											= $this->piVars['edit']==1?$this->piVars['uid']:0;// Set flag/uid to differ between new/edit record mode
-				
-				// Get record / check for use of categories
+			// Get record
+			if ($editMode > 0) {
+				// Check for use of categories
 				if ($this->renderFields['category']['render'] == 1) {
 					$res											= $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query('tt_news.*, tt_news_cat.uid AS catUid, tt_news_cat.shortcut', 'tt_news', 'tt_news_cat_mm', 'tt_news_cat', ' AND tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
 					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
@@ -249,16 +248,15 @@
 					$res											= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
 					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 				}
-				
 				// If shortcut is set, put it into the value for redirect after saving the news
 				$this->piVars['category']							= $this->piVars['shortcut']!=0?$this->piVars['catUid'].'|'.$this->piVars['shortcut']:$this->piVars['catUid'];
 				
 				// Check current user is owner of record
-				$newsOwner											= ($this->piVars['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'])?true:false;	
+				$this->piVars['owner']								= ($this->piVars['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'])?true:false;	
 			}
 			
 			// Throw error message if current user is not the owner of record
-			if ($newsOwner == false) {
+			if ($editMode > 0 && $this->piVars['owner'] == false) {
 				$subpart											= $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_NOACCESS###');
 				$markerArray										= array();
 				$markerArray['###NOACCESS###']						= $this->pi_getLL('l_error_noaccess');
@@ -271,7 +269,7 @@
 				$markerArray										= array();
 				$markerArray['###PREFIX_ID###']						= $this->prefixId;
 				$markerArray['###FORM_URL###']						= $this->pi_getPageLink($GLOBALS['TSFE']->id);
-				$markerArray['###FORM_EDIT###']						= $editUID;
+				$markerArray['###FORM_EDIT###']						= $this->piVars['uid'];
 				$markerArray['###LABEL_LEGEND###']					= $this->pi_getLL('form_legend');
 				$markerArray['###LABEL_SUBMIT###']					= $this->pi_getLL('form_submit');
 				$markerArray['###LABEL_RESET###']					= $this->pi_getLL('form_reset');
@@ -303,10 +301,10 @@
 				}
 	
 				// Render current image in edit mode
-				if ($editUID && $this->renderFields['image']['render'] == 1) {
+				if ($this->piVars['uid'] && $this->renderFields['image']['render'] == 1) {
 					$fieldSubpart									= $this->cObj->getSubpart($subpart, '###CURRENT_IMAGE###');
 					$fieldArray['###LABEL_CURRENT_IMAGE###']		= $this->pi_getLL('l_current_image', '', 1);
-					$fieldArray['###VALUE_CURRENT_IMAGE###']		= $this->getCurrentImage($editUID);
+					$fieldArray['###VALUE_CURRENT_IMAGE###']		= $this->getCurrentImage($this->piVars['uid']);
 					$subpartArray['###CURRENT_IMAGE###']			= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
 				} else {
 					$subpartArray['###CURRENT_IMAGE###']			= '';
@@ -875,6 +873,7 @@
 				$lconf['file']		= $this->conf['currentImage.fileListPath'].$arrImg['image'];
 				$lconf['altText']	= $arrImg['imagealttext'];
 				$lconf['titleText']	= $arrImg['imagetitletext'];
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('getCurrentImage - normal: img conf', 'elemente_fenews', 0, $lconf);
 			}
 
 			// return
