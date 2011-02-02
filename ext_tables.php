@@ -3,7 +3,7 @@
 
 	t3lib_extMgm::addStaticFile($_EXTKEY,'static/ts/','Frontend News');
 
-	if (TYPO3_MODE=='BE')	{
+/*	if (TYPO3_MODE=='BE')	{
 		t3lib_extMgm::insertModuleFunction(
 			'user_task',
 			'tx_elementefenews_modfunc1',
@@ -12,7 +12,8 @@
 		);
 		$TBE_MODULES_EXT['xMOD_db_new_content_el']['addElClasses']['tx_elementefenews_pi1_wizicon'] = t3lib_extMgm::extPath($_EXTKEY).'pi1/class.tx_elementefenews_pi1_wizicon.php';
 	}
-
+*/
+	
 	t3lib_div::loadTCA('tt_content');
 	$TCA['tt_content']['types']['list']['subtypes_excludelist'][$_EXTKEY.'_pi1'] = 'layout,select_key,pages,recursive';
 	$TCA['tt_content']['types']['list']['subtypes_addlist'][$_EXTKEY.'_pi1'] = 'pi_flexform';
