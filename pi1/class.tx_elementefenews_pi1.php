@@ -659,7 +659,9 @@
 			}
 
 			// Clear target page cache
-			$this->clearPageCache($redirect);
+			// Adding writelog support to clear_cacheCmd breaks functionality in T3 4.5
+##			$this->clearPageCache($redirect);
+			$GLOBALS['TSFE']->clearPageCacheContent_pidList($redirect);
 
 			// Redirect to page
 			header('Location: '.t3lib_div::locationHeaderUrl($this->pi_getPageLink($redirect)));
