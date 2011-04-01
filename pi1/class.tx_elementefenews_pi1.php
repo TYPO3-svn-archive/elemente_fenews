@@ -678,18 +678,21 @@
 		function deleteRecord() {
 			// DB: Set record to deleted
 			$GLOBALS['TYPO3_DB']->exec_UPDATEquery('tt_news', 'uid='.intval($this->piVars['uid']), array($this->delMode => 1));
-
+			if ($this->conf['debug'] == 1) t3lib_div::devLog('deleteRecord - dam: delete', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->UPDATEquery('tt_news', 'uid='.intval($this->piVars['uid']), array($this->delMode => 1))));
+			
 			// DB: If DAM is in use, delete ALL relations
 			if ($this->damUse == 1) {
-				$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'tablesnames=\'tt_news\' AND uid_foreign='.intval($this->piVars['uid']));
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('deleteRecord - dam: delete', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'tablesnames=\'tt_news\' AND uid_foreign='.intval($this->piVars['uid']))));
+				$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'tablenames=\'tt_news\' AND uid_foreign='.intval($this->piVars['uid']));
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('deleteRecord - dam: delete', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'tablenames=\'tt_news\' AND uid_foreign='.intval($this->piVars['uid']))));
 			}
 
 			// The piVars given backPid
 			$pid = intval($this->piVars['backPid']);
 
 			// Clear target page cache
-			$this->clearPageCache($pid);
+			// Adding writelog support to clear_cacheCmd breaks functionality in T3 4.5
+##			$this->clearPageCache($redirect);
+			$GLOBALS['TSFE']->clearPageCacheContent_pidList($pid);
 
 			// Redirect
 			header('Location: '.t3lib_div::locationHeaderUrl($this->pi_getPageLink($pid)));

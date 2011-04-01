@@ -33,16 +33,18 @@
 
 			// Edit record
 			if ($lConf['feEdit.']['editRecord'] == 1 && ($row['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'])) {
-				$label	 = $parentObject->cObj->stdWrap($parentObject->pi_getLL('tx-elementefenews-editRecord'), $lConf['feEdit.']['labelWrap.']);
-				$lConf['feEdit.']['editRecord.']['additionalParams'] .= '&tx_elementefenews_pi1[edit]=1&tx_elementefenews_pi1[uid]='.$row['uid'];
-				$links	.= $parentObject->cObj->typoLink($label, $lConf['feEdit.']['editRecord.']);
+				$label													 = $parentObject->cObj->stdWrap($parentObject->pi_getLL('tx-elementefenews-editRecord'), $lConf['feEdit.']['labelWrap.']);
+				$lConf['feEdit.']['editRecord.']['title']				 = $parentObject->pi_getLL('tx-elementefenews-editRecord');
+				$lConf['feEdit.']['editRecord.']['additionalParams']	.= '&tx_elementefenews_pi1[edit]=1&tx_elementefenews_pi1[uid]='.$row['uid'];
+				$links													.= $parentObject->cObj->typoLink($label, $lConf['feEdit.']['editRecord.']);
 			}
 
 			// Delete record
 			if ($lConf['feEdit.']['delRecord'] == 1 && ($row['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'])) {
-				$label	 = $parentObject->cObj->stdWrap($parentObject->pi_getLL('tx-elementefenews-delRecord'), $lConf['feEdit.']['labelWrap.']);
-				$lConf['feEdit.']['delRecord.']['additionalParams'] .= '&tx_elementefenews_pi1[del]=1&tx_elementefenews_pi1[uid]='.$row['uid'].'&tx_elementefenews_pi1[backPid]='.$GLOBALS['TSFE']->id;
-				$links	.= $parentObject->cObj->typoLink($label, $lConf['feEdit.']['delRecord.']);
+				$label	 												 = $parentObject->cObj->stdWrap($parentObject->pi_getLL('tx-elementefenews-delRecord'), $lConf['feEdit.']['labelWrap.']);
+				$lConf['feEdit.']['delRecord.']['title']				 = $parentObject->pi_getLL('tx-elementefenews-delRecord'); 
+				$lConf['feEdit.']['delRecord.']['additionalParams']		.= '&tx_elementefenews_pi1[del]=1&tx_elementefenews_pi1[uid]='.$row['uid'].'&tx_elementefenews_pi1[backPid]='.$GLOBALS['TSFE']->id;
+				$links													.= $parentObject->cObj->typoLink($label, $lConf['feEdit.']['delRecord.']);
 			}
 
 			// Hide author when checkbox "anonymous record" is set:
