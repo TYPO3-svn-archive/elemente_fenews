@@ -42,22 +42,31 @@
 
 		// Start adding fields for the RTE API
 		public $RTEObj;
-		public $strEntryField;
 		public $docLarge				= 0;
 		public $RTEcounter				= 0;
 		public $formName;
-		public $additionalJS_initial	= '';		// Initial JavaScript to be printed before the form (should be in head, but cannot due to IE6 timing bug)
-		public $additionalJS_pre		= array();	// Additional JavaScript to be printed before the form
-		public $additionalJS_post		= array();	// Additional JavaScript to be printed after the form
-		public $additionalJS_submit	= array();	// Additional JavaScript to be executed on submit
+		    // Initial JavaScript to be printed before the form
+		    // (should be in head, but cannot due to IE6 timing bug)
+		public $additionalJS_initial	= '';
+		    // Additional JavaScript to be printed before the form
+		    // (works in Mozilla/Firefox when included in head, but not in IE6)
+		public $additionalJS_pre		= array();
+		    // Additional JavaScript to be printed after the form
+		public $additionalJS_post		= array();
+		    // Additional JavaScript to be executed on submit
+		public $additionalJS_submit		= array();
 		public $PA = array(
-			'itemFormElName'	=> '',
-			'itemFormElValue'	=> '',
-			);
-		public $specConf				= array();
+			'itemFormElName'			=>  '',
+			'itemFormElValue'			=> '',
+		);
+		public $specConf = array(
+			'rte_transform'				=> array(
+				'parameters'			=> array('mode' => 'ts_css')
+			)
+		);
 		public $thisConfig				= array();
 		public $RTEtypeVal				= 'text';
-		public $thePidValue;
+		public $thePidValue;		
 		// End adding fields for the RTE API
 
 
@@ -321,15 +330,29 @@
 					$subpartArray['###ARCHIVEDATE###']				= ''; // Unset "normal" email field
 				}
 	
-				// Enable htmlAreaRTE?
+				// Enable htmlAreaRTE? (rtehtmlarea_api_manual v2.1.0)
 				if ($this->renderFields['bodytext']['render'] == 1 && $this->enableRTE == 1) {
 					if (!$this->RTEObj) $this->RTEObj				= t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
 					if ($this->RTEObj->isAvailable()) {
-						$this->RTEcounter++; // Bug #6016
+						$this->RTEcounter++;
+						$this->table								= 'tt_news';
+						$this->field								= 'bodytext';
 						$this->formName								= $this->prefixId.'-form';
 						$this->PA['itemFormElName']					= $this->prefixId.'[bodytext]';
 						$this->PA['itemFormElValue']				= $this->piVars['bodytext'];
-						$RTEItem									= $this->RTEObj->drawRTE($this, 'tt_news', 'bodytext', array(), $this->PA, $this->specConf, $this->thisConfig, $this->RTEtypeVal, '', $GLOBALS['TSFE']->id);
+						$this->thePidValue							= $GLOBALS['TSFE']->id;
+						$RTEItem = $this->RTEObj->drawRTE(
+							$this,
+							'tt_news',
+							'bodytext',
+							$row = array(),
+							$this->PA,
+							$this->specConf,
+							$this->thisConfig,
+							$this->RTEtypeVal,
+							'',
+							$this->thePidValue
+						);
 						// "Global" marker array
 						$markerArray['###ADDITIONALJS_PRE###']		= $this->additionalJS_initial.'<script type="text/javascript">'. implode(chr(10), $this->additionalJS_pre).'</script>';
 						$markerArray['###ADDITIONALJS_POST###']		= '<script type="text/javascript">'. implode(chr(10), $this->additionalJS_post).'</script>';
@@ -507,7 +530,7 @@
 			} else if ($this->renderFields['archivedate']['render']==1) {
 				$arrNews['archivedate']		= mktime(0, 0, 0, intval($this->piVars['amonth']), intval($this->piVars['adate']), intval($this->piVars['ayear']));
 			}
-
+			
 			// Unset not needed piVars & quote inputs
 			unset($this->piVars['edit']);
 			unset($this->piVars['adate']);
@@ -517,7 +540,7 @@
 			foreach($this->piVars as $field => $input) {
 				$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news');
 			}
-
+			
 			// loginUser?
 			if ($GLOBALS['TSFE']->loginUser) {
 				$arrNews['tx_elementefenews_feuser']	= $GLOBALS['TSFE']->fe_user->user['uid'];
@@ -525,15 +548,26 @@
 				$arrNews['author_email']				= $GLOBALS['TSFE']->fe_user->user['email'];
 			}
 
-			// RTE transform ... is it well done in this way?
+			// RTE transformation (rtehtmlarea_api_manual v2.1.0)
 			if (!empty($this->piVars['bodytext']) && $this->enableRTE == 1) {
 				if (!$this->RTEObj) $this->RTEObj = t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
 				if ($this->RTEObj->isAvailable()) {
 					$pageTSConfig			= $GLOBALS['TSFE']->getPagesTSconfig();
 					$RTEsetup				= $pageTSConfig['RTE.'];
-					$thisConfig				= $RTEsetup['default.'];
-					$thisConfig				= $thisConfig['FE.'];
-					$arrNews['bodytext']	= $this->RTEObj->transformContent('db', $arrNews['bodytext'], 'tt_news', 'bodytext', $arrNews, $this->specConf, $thisConfig, '', $GLOBALS['TSFE']->id);
+					$this->thisConfig		= $RTEsetup['default.'];
+					$this->thisConfig		= $this->thisConfig['FE.'];
+					$this->thePidValue		= $GLOBALS['TSFE']->id;
+					$arrNews['bodytext']	= $this->RTEObj->transformContent(
+						'db',
+						$this->piVars['bodytext'],
+						'tt_news',
+						'bodytext',
+						$arrNews,
+						$this->specConf,
+						$this->thisConfig,
+						'',
+						$this->thePidValue
+					);
 				}
 				unset($arrNews['_TRANSFORM_bodytext']); // Unset not needed field
 			} else {

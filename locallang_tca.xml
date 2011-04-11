@@ -50,7 +50,7 @@
             <label index="elemente_fenews.pi_flexform.queuePublish.label">Publish manually:</label>
             <label index="elemente_fenews.pi_flexform.queueBeUser.label">Publisher:</label>
             <label index="elemente_fenews.pi_flexform.optionsConfig">Options</label>
-            <label index="elemente_fenews.pi_flexform.enableRTE.label">Enable htmlArea RTE:</label>
+            <label index="elemente_fenews.pi_flexform.enableRTE.label">Enable RTE for bodytext:</label>
             <label index="elemente_fenews.pi_flexform.delMode.label">By author deleted records will be</label>
             <label index="elemente_fenews.pi_flexform.delMode.I0.label">... hidden!</label>
             <label index="elemente_fenews.pi_flexform.delMode.I1.label">... deleted!</label>
@@ -99,7 +99,7 @@
             <label index="elemente_fenews.pi_flexform.queuePublish.label">Manuelle Freigabe:</label>
             <label index="elemente_fenews.pi_flexform.queueBeUser.label">Freigabe durch:</label>
             <label index="elemente_fenews.pi_flexform.optionsConfig">Optionen</label>
-            <label index="elemente_fenews.pi_flexform.enableRTE.label">Nutze htmlArea-RTE:</label>
+            <label index="elemente_fenews.pi_flexform.enableRTE.label">Nutze RTE für Textfeld:</label>
             <label index="elemente_fenews.pi_flexform.delMode.label">Vom Autor gelöschte Beiträge werden</label>
             <label index="elemente_fenews.pi_flexform.delMode.I0.label">... ausgeblendet!</label>
             <label index="elemente_fenews.pi_flexform.delMode.I1.label">... gelöscht!</label>
