@@ -296,6 +296,22 @@
 							</config>
 						</TCEforms>
 					</categorySelection>
+					<categoryMultiSelection>
+						<TCEforms>
+							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.categoryMultiSelection</label>
+							<config>
+								<type>check</type>
+							</config>
+						</TCEforms>
+					</categoryMultiSelection>
+					<categoryShortcutStorage>
+						<TCEforms>
+							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.categoryShortcutStorage</label>
+							<config>
+								<type>check</type>
+							</config>
+						</TCEforms>
+					</categoryShortcutStorage>
 				</el>
 			</ROOT>
 		</catConfig>
@@ -446,6 +462,20 @@
 				</TCEforms>
 				<type>array</type>
 				<el>
+					<feeditGroup>
+						<TCEforms>
+							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.feeditGroup</label>
+							<config>
+								<type>group</type>
+								<internal_type>db</internal_type>
+								<allowed>fe_groups</allowed>
+								<minitems>0</minitems>
+								<maxitems>1</maxitems>
+								<size>1</size>
+								<show_thumbs>1</show_thumbs>
+							</config>
+						</TCEforms>
+					</feeditGroup>
 					<delMode>
 						<TCEforms>
 							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.delMode.label</label>

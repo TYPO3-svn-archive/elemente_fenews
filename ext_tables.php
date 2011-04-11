@@ -30,4 +30,33 @@
 	}
 	
 	t3lib_extMgm::addPlugin(array('LLL:EXT:elemente_fenews/locallang_db.xml:tt_content.list_type_pi1', $_EXTKEY.'_pi1'),'list_type');
+	
+	
+	$tempColumns = Array (
+		'tx_elementefenews_feuser' => Array (
+			'exclude' => 1,
+			'label' => 'LLL:EXT:elemente_fenews/locallang_tca.xml:tt_news.tx_elementefenews_feuser',
+			'config' => Array (
+				'type' => 'none',
+			)
+		),
+		'tx_elementefenews_fegroup' => Array (
+			'exclude' => 1,
+			'label' => 'LLL:EXT:elemente_fenews/locallang_tca.xml:tt_news.tx_elementefenews_fegroup',
+			'config' => Array (
+				'type' => 'none',
+			)
+		),
+		'tx_elementefenews_author' => Array (
+			'exclude' => 1,
+			'label' => 'LLL:EXT:elemente_fenews/locallang_tca.xml:tt_news.tx_elementefenews_author',
+			'config' => Array (
+				'type' => 'none',
+			)
+		),
+	);
+
+	t3lib_div::loadTCA('tt_news');
+	t3lib_extMgm::addTCAcolumns('tt_news',$tempColumns,1);
+	t3lib_extMgm::addToAllTCAtypes('tt_news','tx_elementefenews_feuser,tx_elementefenews_fegroup,tx_elementefenews_author');
 ?>

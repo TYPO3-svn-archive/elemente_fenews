@@ -87,9 +87,14 @@
 			// System Language
 			$this->languageUID				= $GLOBALS['TSFE']->config['config']['sys_language_uid']?$GLOBALS['TSFE']->config['config']['sys_language_uid']:0;
 
+			// Category settings
+			$this->categoryDefault	 		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryDefault', 'catConfig');
+			$this->categorySelection 		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categorySelection', 'catConfig');
+			$this->categoryMultiSelection	= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryMultiSelection', 'catConfig');
+			$this->categoryShortcutStorage	= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryShortcutStorage', 'catConfig');
+			
 			// Storage PID
-			$storagePID						= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'storagePID', 'baseConfig');
-			$this->storagePID				= $storagePID?$storagePID:$GLOBALS['TSFE']->id;
+			$this->storagePID				= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'storagePID', 'baseConfig');
 
 			// Redirect PID
 			$this->redirectPID				= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'redirectPID', 'baseConfig');
@@ -161,10 +166,6 @@
  				$this->arrCaptcha['ext']		= 'captcha';
 				$this->arrCaptcha['captcha']	= '<img src="'.t3lib_extMgm::siteRelPath('captcha').'captcha/captcha.php" alt="" />';
 			}
-			
-			// Category settings
-			$this->categoryDefault	 = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryDefault', 'catConfig');
-			$this->categorySelection = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categorySelection', 'catConfig');
 
 			// DAM support
 			$damUse	= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'damUse', 'damConfig');
@@ -204,6 +205,9 @@
 			$this->autoEndtime		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'autoEndtime', 'optionsConfig');
 			$this->autoArchive		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'autoArchive', 'optionsConfig');
 
+			// Enable FE group editing
+			$this->feeditGroup		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'feeditGroup', 'optionsConfig');
+			
 			// Record delete mode
 			$this->delMode			= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'delMode', 'optionsConfig');
 
@@ -321,13 +325,13 @@
 	
 				// loginUser?
 				if ($GLOBALS['TSFE']->loginUser) {
-					$subpartArray['###AUTHOR###']					= ''; // Unset "normal" author field
-					$subpartArray['###AUTHOR_EMAIL###']				= ''; // Unset "normal" email field
+					$subpartArray['###AUTHOR###']					= '';
+					$subpartArray['###AUTHOR_EMAIL###']				= '';
 				}
 	
 				// Auto hide & auto archive?
 				if ($this->autoEndtime > 0) {
-					$subpartArray['###ARCHIVEDATE###']				= ''; // Unset "normal" email field
+					$subpartArray['###ARCHIVEDATE###']				= '';
 				}
 	
 				// Enable htmlAreaRTE? (rtehtmlarea_api_manual v2.1.0)
@@ -374,7 +378,7 @@
 					$markerArray['###ADDITIONALJS_SUBMIT###']		= '';
 					$subpartArray['###BODYTEXT_RTE###']				= ''; // Unset RTE bodytext field
 				}
-	
+
 				// Captcha
 				if (!$GLOBALS['TSFE']->loginUser) {
 					$markerArray['###LABEL_CAPTCHA###']				= $this->pi_getLL('l_captcha', '', 1);
@@ -507,7 +511,7 @@
 
 			// News settings
 			$arrNews						= array();
-			$arrNews['pid']					= isset($arrCat[1])?$arrCat[1]:$this->storagePID; // Save news on category shortcut page, if set
+			$arrNews['pid']					= ($this->categoryShortcutStorage == 1 && isset($arrCat[1]))?$arrCat[1]:$this->storagePID; // Save news on category shortcut page, if set
 			$arrNews['tstamp']				= time();
 			$arrNews['crdate']				= time();
 			$arrNews['hidden']				= $this->queuePublish==1?1:0; // queuePublish?
@@ -544,6 +548,7 @@
 			// loginUser?
 			if ($GLOBALS['TSFE']->loginUser) {
 				$arrNews['tx_elementefenews_feuser']	= $GLOBALS['TSFE']->fe_user->user['uid'];
+				$arrNews['tx_elementefenews_fegroup']	= $this->feeditGroup;
 				$arrNews['author']						= $GLOBALS['TSFE']->fe_user->user['name'];
 				$arrNews['author_email']				= $GLOBALS['TSFE']->fe_user->user['email'];
 			}

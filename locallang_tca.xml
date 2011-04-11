@@ -9,9 +9,12 @@
     </meta>
     <data type="array">
         <languageKey index="default" type="array">
+        	<label index="tt_news.tx_elementefenews_feuser">FE-User UID</label>
+			<label index="tt_news.tx_elementefenews_fegroup">FE-User usergroup</label>
+			<label index="tt_news.tx_elementefenews_author">Anonymous author</label>
         	<label index="elemente_fenews.pi_flexform.baseConfig">Pages/Template</label>
-            <label index="elemente_fenews.pi_flexform.storagePID.label">Storage page:</label>
-            <label index="elemente_fenews.pi_flexform.redirectPID.label">Redirect page after saving (when non category shortcut is set):</label>
+            <label index="elemente_fenews.pi_flexform.storagePID.label">Page with tt_news records:</label>
+            <label index="elemente_fenews.pi_flexform.redirectPID.label">Redirect page after saving (if no "News category shortcut" is set):</label>
             <label index="elemente_fenews.pi_flexform.selectTMPL.label">HTML template:</label>
             <label index="elemente_fenews.pi_flexform.fieldConfig">Fields</label>
             <label index="elemente_fenews.pi_flexform.renderFields.label">Render fields:</label>
@@ -33,9 +36,10 @@
             <label index="elemente_fenews.pi_flexform.requiredFields.label">Required fields:</label>
             <label index="elemente_fenews.pi_flexform.useCaptcha.label">Use Captcha library:</label>
 			<label index="elemente_fenews.pi_flexform.catConfig">Category</label>
-			<label index="elemente_fenews.pi_flexform.categoryDefault">Default Category (hidden in FE, save to record only):</label>
+			<label index="elemente_fenews.pi_flexform.categoryDefault">Default Category (hidden in FE, add to record only):</label>
 			<label index="elemente_fenews.pi_flexform.categorySelection">Category selection for user in Frontend:</label>
-			<label index="elemente_fenews.pi_flexform.useSubCategories">Use subcategories (not yet supported):</label>
+			<label index="elemente_fenews.pi_flexform.categoryMultiSelection">Use multi-selection (shows category tree of selected category):</label>
+			<label index="elemente_fenews.pi_flexform.categoryShortcutStorage">Use category "News category shortcut" in category record as storage page:</label>
             <label index="elemente_fenews.pi_flexform.damConfig">DAM</label>
             <label index="elemente_fenews.pi_flexform.damUse.label">Use DAM extension:</label>
             <label index="elemente_fenews.pi_flexform.damDisabled.label">Disabled</label>
@@ -50,17 +54,21 @@
             <label index="elemente_fenews.pi_flexform.queuePublish.label">Publish manually:</label>
             <label index="elemente_fenews.pi_flexform.queueBeUser.label">Publisher:</label>
             <label index="elemente_fenews.pi_flexform.optionsConfig">Options</label>
+			<label index="elemente_fenews.pi_flexform.feeditGroup">Enable FE group for frontend editing:</label>
             <label index="elemente_fenews.pi_flexform.enableRTE.label">Enable RTE for bodytext:</label>
-            <label index="elemente_fenews.pi_flexform.delMode.label">By author deleted records will be</label>
-            <label index="elemente_fenews.pi_flexform.delMode.I0.label">... hidden!</label>
-            <label index="elemente_fenews.pi_flexform.delMode.I1.label">... deleted!</label>
+            <label index="elemente_fenews.pi_flexform.delMode.label">By author deleted news will be ...</label>
+            <label index="elemente_fenews.pi_flexform.delMode.I0.label">... set to hidden.</label>
+            <label index="elemente_fenews.pi_flexform.delMode.I1.label">... set to deleted.</label>
             <label index="elemente_fenews.pi_flexform.autoEndtime.label">Hide news after x days:</label>
-            <label index="elemente_fenews.pi_flexform.autoArchive.label">Use archive instead of "hide":</label>
+            <label index="elemente_fenews.pi_flexform.autoArchive.label">Use archive date instead of "hide":</label>
         </languageKey>
         <languageKey index="de" type="array">
+        	<label index="tt_news.tx_elementefenews_feuser">FE-User UID</label>
+			<label index="tt_news.tx_elementefenews_fegroup">FE-User Benutzergruppe</label>
+			<label index="tt_news.tx_elementefenews_author">Anonymer Autor</label>
         	<label index="elemente_fenews.pi_flexform.baseConfig">Seiten/Template</label>
-            <label index="elemente_fenews.pi_flexform.storagePID.label">Ausgangsseite:</label>
-            <label index="elemente_fenews.pi_flexform.redirectPID.label">Weiterleitung nach Eintrag (wenn kein Kategorie Shortcut gesetzt):</label>
+            <label index="elemente_fenews.pi_flexform.storagePID.label">Seite mit tt_news-Datensätzen:</label>
+            <label index="elemente_fenews.pi_flexform.redirectPID.label">Weiterleitung nach Eintrag (wenn "Verweis auf Kategorie" nicht gesetzt):</label>
             <label index="elemente_fenews.pi_flexform.selectTMPL.label">HTML-Template:</label>
             <label index="elemente_fenews.pi_flexform.fieldConfig">Felder</label>
             <label index="elemente_fenews.pi_flexform.renderFields.label">Zeige Felder:</label>
@@ -84,7 +92,8 @@
 			<label index="elemente_fenews.pi_flexform.catConfig">Kategorie</label>
 			<label index="elemente_fenews.pi_flexform.categoryDefault">Vorausgewählte Kategorie (wird nicht angezeigt, nur in News gespeichert):</label>
 			<label index="elemente_fenews.pi_flexform.categorySelection">Kategorieauswahl für Benutzer im Frontend:</label>
-			<label index="elemente_fenews.pi_flexform.useSubCategories">Sub-Kategorien benutzen (noch nicht unterstützt):</label>
+			<label index="elemente_fenews.pi_flexform.categoryMultiSelection">Nutze Mehrfachauswahl (es wird der Kategoriebaum zur gewählten Kategorie angezeigt):</label>
+			<label index="elemente_fenews.pi_flexform.categoryShortcutStorage">Nutze "Verweis auf Kategorie" in Kategoriedatensatz als Speicherort:</label>
             <label index="elemente_fenews.pi_flexform.damConfig">DAM</label>
             <label index="elemente_fenews.pi_flexform.damUse.label">Nutze DAM:</label>
             <label index="elemente_fenews.pi_flexform.damDisabled.label">Deaktiviert</label>
@@ -92,19 +101,20 @@
             <label index="elemente_fenews.pi_flexform.damImgPath.label">Speichere Bilder in:</label>
             <label index="elemente_fenews.pi_flexform.damFilePath.label">Speichere Dateien in:</label>
             <label index="elemente_fenews.pi_flexform.mailConfig">Freigabe</label>
-            <label index="elemente_fenews.pi_flexform.mailFeedback.label">Bestätigungsmail:</label>
+            <label index="elemente_fenews.pi_flexform.mailFeedback.label">Bestätigungs-Mail:</label>
             <label index="elemente_fenews.pi_flexform.mailHTML.label">Nutze HTML-Format:</label>
             <label index="elemente_fenews.pi_flexform.mailFromName.label">Absender:</label>
             <label index="elemente_fenews.pi_flexform.mailFrom.label">Absenderadresse:</label>
             <label index="elemente_fenews.pi_flexform.queuePublish.label">Manuelle Freigabe:</label>
             <label index="elemente_fenews.pi_flexform.queueBeUser.label">Freigabe durch:</label>
             <label index="elemente_fenews.pi_flexform.optionsConfig">Optionen</label>
+			<label index="elemente_fenews.pi_flexform.feeditGroup">Nutze FE-Gruppe darf News bearbeiten und löschen:</label>
             <label index="elemente_fenews.pi_flexform.enableRTE.label">Nutze RTE für Textfeld:</label>
-            <label index="elemente_fenews.pi_flexform.delMode.label">Vom Autor gelöschte Beiträge werden</label>
-            <label index="elemente_fenews.pi_flexform.delMode.I0.label">... ausgeblendet!</label>
-            <label index="elemente_fenews.pi_flexform.delMode.I1.label">... gelöscht!</label>
+            <label index="elemente_fenews.pi_flexform.delMode.label">Vom Autor gelöschte Beiträge werden ...</label>
+            <label index="elemente_fenews.pi_flexform.delMode.I0.label">... als ausgeblendet markiert.</label>
+            <label index="elemente_fenews.pi_flexform.delMode.I1.label">... als gelöscht markiert.</label>
             <label index="elemente_fenews.pi_flexform.autoEndtime.label">News nach x Tage ausblenden:</label>
-            <label index="elemente_fenews.pi_flexform.autoArchive.label">Nutze Archiv statt "Ausblenden":</label>
+            <label index="elemente_fenews.pi_flexform.autoArchive.label">Nutze Archivdatum statt "ausblenden":</label>
         </languageKey>
     </data>
 </T3locallang>
