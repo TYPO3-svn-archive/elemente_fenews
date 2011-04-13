@@ -20,6 +20,7 @@
             <label index="l_keywords">Keywords (comma separated)</label>
             <label index="l_category">Category</label>
             <label index="l_current_image">Current image</label>
+			<label index="l_current_news_files">Current file</label>
             <label index="l_image">Image</label>
             <label index="l_imagecaption">Image caption</label>
             <label index="l_imagealttext">Image ALT-text</label>
@@ -60,6 +61,7 @@
             <label index="l_keywords">Stichworte (komma-separiert)</label>
             <label index="l_category">Kategorie</label>
             <label index="l_current_image">Aktuelles Bild</label>
+			<label index="l_current_news_files">Aktuelle Datei</label>
             <label index="l_image">Bild</label>
             <label index="l_imagecaption">Bildtext</label>
             <label index="l_imagealttext">ALT-Text des Bildes</label>

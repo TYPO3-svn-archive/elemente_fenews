@@ -20,9 +20,9 @@
 	
 # elemente_fenews
 	plugin.tx_elementefenews_pi1 {
-		# cat= plugin.tx_elementefenews_pi1/enable/10; type= text; label= Template path: Path to the template file.
+		# cat= plugin.tx_elementefenews_pi1//; type= string; label= Template path: Path to the template file.
 		template = EXT:elemente_fenews/res/tmpl_default.html
 		
-		# cat=plugin.tx_elementefenews_pi1/enable/20; type=int+; label= Debug mode: Enable extension "Frontend News" to store some log data (requires an extension such as devlog).
+		# cat=plugin.tx_elementefenews_pi1//; type= int+; label= Debug mode: Enable extension "Frontend News" to store some log data (requires an extension such as devlog).
 		debug = 0
 	}

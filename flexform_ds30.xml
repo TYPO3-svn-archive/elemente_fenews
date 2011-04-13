@@ -296,6 +296,32 @@
 							</config>
 						</TCEforms>
 					</categorySelection>
+					<categoryOrdering>
+						<TCEforms>
+							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.categoryOrdering</label>
+							<config>
+								<type>select</type>
+								<items type="array">
+									<numIndex index="0" type="array">
+										<numIndex index="0"></numIndex>
+										<numIndex index="1"></numIndex>
+									</numIndex>
+									<numIndex index="1" type="array">
+										<numIndex index="0">LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.categoryOrdering.title</numIndex>
+										<numIndex index="1">title</numIndex>
+									</numIndex>
+									<numIndex index="2" type="array">
+										<numIndex index="0">LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.categoryOrdering.sorting</numIndex>
+										<numIndex index="1">sorting</numIndex>
+									</numIndex>
+									<numIndex index="3" type="array">
+										<numIndex index="0">LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.categoryOrdering.uid</numIndex>
+										<numIndex index="1">uid</numIndex>
+									</numIndex>
+								</items>
+							</config>
+						</TCEforms>
+					</categoryOrdering>
 					<categoryMultiSelection>
 						<TCEforms>
 							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.categoryMultiSelection</label>

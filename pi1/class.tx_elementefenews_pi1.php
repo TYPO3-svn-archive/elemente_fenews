@@ -85,6 +85,7 @@
 			$this->pi_initPIflexForm(); // Init FlexForm configuration for plugin
 
 			// System Language
+			// TODO: Is sys_language_content a better solution?
 			$this->languageUID				= $GLOBALS['TSFE']->config['config']['sys_language_uid']?$GLOBALS['TSFE']->config['config']['sys_language_uid']:0;
 
 			// Category settings
@@ -92,6 +93,7 @@
 			$this->categorySelection 		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categorySelection', 'catConfig');
 			$this->categoryMultiSelection	= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryMultiSelection', 'catConfig');
 			$this->categoryShortcutStorage	= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryShortcutStorage', 'catConfig');
+			$this->categoryOrdering			= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryOrdering', 'catConfig');
 			
 			// Storage PID
 			$this->storagePID				= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'storagePID', 'baseConfig');
@@ -255,19 +257,23 @@
 			if ($editMode > 0) {
 				// Check for use of categories
 				if ($this->renderFields['category']['render'] == 1) {
-					$res											= $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query('tt_news.*, tt_news_cat.uid AS catUid, tt_news_cat.shortcut', 'tt_news', 'tt_news_cat_mm', 'tt_news_cat', ' AND tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
+					$res											= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
 					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+					$this->piVars['category']						= array();
+					$res											= $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query('tt_news_cat.uid, tt_news_cat.shortcut', 'tt_news', 'tt_news_cat_mm', 'tt_news_cat', ' AND tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
+					while(($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
+						$this->piVars['category'][]					= $row['shortcut']!=0?$row['uid'].'|'.$row['shortcut']:$row['uid']; // If shortcut is set, put it into the value for redirect after saving the news		
+					}
+
 				} else {
 					$res											= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
 					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 				}
-				// If shortcut is set, put it into the value for redirect after saving the news
-				$this->piVars['category']							= $this->piVars['shortcut']!=0?$this->piVars['catUid'].'|'.$this->piVars['shortcut']:$this->piVars['catUid'];
 				
-				// Check current user is owner of record
-				$this->piVars['owner']								= ($this->piVars['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'])?true:false;	
+				// Check current user or its group is owner of record
+				$this->piVars['owner']								= ($this->piVars['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'] || t3lib_div::inList($GLOBALS['TSFE']->fe_user->user['usergroup'], $this->piVars['tx_elementefenews_fegroup']))?true:false;	
 			}
-			
+
 			// Throw error message if current user is not the owner of record
 			if ($editMode > 0 && $this->piVars['owner'] == false) {
 				$subpart											= $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_NOACCESS###');
@@ -317,10 +323,20 @@
 				if ($this->piVars['uid'] && $this->renderFields['image']['render'] == 1) {
 					$fieldSubpart									= $this->cObj->getSubpart($subpart, '###CURRENT_IMAGE###');
 					$fieldArray['###LABEL_CURRENT_IMAGE###']		= $this->pi_getLL('l_current_image', '', 1);
-					$fieldArray['###VALUE_CURRENT_IMAGE###']		= $this->getCurrentImage($this->piVars['uid']);
+					$fieldArray['###VALUE_CURRENT_IMAGE###']		= $this->getPreviewFile($this->piVars['uid'], 'image');
 					$subpartArray['###CURRENT_IMAGE###']			= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
 				} else {
 					$subpartArray['###CURRENT_IMAGE###']			= '';
+				}
+				
+				// Render current files in edit mode
+				if ($this->piVars['uid'] && $this->renderFields['news_files']['render'] == 1) {
+					$fieldSubpart									= $this->cObj->getSubpart($subpart, '###CURRENT_NEWS_FILES###');
+					$fieldArray['###LABEL_CURRENT_NEWS_FILES###']	= $this->pi_getLL('l_current_news_files', '', 1);
+					$fieldArray['###VALUE_CURRENT_NEWS_FILES###']	= $this->getPreviewFile($this->piVars['uid'], 'news_files');
+					$subpartArray['###CURRENT_NEWS_FILES###']		= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
+				} else {
+					$subpartArray['###CURRENT_NEWS_FILES###']		= '';
 				}
 	
 				// loginUser?
@@ -499,24 +515,25 @@
 			// New or edit record
 			$newsUID						= $this->piVars['edit']>0?intval($this->piVars['edit']):false;
 
-			// Category settings
-			if (!empty($this->piVars['category'])) {
-				$arrCat						= t3lib_div::trimExplode('|', $this->piVars['category']);
-				$redirect					= isset($arrCat[1])?$arrCat[1]:$this->redirectPID; // Redirect to category shortcut page, if set
-				$this->piVars['category']	= 1; // Reset category, only one category could be seleted!
+			// Count categories & redirect settings
+			// TODO: Recursive search for shortcut page definitions?
+			if (is_array($this->piVars['category'])) {
+				$arrCat						= t3lib_div::trimExplode('|', $this->piVars['category'][0]);
+				$redirect					= isset($arrCat[1])?$arrCat[1]:$this->redirectPID; // Redirect to the 1st category shortcut page, if set
+				$countCat					= count($this->piVars['category']);
 			} else {
-				$this->piVars['category']	= 0;
+				$countCat					= 0;
 				$redirect					= $this->redirectPID;
 			}
 
 			// News settings
 			$arrNews						= array();
-			$arrNews['pid']					= ($this->categoryShortcutStorage == 1 && isset($arrCat[1]))?$arrCat[1]:$this->storagePID; // Save news on category shortcut page, if set
+			$arrNews['pid']					= ($this->categoryShortcutStorage == 1 && $this->categoryMultiSelection == 0 && isset($arrCat[1]))?$arrCat[1]:$this->storagePID; // Save news on category shortcut page, if set & multiSelection is off
 			$arrNews['tstamp']				= time();
 			$arrNews['crdate']				= time();
 			$arrNews['hidden']				= $this->queuePublish==1?1:0; // queuePublish?
 			$arrNews['datetime']			= time();
-			$arrNews['category']			= $this->piVars['category'];
+			$arrNews['category']			= $countCat;
 			$arrNews['sys_language_uid']	= $this->languageUID;
 
 			// Archivedate or auto-hide / auto-archive?
@@ -621,21 +638,24 @@
 				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: record', 'elemente_fenews', 0, array('newsUID' => $newsUID));
 
 				// DB: Default category
-				$sort = 1;
 				if (!empty($this->categoryDefault)) {
 					$arrCatDef = t3lib_div::trimExplode(',', $this->categoryDefault);
 					foreach ($arrCatDef as $sort => $uidCat) {
-						$arrMM = array('uid_local' => $newsUID, 'uid_foreign' => intval($uidCat), 'sorting' => $sort);
+						$arrMM = array('uid_local' => $newsUID, 'uid_foreign' => intval($uidCat), 'sorting' => $sort+1);
 						$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news_cat_mm', $arrMM);
 						if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: def cat mm', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tt_news_cat_mm', $arrMM)));
 					}
 				}
 				
 				// DB: Insert category relation
-				if (!empty($this->piVars['category'])) {
-					$arrMM = array('uid_local' => $newsUID, 'uid_foreign' => intval($arrCat[0]), 'sorting' => $sort);
-					$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news_cat_mm', $arrMM);
-					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: fe cat mm', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tt_news_cat_mm', $arrMM)));
+				if (is_array($this->piVars['category'])) {
+					$p = is_array($arrCatDef)?count($arrCatDef)+1:1;
+					foreach($this->piVars['category'] as $sort => $cat) {
+						$arrCat	= t3lib_div::trimExplode('|', $cat);
+						$arrMM	= array('uid_local' => $newsUID, 'uid_foreign' => intval($arrCat[0]), 'sorting' => $sort+$p);
+						$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news_cat_mm', $arrMM);
+						if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: fe cat mm', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tt_news_cat_mm', $arrMM)));
+					}
 				}
 
 			// Edit record
@@ -657,14 +677,21 @@
 				}
 
 				// DB: Update category relation
-				if (!empty($this->piVars['category'])) {
+				if (is_array($this->piVars['category'])) {
 					// 1. Delete old relation, but not categoryDefault!!
-					// TODO: Only one category is taken into account yet ...
 					$whereCatDef = !empty($this->categoryDefault)?' AND uid_foreign NOT IN ('.$this->categoryDefault.')':'';
 					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tt_news_cat_mm', 'uid_local='.$newsUID.$whereCatDef);
-					// 2. Add new one
-					$arrMM = array('uid_local' => $newsUID, 'uid_foreign' => intval($arrCat[0]), 'sorting' => 1);
-					$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news_cat_mm', $arrMM);
+					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: del cat mm', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tt_news_cat_mm', 'uid_local='.$newsUID.$whereCatDef)));
+					
+					// 2. Add new relation
+					foreach($this->piVars['category'] as $sort => $cat) {
+						$arrCatDef	= t3lib_div::trimExplode(',', $this->categoryDefault);
+						$p			= is_array($arrCatDef)?count($arrCatDef)+1:1;
+						$arrCat		= t3lib_div::trimExplode('|', $cat);
+						$arrMM		= array('uid_local' => $newsUID, 'uid_foreign' => intval($arrCat[0]), 'sorting' => $sort+$p);
+						$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news_cat_mm', $arrMM);
+						if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: del cat mm', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tt_news_cat_mm', $arrMM)));
+					}
 				}
 			}
 
@@ -679,7 +706,7 @@
 			if (!empty($_FILES[$this->prefixId]['name']['news_files']) && $this->damUse == 1) {
 				$arrMM = array('uid_local' => $damUidFile, 'uid_foreign' => $newsUID, 'tablenames' => 'tt_news', 'ident' => $this->damIdent.'_dam_media', 'sorting' => 0, 'sorting_foreign' => 1);
 				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM);
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - dam: insert file', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM)));
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - dam: insert file', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tx_dam_mm_ref', $arrMM)));
 			}
 
 			// Mail: Alert publisher?
@@ -698,8 +725,6 @@
 			}
 
 			// Clear target page cache
-			// Adding writelog support to clear_cacheCmd breaks functionality in T3 4.5
-##			$this->clearPageCache($redirect);
 			$GLOBALS['TSFE']->clearPageCacheContent_pidList($redirect);
 
 			// Redirect to page
@@ -739,64 +764,51 @@
 		}
 
 
-		/**
-		 *	Helpful function when updating or deleting news records:
-		 *	Clears the page cache of page where the news records are related to.
-		 *
-		 *	@param		integer		Target page uid
-		 *	@return		void
-		 */
-		function clearPageCache($pid) {
-			$TCE		= t3lib_div::makeInstance('t3lib_TCEmain');
-			$TCE->admin	= 1;
-			$TCE->clear_cacheCmd('pages');
-			$TCE->clear_cacheCmd($pid);
-		}
-
 
 		/**
 		 *	Function to validate and move the uploaded file.
 		 *	Checks upload for allowed file extension & mime type and max filesize.
-		 *	TODO: Different MIMEs for image and file
 		 *
-		 * @param		string		$file: Name of the upload field
+		 * @param		string		$field: Name of the upload field
 		 * @return		A unsorted list with user feedback or void
 		 */
-		function handleUpload($file) {
+		function handleUpload($field) {
 			// Error handling
 			$error	= '';
 			// Is a file out there?
-			if (!empty($_FILES[$this->prefixId]['name'][$file])) {
+			if (!empty($_FILES[$this->prefixId]['name'][$field])) {
 				// Set path for DAM or filelist
-				$path		= $this->damUse==1?$this->damImgPath:$this->conf['path'];
-				$fName		= $_FILES[$this->prefixId]['name'][$file];
-				$fTemp		= $_FILES[$this->prefixId]['tmp_name'][$file];
-				$fType		= $_FILES[$this->prefixId]['type'][$file];
+				$path		= $this->damUse==1?$this->damImgPath:$this->conf['path_'.$field];
+				$fName		= $_FILES[$this->prefixId]['name'][$field];
+				$fTemp		= $_FILES[$this->prefixId]['tmp_name'][$field];
+				$fType		= $_FILES[$this->prefixId]['type'][$field];
 				$fExt		= strtolower(substr(strrchr($fName, '.'), 1));
 
 				// Get TS configuration
-				$arrMime	= t3lib_div::trimExplode(',', $this->conf['mimeInclude']);
-				$arrExt		= t3lib_div::trimExplode(',', $this->conf['extInclude']);
+				$arrMimeIn	= t3lib_div::trimExplode(',', $this->conf['mimeInclude']);
+				$arrExtIn	= t3lib_div::trimExplode(',', $this->conf['extInclude']);
+				$arrMimeEx	= t3lib_div::trimExplode(',', $this->conf['mimeExclude']);
+				$arrExtEx	= t3lib_div::trimExplode(',', $this->conf['extExclude']);
 
-				// 1. Check for allowed MIME type
-				if (in_array($fType, $arrMime) == true) {
-					// 2. Check for allowed file extension
-					if (in_array($fExt, $arrExt) == true) {
+				// 1. Check for disallowed MIME type
+				if (in_array($fType, $arrMimeEx) == false) {
+					// 2. Check for disallowed file extension
+					if (in_array($fExt, $arrExtEx) == false) {
 						$tmpFile = t3lib_div::upload_to_tempfile($fTemp);
 						// 3. Check for max. filesize
 						if ($tmpFile) {
 							if ((filesize($tmpFile)<=$this->conf['maxsize'])) {
 								// Rip of file extension form OrgName
 								$point								= strrpos($fName, '.');
-								$this->arrUploads[$file]['name']	= substr($fName, 0, $point); // Is needed for ALT- and TITLE
-								$this->arrUploads[$file]['hash']	= t3lib_div::shortMD5($this->arrUploads[$file]['name'].time()).'.'.$fExt; // Is needed for filelist
-								$this->arrUploads[$file]['path']	= PATH_site.$path.'/'.$this->arrUploads[$file]['hash']; // Is needed for DAM
-								t3lib_div::upload_copy_move($tmpFile, $this->arrUploads[$file]['path']); // Move file
+								$this->arrUploads[$field]['name']	= substr($fName, 0, $point); // Is needed for ALT- and TITLE
+								$this->arrUploads[$field]['hash']	= t3lib_div::shortMD5($this->arrUploads[$field]['name'].time()).'.'.$fExt; // Is needed for filelist
+								$this->arrUploads[$field]['path']	= PATH_site.$path.'/'.$this->arrUploads[$field]['hash']; // Is needed for DAM
+								t3lib_div::upload_copy_move($tmpFile, $this->arrUploads[$field]['path']); // Move file
 								t3lib_div::unlink_tempfile($tmpFile); // Unlink temp file
-							} else $error = '<li>'.str_replace(array('###FIELD###', '###SIZE###'), array('<strong>'.$this->pi_getLL('l_'.$file, '', 1).'</strong>', '<strong>'.$this->setBytesToHuman($this->conf['maxsize']).'</strong>'), $this->pi_getLL('l_error_file_size', '', 1)).'</li>'; // File size error
+							} else $error = '<li>'.str_replace(array('###FIELD###', '###SIZE###'), array('<strong>'.$this->pi_getLL('l_'.$field, '', 1).'</strong>', '<strong>'.$this->setBytesToHuman($this->conf['maxsize']).'</strong>'), $this->pi_getLL('l_error_file_size', '', 1)).'</li>'; // File size error
 						}
-					} else $error = '<li>'.str_replace(array('###FIELD###', '###EXT###'), array('<strong>'.$this->pi_getLL('l_'.$file, '', 1).'</strong>', '<strong>'.$this->conf['extInclude'].'</strong>'), $this->pi_getLL('l_error_file_ext', '', 1)).'</li>'; // Extension error
-				} else $error = '<li>'.str_replace(array('###FIELD###', '###MIME###'), array('<strong>'.$this->pi_getLL('l_'.$file, '', 1).'</strong>', '<strong>'.$this->conf['mimeInclude'].'</strong>'), $this->pi_getLL('l_error_file_mime', '', 1)).'</li>'; // MIME type error
+					} else $error = '<li>'.str_replace(array('###FIELD###', '###EXT###'), array('<strong>'.$this->pi_getLL('l_'.$field, '', 1).'</strong>', '<strong>'.$this->conf['extInclude'].'</strong>'), $this->pi_getLL('l_error_file_ext', '', 1)).'</li>'; // Extension error
+				} else $error = '<li>'.str_replace(array('###FIELD###', '###MIME###'), array('<strong>'.$this->pi_getLL('l_'.$field, '', 1).'</strong>', '<strong>'.$this->conf['mimeInclude'].'</strong>'), $this->pi_getLL('l_error_file_mime', '', 1)).'</li>'; // MIME type error
 			}
 			// return
 			return $error;
@@ -838,6 +850,20 @@
 
 
 		/**
+		 *	Returns the real name and mail-address of a given Be-User..
+		 *
+		 *	@return		array		Array with keys "name" and "email"
+		 */
+		function getBeUser() {
+			$res	= $GLOBALS['TYPO3_DB']->exec_SELECTquery ('realName AS name, email', 'be_users', 'uid='.intval($this->queueBeUser).$this->cObj->enableFields('be_users'));
+			$row	= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+			// return
+			return $row;
+		}
+		
+		
+		/**
 		 *	Creates a Be-User, who could "handle" the DAM actions,
 		 *	needed for indexing the uploaded files.
 		 *
@@ -869,125 +895,241 @@
 
 
 		/**
-		 *	Method for render the preview/ thumbnail image in edit news mode.
+		 *	Method to render the preview/ thumbnail image in edit news mode.
 		 *	TODO: Keep care of multiple images ...
 		 *
-		 *	@param		interger	UID of news
-		 *	@return		string		Thumbnail image
+		 *	@param		interger	$newsUID: UID of news
+		 *	@param		interger	$type: 'image' oder 'news_files'
+		 *	@return		string		Thumbnail image or file link
 		 */
-		function getCurrentImage($newsUID) {
+		function getPreviewFile($newsUID, $type) {
 			// Config
-			$lconf = $this->conf['currentImage.'];
+			$damIdent	= $type == 'image' ? 'images' : 'media';
+			$lconf 		= $this->conf['preview_'.$type.'.'];
 
 			// DAM reference
-			if ($this->damUse==1) {
+			if ($this->damUse == 1) {
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query (
 					'tx_dam.file_name, tx_dam.file_path, tx_dam.alt_text',
 					'tx_dam', 'tx_dam_mm_ref', 'tt_news',
-					'AND tx_dam_mm_ref.tablenames=\'tt_news\' AND tx_dam_mm_ref.sorting_foreign=1 AND tx_dam_mm_ref.ident=\'tx_damnews_dam_images\' AND tx_dam_mm_ref.uid_foreign='.$newsUID,
+					'AND tx_dam_mm_ref.tablenames=\'tt_news\' AND tx_dam_mm_ref.sorting_foreign=1 AND tx_dam_mm_ref.ident=\'tx_damnews_dam_'.$damIdent.'\' AND tx_dam_mm_ref.uid_foreign='.$newsUID,
 					'',
 					'tx_dam_mm_ref.sorting_foreign ASC'
 				);
 				if ($this->conf['debug'] == 1) {
-					t3lib_div::devLog('getCurrentImage - dam: img', 'elemente_fenews', 0, array('sql' => 'tx_dam.file_name, tx_dam.file_path, tx_dam.alt_text',
+					t3lib_div::devLog('getPreviewFile - dam: '.$type, 'elemente_fenews', 0, array('sql' => 'tx_dam.file_name, tx_dam.file_path, tx_dam.alt_text',
 						'tx_dam', 'tx_dam_mm_ref', 'tt_news',
-						'AND tx_dam_mm_ref.tablenames=\'tt_news\' AND tx_dam_mm_ref.sorting_foreign=1 AND tx_dam_mm_ref.ident=\'tx_damnews_dam_images\' AND tx_dam_mm_ref.uid_foreign='.$newsUID,
+						'AND tx_dam_mm_ref.tablenames=\'tt_news\' AND tx_dam_mm_ref.sorting_foreign=1 AND tx_dam_mm_ref.ident=\'tx_damnews_dam_'.$damIdent.'\' AND tx_dam_mm_ref.uid_foreign='.$newsUID,
 						'',
 						'tx_dam_mm_ref.sorting_foreign ASC')
 					);
 				}
 				
-				// Image
-				$arrImg				= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-				$lconf['file']		= $arrImg['file_path'].$arrImg['file_name'];
-				$lconf['altText']	= $arrImg['alt_text'];
+				$arrFile								= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				if ($type == 'image') {
+					$lconf['file']						= $arrFile['file_path'].$arrFile['file_name'];
+					$lconf['altText']					= $arrFile['alt_text'];
+					$lconf['titleText']					= $arrFile['alt_text'];
+					$preview							= $this->cObj->IMAGE($lconf);
+				} else {
+					$lconf['typolink.']['parameter']	= $arrFile['file_path'].$arrFile['file_name'];
+					$preview							= $this->cObj->cObjGetSingle($this->conf['preview_'.$type], $lconf, 'preview_'.$type);
+				}
 
 			// File list
 			} else {
-				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('image, imagealttext, imagetitletext', 'tt_news', 'tt_news.uid='.$newsUID);
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('getCurrentImage - normal: img', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->SELECTquery('image, imagealttext, imagetitletext', 'tt_news', 'tt_news.uid='.$newsUID)));
+				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($type.', imagealttext, imagetitletext', 'tt_news', 'tt_news.uid='.$newsUID);
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('getPreviewFile - normal: '.$type, 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->SELECTquery($type.', imagealttext, imagetitletext', 'tt_news', 'tt_news.uid='.$newsUID)));
 				
-				// Image
-				$arrImg				= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-				$imgTmp				= t3lib_div::trimExplode(',', $arrImg['image']);
-				$arrImg['image']	= $imgTmp[0];
-				$lconf['file']		= $this->conf['currentImage.']['fileListPath'].$arrImg['image'];
-				$lconf['altText']	= $arrImg['imagealttext'];
-				$lconf['titleText']	= $arrImg['imagetitletext'];
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('getCurrentImage - normal: img conf', 'elemente_fenews', 0, $lconf);
+				$arrFile								= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				$tmpFile								= t3lib_div::trimExplode(',', $arrFile[$type]);
+				if ($type == 'image') {
+					$lconf['file']						= $lconf['filePath'].$imgTmp[0];
+					$lconf['altText']					= $arrFile['imagealttext'];
+					$lconf['titleText']					= $arrFile['imagetitletext'];
+					$preview							= $this->cObj->IMAGE($lconf);
+				} else {
+					$lconf['typolink.']['parameter']	= $lconf['filePath'].$imgTmp[0];
+					$preview							= $this->cObj->cObjGetSingle($this->conf['preview_'.$type], $lconf, 'preview_'.$type);
+				}
 			}
 
 			// return
-			return ($this->cObj->IMAGE($lconf));
-		}
-
-
-    	/**
-		 *	Method to generate the plain text and HTML part for the mails based on a HTML template.
-		 *	Puts automatically submitted piVars into the content and substitutes
-		 *	filed names by locallang aliases. Differs between "admin" and "feedback" mode.
-		 *
-		 *	@param		string		$action: The "mode"
-		 *	@return		array		Array with keys 'plain' and 'html' and there contents
-		 */
-		function setMailContent($action, $name) {
-			// Templates
-			$tmplPlain	= $this->cObj->getSubpart($this->mainTMPL, '###EMAIL_PLAINTEXT###');
-			$tmplHTML	= $this->cObj->getSubpart($this->mainTMPL, '###EMAIL_HTMLTEXT###');
-
-			// Marker
-			$markerArray 							= array();
-			$markerArray['###USER_NAME###']			= $name;
-			$markerArray['###MAIL_SALUTATION###']	= $this->pi_getLL('l_mail_salutation', '', 1);
-			$markerArray['###MAIL_INTRODUCTION###']	= $this->pi_getLL('l_mail_intro_'.$action, '', 1);
-			$markerArray['###MAIL_REGARDS###']		= $this->pi_getLL('l_mail_regards', '', 1);
-
-			// piVars
-			$arrHTML	= array();
-			$plainText	= '';
-			foreach ($this->piVars as $key => $value) {
-				$label			 = $this->pi_getLL('l_'.$key, '', 1)!=''?$this->pi_getLL('l_'.$key, '', 1).':':ucfirst($key).':';
-				$arrHTML[$label] = $value;
-				$plainText		.= $label.' '.$value.chr(10);
-			}
-
-			// Content
-			$arrContent = array();
-			// HTML content
-			$markerArray['###ACCOUNT###']	= str_replace(array('<font face="Verdana,Arial" size="1">', '<font face="Verdana,Arial" size="1" color="red">', '</font>'), array('<strong>', '', ''), t3lib_div::view_array($arrHTML));
-			$arrContent['html']				= $this->cObj->substituteMarkerArray($tmplHTML, $markerArray);
-			// Plain text
-			$markerArray['###ACCOUNT###']	= $plainText;
-			$arrContent['plain']			= $this->cObj->substituteMarkerArray($tmplPlain, $markerArray);
-
-			// Return
-			return $arrContent;
+			return $preview;
 		}
 
 
 		/**
+		 *	Returns the path set by a defined filemount in the backend.
+		 *	Takes care for absolute and relative "base".
+		 *
+		 *	@param		integer		$uid: UID of fielmount
+		 *	@return		string		Filemount path
+		 */
+		function getFileMount($uid) {
+			$res	= $GLOBALS['TYPO3_DB']->exec_SELECTquery ('path, base', 'sys_filemounts', 'uid='.intval($uid).$this->cObj->enableFields('sys_filemounts'));
+			$row	= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			$path	= $row['base']==1?'fileadmin/'.$row['path']:$row['path'];
+			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+			// return
+			return $path;
+		}
+
+		
+		/**
 		 * Renders a news category select field based upon a subpart in the template.
+		 * TODO: Substitute hardcoded HTML by TypoScript / Flexform
+		 * TODO: Use sys_language_content oder sys_language_uid?
 		 *
 		 * @return		string		Select field
 		 */
 		function getCategories() {
-			// Subpart
-			$tmpl			 = $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_SELECT###');
-			// Get categories
-			$opts 			 = '<option value="">'.$this->pi_getLL('form_select', '', 1).'</option>';
-			$res			 = $GLOBALS['TYPO3_DB']->exec_SELECTquery ('uid, title, shortcut', 'tt_news_cat', 'uid IN ('.$this->categorySelection.')'.$this->cObj->enableFields('tt_news_cat'), '', 'title');
-			while (($row	 = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-				$value		 = $row['shortcut']>0?$row['uid'].'|'.$row['shortcut']:$row['uid']; // if shortcut is set, put it into the value for redirect after saving the news
-				$selected	 = $this->piVars['category']==$value?' selected="selected"':'';
-				$opts		.= '<option value="'.$value.'"'.$selected.'>'.$row['title'].'</option>'.chr(10);
-			}
+			$tmpl					 	 	 = $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_SELECT###');
+			$opts 				 	 		 = '<option value="">'.$this->pi_getLL('form_select', '', 1).'</option>';
+
 			// Marker
-			$marker							= array();
-			$marker['###PREFIX_ID###']		= $this->prefixId;
-			$marker['###NAME###']			= 'category';
-			$marker['###OPTIONS###']		= $opts;
+			$marker							 = array();
+			$marker['###PREFIX_ID###']		 = $this->prefixId;
+			$marker['###NAME###']			 = 'category';
+				
+			// Multi selection
+			if ($this->categoryMultiSelection == 1) {
+				$arrCats				 	 = array();
+				$res	 				 	 = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid, title, title_lang_ol, shortcut', 'tt_news_cat', 'uid IN ('.$this->categorySelection.')'.$this->cObj->enableFields('tt_news_cat'), '', $this->categoryOrdering);
+				while (($row			 	 = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
+					$arrCats[]			 	 = $row;
+					$subCats			 	 = $this->getSubCategories($row['uid']);
+					if (count($subCats)) {
+						$arrCats[]	 		 = $subCats;
+					}
+				}
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
+
+				// Unset $this->categorySelection, TODO: Flexform config?
+				unset($arrCats[0]);
+##				t3lib_div::devLog('getCategories', 'elemente_fenews', 0, $arrCats);
+				// Marker
+				$marker['###SIZE###']		 = 'size="15" multiple="multiple"'; // TODO: size config
+				$marker['###OPTIONS###']	 = $this->renderHirachicalCategories($arrCats);
+
+			// Single selection
+			} else {
+				$res			 			 = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid, title, title_lang_ol, shortcut', 'tt_news_cat', 'uid IN ('.$this->categorySelection.')'.$this->cObj->enableFields('tt_news_cat'), '', $this->categoryOrdering);
+				while (($row	 			 = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
+					// Get translations of category titles
+#					if ($GLOBALS['TSFE']->sys_language_content) {
+					$title					 = $row['title'];
+					if ($this->languageUID) {
+						$arrCatTitle		 = t3lib_div::trimExplode('|', $row['title_lang_ol']);
+#						$sysLang			 = $GLOBALS['TSFE']->sys_language_content - 1;
+						$sysLang			 = $this->languageUID-1;
+						$title				 = $arrCatTitle[$sysLang] ? $arrCatTitle[$sysLang] : $row['title'];
+					}
+					$value		 			 = $row['shortcut']>0?$row['uid'].'|'.$row['shortcut']:$row['uid']; // if shortcut is set, put it into the value for redirect after saving the news
+					$selected				 = '';
+					foreach($this->piVars['category'] as $savedCat) {
+						if ($savedCat == $value) $selected = ' selected="selected"';
+					}
+					$opts					.= '<option value="'.$value.'"'.$selected.'>'.$title.'</option>'.chr(10);
+				}
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
+				
+				// Marker
+				$marker['###SIZE###']		 = 'size="1"';
+				$marker['###OPTIONS###']	 = $opts;	
+			}
+			
 			// return
 			return $this->cObj->substituteMarkerArray($tmpl, $marker);
+		}
+		
+		
+		/**
+		 * Needful method adapted from extension "tt_news":
+		 * Extends a given list of categories by their subcategories.
+		 * This function returns a nested array with subcategories.
+		 *
+		 * @param	string		$catlist: list of categories which will be extended by subcategories
+		 * @return	array		All categories in a nested array
+		 */
+		function getSubCategories($catlist) {
+			$arrSubCats				= array();
+			$res					= $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid, title, title_lang_ol, shortcut', 'tt_news_cat', 'tt_news_cat.parent_category IN ('.$catlist.')'.$this->cObj->enableFields('tt_news_cat'), '', $this->categoryOrdering);
+			while (($row			= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
+				$cc++;
+				if ($cc > 10000) {
+					$GLOBALS['TT']->setTSlogMessage('elemente_fenews: one or more recursive categories where found');
+					return $arrSubCats;
+				}
+				$subCats			= $this->getSubCategories($row['uid']);
+				// Seperate levels
+				// TODO: Better solutions to seperate levels?
+				$subs				= array();
+				if (is_array($subCats)) {
+					$subs['begin']	= 'begin';
+					array_push($subs, $subCats);
+					$subs['end']	= 'end';	
+				}
+				$arrSubCats[]		= is_array($subCats)?array_merge($row, $subs):'';
+			}
+			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+			// return
+			return $arrSubCats;
+		}
+		
+		
+		/**
+		 * Needful method adapted from extension "tt_news":
+		 * This function calls itself recursively to convert the nested category array to HTML.
+		 * TODO: Substitute hardcoded HTML by TypoScript / Flexform
+		 * TODO: Use sys_language_content oder sys_language_uid?
+		 *
+		 * @param	array		$array_in: the nested categories
+		 * @param	integer		$level: level counter
+		 * @return	string		HTML for the category menu
+		 */
+		function renderHirachicalCategories($array_in, $level=0) {
+			$titlefield	= 'title';
+			if (is_array($array_in)) {
+				$result = '';
+				foreach ($array_in as $key => $val) {
+					if ($key == $titlefield || is_array($array_in[$key])) {
+						// Für die optgroups ...
+						if ($key == 'begin' && $level == 2) {
+							$catMenuLevel_stdWrap = explode('|||', $this->cObj->stdWrap('|||', $this->conf['catMenu'.$level.'_stdWrap.']));
+							$result .= $catMenuLevel_stdWrap[0];
+						}
+						if (is_array($array_in[$key])) {
+							$result				 .= $this->renderHirachicalCategories($array_in[$key], $level+1);
+							
+						} elseif ($key == $titlefield) {
+							// Get translations of category titles
+#							if ($GLOBALS['TSFE']->sys_language_content && $array_in['uid']) {
+							if ($this->languageUID && $array_in['uid']) {
+								$arrCatTitle	 = t3lib_div::trimExplode('|', $array_in['title_lang_ol']);
+#								$syslang		 = $GLOBALS['TSFE']->sys_language_content - 1;
+								$sysLang		 = $this->languageUID-1;
+								$val			 = $arrCatTitle[$syslang] ? $arrCatTitle[$syslang] : $val;
+							}
+							if ($array_in['uid']) {
+								$value			 = $array_in['shortcut']>0?$array_in['uid'].'|'.$array_in['shortcut']:$array_in['uid']; // if shortcut is set, put it into the value for redirect after saving the news
+								// Selected values
+								$selected		 = '';
+								foreach($this->piVars['category'] as $savedCat) {
+									if ($savedCat == $value) $selected = ' selected="selected"';
+								}
+								$result			.= '<option value="'.$value.'"'.$selected.'>'.$val.'</option>'.chr(10);			
+							}	
+						}
+						// Für die optgroups ...
+						if ($key == 'end' && $level == 2) {
+							$result .= $catMenuLevel_stdWrap[1];
+						}
+					}
+				}
+			}	
+			// return
+			return $result;
 		}
 
 
@@ -995,7 +1137,7 @@
 		 *	Renders a date select field based upon a subpart in the template.
 		 *	Possible outputs are: "adate", "amonth", "ayear". In first line this
 		 *	function is needed for output the archivedate field.
-		 *	# TODO: Customize output by FF
+		 *	TODO: Substitute hardcoded HTML by TypoScript / Flexform
 		 *
 		 *	@param		string		$pos: "Date position"
 		 *	@return		string		Select field
@@ -1039,62 +1181,55 @@
 			return $this->cObj->substituteMarkerArray($tmpl, $marker);
 		}
 
-
+		
 		/**
-		 *	Returns the path set by a defined filemount in the backend.
-		 *	Takes care for absolute and relative "base".
+		 *	Method to generate the plain text and HTML part for the mails based on a HTML template.
+		 *	Puts automatically submitted piVars into the content and substitutes
+		 *	filed names by locallang aliases. Differs between "admin" and "feedback" mode.
 		 *
-		 *	@param		integer		$uid: UID of fielmount
-		 *	@return		string		Filemount path
+		 *	@param		string		$action: The "mode"
+		 *	@return		array		Array with keys 'plain' and 'html' and there contents
 		 */
-		function getFileMount($uid) {
-			$res	= $GLOBALS['TYPO3_DB']->exec_SELECTquery ('path, base', 'sys_filemounts', 'uid='.intval($uid).$this->cObj->enableFields('sys_filemounts'));
-			$row	= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-			$path	= $row['base']==1?'fileadmin/'.$row['path']:$row['path'];
-			// return
-			return $path;
-		}
+		function setMailContent($action, $name) {
+			// Templates
+			$tmplPlain	= $this->cObj->getSubpart($this->mainTMPL, '###EMAIL_PLAINTEXT###');
+			$tmplHTML	= $this->cObj->getSubpart($this->mainTMPL, '###EMAIL_HTMLTEXT###');
 
+			// Marker
+			$markerArray 							= array();
+			$markerArray['###USER_NAME###']			= $name;
+			$markerArray['###MAIL_SALUTATION###']	= $this->pi_getLL('l_mail_salutation', '', 1);
+			$markerArray['###MAIL_INTRODUCTION###']	= $this->pi_getLL('l_mail_intro_'.$action, '', 1);
+			$markerArray['###MAIL_REGARDS###']		= $this->pi_getLL('l_mail_regards', '', 1);
 
-		/**
-		 *	Returns the real name and mail-address of a given Be-User..
-		 *
-		 *	@return		array		Array with keys "name" and "email"
-		 */
-		function getBeUser() {
-			$res	= $GLOBALS['TYPO3_DB']->exec_SELECTquery ('realName AS name, email', 'be_users', 'uid='.intval($this->queueBeUser).$this->cObj->enableFields('be_users'));
-			$row	= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-			// return
-			return $row;
-		}
-
-
-		/**
-		 *  Needful method for wrapping labels from locallang.
-		 *	Wraps could be done by TAGs <span> and <strong>. If <span> is used,
-		 *	a CSS class could be set, too.
-		 *
-		 *  @param		string		$str: String/Label
-		 *	@param		string		$class='': CSS class for <span> => ' class="myClass"'
-		 *	@param		string		$strong=0: Use <strong> instead of <span>
-		 *	@return		Formated string
-		 */
-		function spanReplace($str, $class='', $strong=0) {
-			if ($strong == 0) {
-				return str_replace(array('###SPAN_BEGIN###', '###SPAN_END###'), array('<span'.$class.'>', '</span>'), $str);
-			} else {
-				return str_replace(array('###STRONG_BEGIN###', '###STRONG_END###'), array('<strong>', '</strong>'), $str);
+			// piVars
+			$arrHTML	= array();
+			$plainText	= '';
+			foreach ($this->piVars as $key => $value) {
+				$label			 = $this->pi_getLL('l_'.$key, '', 1)!=''?$this->pi_getLL('l_'.$key, '', 1).':':ucfirst($key).':';
+				$arrHTML[$label] = $value;
+				$plainText		.= $label.' '.$value.chr(10);
 			}
+
+			// Content
+			$arrContent = array();
+			// HTML content
+			$markerArray['###ACCOUNT###']	= str_replace(array('<font face="Verdana,Arial" size="1">', '<font face="Verdana,Arial" size="1" color="red">', '</font>'), array('<strong>', '', ''), t3lib_div::view_array($arrHTML));
+			$arrContent['html']				= $this->cObj->substituteMarkerArray($tmplHTML, $markerArray);
+			// Plain text
+			$markerArray['###ACCOUNT###']	= $plainText;
+			$arrContent['plain']			= $this->cObj->substituteMarkerArray($tmplPlain, $markerArray);
+
+			// Return
+			return $arrContent;
 		}
 
-
+		
 		/**
 		 *	Needful method adapted from extension "tt_products":
 		 *	Extended mail method.
 		 */
 		function sendMail($toEMail, $subject, &$message, &$html, $fromEMail, $fromName, $attachment='') {
-##			global $TYPO3_CONF_VARS;
-
 			include_once (PATH_t3lib.'class.t3lib_htmlmail.php');
 
 			$cls=t3lib_div::makeInstanceClassName('t3lib_htmlmail');
@@ -1135,8 +1270,27 @@
 				$Typo3_htmlmail->sendTheMail();
 			}
 		}
+	
 
+		/**
+		 *  Needful method for wrapping labels from locallang.
+		 *	Wraps could be done by TAGs <span> and <strong>. If <span> is used,
+		 *	a CSS class could be set, too.
+		 *
+		 *  @param		string		$str: String/Label
+		 *	@param		string		$class='': CSS class for <span> => ' class="myClass"'
+		 *	@param		string		$strong=0: Use <strong> instead of <span>
+		 *	@return		Formated string
+		 */
+		function spanReplace($str, $class='', $strong=0) {
+			if ($strong == 0) {
+				return str_replace(array('###SPAN_BEGIN###', '###SPAN_END###'), array('<span'.$class.'>', '</span>'), $str);
+			} else {
+				return str_replace(array('###STRONG_BEGIN###', '###STRONG_END###'), array('<strong>', '</strong>'), $str);
+			}
+		}
 
+		
 		/**
 		 *	Needful method adapted from extension "w4x_backup":
 		 *	Transforms bytes to a human readable measure.
@@ -1187,6 +1341,21 @@
 			} else {
 				return true;
 			}
+		}
+
+		
+		/**
+		 *	DEPRECATED: Helpful function when updating or deleting news records:
+		 *	Clears the page cache of page where the news records are related to.
+		 *
+		 *	@param		integer		Target page uid
+		 *	@return		void
+		 */
+		function clearPageCache($pid) {
+			$TCE		= t3lib_div::makeInstance('t3lib_TCEmain');
+			$TCE->admin	= 1;
+			$TCE->clear_cacheCmd('pages');
+			$TCE->clear_cacheCmd($pid);
 		}
 
 

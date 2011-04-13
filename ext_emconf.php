@@ -43,6 +43,8 @@ $EM_CONF[$_EXTKEY] = array(
 		'suggests' => array(
 			'typo3' => '4.5.0-',
 			'php' => '5.2.0-',
+			'dam' => '1.1-',
+			'dam_ttnews' => '0.1-',
 			'tt_news' => '3.0-',
 		),
 	),

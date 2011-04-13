@@ -80,17 +80,17 @@
 	
 				<!-- ###IMAGECAPTION### begin - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-imagecaption">###LABEL_IMAGECAPTION###:</label>###REQMARKER###</dt>
-				<dd><input name="###PREFIX_ID###[imagecaption]" id="###PREFIX_ID###-imagecaption" type="text" class="input" /></dd>
+				<dd><input name="###PREFIX_ID###[imagecaption]" id="###PREFIX_ID###-imagecaption" value="###VALUE_IMAGECAPTION###" type="text" class="input" /></dd>
 				<!-- ###IMAGECAPTION### end -->
 	
 				<!-- ###IMAGEALTTEXT### begin - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-imagealttext">###LABEL_IMAGEALTTEXT###:</label>###REQMARKER###</dt>
-				<dd><input name="###PREFIX_ID###[imagealttext]" id="###PREFIX_ID###-imagealttext" type="text" class="input" /></dd>
+				<dd><input name="###PREFIX_ID###[imagealttext]" id="###PREFIX_ID###-imagealttext" value="###VALUE_IMAGEALTTEXT###" type="text" class="input" /></dd>
 				<!-- ###IMAGEALTTEXT### end -->
 	
 				<!-- ###IMAGETITLETEXT### begin - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-imagetitletext">###LABEL_IMAGETITLETEXT###:</label>###REQMARKER###</dt>
-				<dd><input name="###PREFIX_ID###[imagetitletext]" id="###PREFIX_ID###-imagetitletext" type="text" class="input" /></dd>
+				<dd><input name="###PREFIX_ID###[imagetitletext]" id="###PREFIX_ID###-imagetitletext" value="###VALUE_IMAGETITLETEXT###" type="text" class="input" /></dd>
 				<!-- ###IMAGETITLETEXT### end -->
 	
 				<!-- ###LINKS### begin - this subpart is removed if is not enabled! -->
@@ -102,6 +102,11 @@
 				<dt class="label"><label for="###PREFIX_ID###-news_files">###LABEL_NEWS_FILES###:</label>###REQMARKER###</dt>
 				<dd><input name="###PREFIX_ID###[news_files]" id="###PREFIX_ID###-news_files" type="file" class="text" /></dd>
 				<!-- ###NEWS_FILES### end -->
+				
+				<!-- ###CURRENT_NEWS_FILES### begin - this subpart is removed if is not enabled! -->
+				<dt class="label">###LABEL_CURRENT_NEWS_FILES###:</dt>
+				<dd>###VALUE_CURRENT_NEWS_FILES###</dd>
+				<!-- ###CURRENT_NEWS_FILES### end -->
 	
 				<!-- ###SR_FREECAP_INSERT### - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-freecap">###LABEL_CAPTCHA###:</label><span class="hili">*</span></dt>
@@ -142,7 +147,7 @@
 <br />
 <br />
 <!-- ###TEMPLATE_SELECT### begin -->
-<select name="###PREFIX_ID###[###NAME###]" id="###PREFIX_ID###-###NAME###" size="1">
+<select name="###PREFIX_ID###[###NAME###][]" id="###PREFIX_ID###-###NAME###" ###SIZE### class="select">
 	###OPTIONS###
 </select>
 <!-- ###TEMPLATE_SELECT### end -->

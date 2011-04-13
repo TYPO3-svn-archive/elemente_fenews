@@ -1,17 +1,37 @@
 # elemente_fenews
 	plugin.tx_elementefenews_pi1 {
-		template			= {$plugin.tx_elementefenews_pi1.template}
-		mimeInclude			= image/jpeg, image/pjpeg, image/gif
-		extInclude			= jpg, jpeg, gif
-		maxsize				= 2048000
-		path				= uploads/pics
-		currentImage {
-			wrap			= <div class="news-list-img">|</div>
-			fileListPath	= uploads/pics/
-			file.maxW		= {$plugin.tt_news.listMaxW}
-		    file.maxH		= {$plugin.tt_news.listMaxH}
+		template				= {$plugin.tx_elementefenews_pi1.template}
+		debug					= {$plugin.tx_elementefenews_pi1.debug}
+	
+		mimeInclude				= image/gif,image/png,image/jpeg,application/x-zip-compressed
+    	mimeExclude				= application/octet-stream
+		extExclude				= exe,php,php3
+    	extInclude				= *
+		maxsize					= 15728640
+		path_image				= uploads/pics
+		path_news_files			= uploads/media
+		
+		preview_image {
+			wrap				= <div class="news-list-img">|</div>
+			filePath			= uploads/pics/
+			file.maxW			= {$plugin.tt_news.listMaxW}
+		    file.maxH			= {$plugin.tt_news.listMaxH}
 		}
-		debug				= {$plugin.tx_elementefenews_pi1.debug}
+		
+		preview_news_files		= TEXT
+		preview_news_files {
+			wrap				= <div class="news-list-files">|</div>
+			filePath			= uploads/media/
+			typolink.parameter	= PHP_VALUE
+			typolink.ATagParams	= class="download"
+		}
+		
+		# Still in process
+		catMenu_stdWrap.wrap	= <select name="tx_ttnews[cat]" id="tx_ttnews-cat" class="select">|</select>
+	    catMenu1_stdWrap.wrap	= <optgroup class="level1">|</optgroup>
+	    catMenu2_stdWrap.wrap	= <optgroup class="level2">|</optgroup>
+	    catMenu3_stdWrap.wrap	= <optgroup class="level3">|</optgroup>
+	    catMenu4_stdWrap.wrap	= <optgroup class="level4">|</optgroup>
 	}
 
 
