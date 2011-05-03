@@ -373,6 +373,7 @@
 							'',
 							$this->thePidValue
 						);
+						
 						// "Global" marker array
 						$markerArray['###ADDITIONALJS_PRE###']		= $this->additionalJS_initial.'<script type="text/javascript">'. implode(chr(10), $this->additionalJS_pre).'</script>';
 						$markerArray['###ADDITIONALJS_POST###']		= '<script type="text/javascript">'. implode(chr(10), $this->additionalJS_post).'</script>';
@@ -559,7 +560,12 @@
 			unset($this->piVars['ayear']);
 			unset($this->piVars['submit']);
 			foreach($this->piVars as $field => $input) {
-				$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news');
+				// Replace '\r\n' in field short
+				if ($field == 'short') {
+					$arrNews[$field] = str_replace('\r\n', chr(10), $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news'));
+				} else {
+					$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news');
+				}
 			}
 			
 			// loginUser?
@@ -801,7 +807,7 @@
 								// Rip of file extension form OrgName
 								$point								= strrpos($fName, '.');
 								$this->arrUploads[$field]['name']	= substr($fName, 0, $point); // Is needed for ALT- and TITLE
-								$this->arrUploads[$field]['hash']	= t3lib_div::shortMD5($this->arrUploads[$field]['name'].time()).'.'.$fExt; // Is needed for filelist
+								$this->arrUploads[$field]['hash']	= $this->arrUploads[$field]['name'].'-'.t3lib_div::shortMD5($this->arrUploads[$field]['name'].time()).'.'.$fExt; // Is needed for filelist
 								$this->arrUploads[$field]['path']	= PATH_site.$path.'/'.$this->arrUploads[$field]['hash']; // Is needed for DAM
 								t3lib_div::upload_copy_move($tmpFile, $this->arrUploads[$field]['path']); // Move file
 								t3lib_div::unlink_tempfile($tmpFile); // Unlink temp file

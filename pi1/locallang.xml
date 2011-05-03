@@ -30,7 +30,7 @@
             <label index="l_captcha">Spam protectiion</label>
 			<label index="l_captcha_text">Please fill in the word shown in the image.</label>
             <label index="l_required">###SPAN_BEGIN###*###SPAN_END###</label>
-            <label index="l_required_text">Fields labeled with ###SPAN_BEGIN###*###SPAN_END### are required.</label>
+            <label index="l_required_text">Fields labeled with ###SPAN_BEGIN###*###SPAN_END### are mandatory fields.</label>
             <label index="l_mail_subject">News submitted</label>
             <label index="l_mail_salutation">Dear</label>
             <label index="l_mail_intro_feed">you have submitted a new news. For your information, your data is listed following.</label>
