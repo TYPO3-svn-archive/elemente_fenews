@@ -1032,10 +1032,12 @@
 						$title				 = $arrCatTitle[$sysLang] ? $arrCatTitle[$sysLang] : $row['title'];
 					}
 					$value		 			 = $row['shortcut']>0?$row['uid'].'|'.$row['shortcut']:$row['uid']; // if shortcut is set, put it into the value for redirect after saving the news
-					$selected				 = '';
-					foreach($this->piVars['category'] as $savedCat) {
-						if ($savedCat == $value) $selected = ' selected="selected"';
-					}
+					$selected         		 = $this->piVars['category']==$value?' selected="selected"':'';
+					// AST, 09.05.11: C&P error -> renderHirachicalCategories ???
+#					$selected				 = '';
+#					foreach($this->piVars['category'] as $savedCat) {
+#						if ($savedCat == $value) $selected = ' selected="selected"';
+#					}
 					$opts					.= '<option value="'.$value.'"'.$selected.'>'.$title.'</option>'.chr(10);
 				}
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
