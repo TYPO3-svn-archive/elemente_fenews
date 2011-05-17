@@ -14,7 +14,13 @@
 			<label index="tt_news.tx_elementefenews_author">Anonymous author</label>
         	<label index="elemente_fenews.pi_flexform.baseConfig">Pages/Template</label>
             <label index="elemente_fenews.pi_flexform.storagePID.label">Page with tt_news records:</label>
-            <label index="elemente_fenews.pi_flexform.redirectPID.label">Redirect page after saving (if no "News category shortcut" is set):</label>
+            <label index="elemente_fenews.pi_flexform.redirectPID.label">Redirect page after saving (if "News category shortcut" is not set):</label>
+			<label index="elemente_fenews.pi_flexform.clearCachePID.label">Page to clear cache after saving (if not set, use of redirect/"News category shortcut" page):</label>
+			<label index="elemente_fenews.pi_flexform.clearCacheRecursive">Recursive:</label>
+			<label index="elemente_fenews.pi_flexform.clearCacheRecursive.0.label">0 Level</label>
+			<label index="elemente_fenews.pi_flexform.clearCacheRecursive.1.label">1 Level</label>
+			<label index="elemente_fenews.pi_flexform.clearCacheRecursive.2.label">2 Level</label>
+			<label index="elemente_fenews.pi_flexform.clearCacheRecursive.99.label">Infinitive</label>
             <label index="elemente_fenews.pi_flexform.selectTMPL.label">HTML template:</label>
             <label index="elemente_fenews.pi_flexform.fieldConfig">Fields</label>
             <label index="elemente_fenews.pi_flexform.renderFields.label">Render fields:</label>
@@ -73,6 +79,12 @@
         	<label index="elemente_fenews.pi_flexform.baseConfig">Seiten/Template</label>
             <label index="elemente_fenews.pi_flexform.storagePID.label">Seite mit tt_news-Datensätzen:</label>
             <label index="elemente_fenews.pi_flexform.redirectPID.label">Weiterleitung nach Eintrag (wenn "Verweis auf Kategorie" nicht gesetzt):</label>
+			<label index="elemente_fenews.pi_flexform.clearCachePID.label">Löschen des Caches nach Speichern von Seite (Verwendung von Seite Weiterleitung/"Verweis auf Kategorie" wenn nicht gesetzt):</label>
+			<label index="elemente_fenews.pi_flexform.clearCacheRecursive">Rekursive:</label>
+			<label index="elemente_fenews.pi_flexform.clearCacheRecursive.0.label">0 Ebene</label>
+			<label index="elemente_fenews.pi_flexform.clearCacheRecursive.1.label">1 Ebene</label>
+			<label index="elemente_fenews.pi_flexform.clearCacheRecursive.2.label">2 Ebene</label>
+			<label index="elemente_fenews.pi_flexform.clearCacheRecursive.99.label">Unendlich</label>
             <label index="elemente_fenews.pi_flexform.selectTMPL.label">HTML-Template:</label>
             <label index="elemente_fenews.pi_flexform.fieldConfig">Felder</label>
             <label index="elemente_fenews.pi_flexform.renderFields.label">Zeige Felder:</label>

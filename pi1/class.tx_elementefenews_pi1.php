@@ -100,6 +100,10 @@
 
 			// Redirect PID
 			$this->redirectPID				= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'redirectPID', 'baseConfig');
+			
+			// Cache settings
+			$this->clearCachePID			= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'clearCachePID', 'baseConfig');
+			$this->clearCacheRecursive		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'clearCacheRecursive', 'baseConfig');
 
 			// HTML Template
 			$selectTMPL						= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'selectTMPL', 'baseConfig');
@@ -264,12 +268,10 @@
 					while(($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
 						$this->piVars['category'][]					= $row['shortcut']!=0?$row['uid'].'|'.$row['shortcut']:$row['uid']; // If shortcut is set, put it into the value for redirect after saving the news		
 					}
-
 				} else {
 					$res											= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
 					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 				}
-				
 				// Check current user or its group is owner of record
 				$this->piVars['owner']								= ($this->piVars['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'] || t3lib_div::inList($GLOBALS['TSFE']->fe_user->user['usergroup'], $this->piVars['tx_elementefenews_fegroup']))?true:false;	
 			}
@@ -448,7 +450,7 @@
 			// Check fields
 			foreach ($this->renderFields as $field => $conf) {
 				if ($conf['file']==0) { // Normal fields excluding archivedate!
-					if (empty($this->piVars[$field]) && $field!='archivedate' && $conf['render']==1 && $conf['req']==1) {
+					if ((empty($this->piVars[$field]) || empty($this->piVars[$field][0])) && $field!='archivedate' && $conf['render']==1 && $conf['req']==1) {
 						$error	.= '<li>'.str_replace('###FIELD###', '<strong>'.$this->pi_getLL('l_'.$field, '', 1).'</strong>', $this->pi_getLL('l_error_field', '', 1)).'</li>'.chr(10);
 					}
 				} else { // Upload fields
@@ -520,11 +522,11 @@
 			// TODO: Recursive search for shortcut page definitions?
 			if (is_array($this->piVars['category'])) {
 				$arrCat						= t3lib_div::trimExplode('|', $this->piVars['category'][0]);
-				$redirect					= isset($arrCat[1])?$arrCat[1]:$this->redirectPID; // Redirect to the 1st category shortcut page, if set
+				$redirectPID				= isset($arrCat[1])?$arrCat[1]:$this->redirectPID; // Redirect to the 1st category shortcut page, if set
 				$countCat					= count($this->piVars['category']);
 			} else {
 				$countCat					= 0;
-				$redirect					= $this->redirectPID;
+				$redirectPID				= $this->redirectPID;
 			}
 
 			// News settings
@@ -730,11 +732,16 @@
 				$this->sendMail($arrNews['author_email'], $this->pi_getLL('l_mail_subject', '', 1), $arrMail['plain'], $htmlPart, $this->mailFrom, $this->mailFromName);
 			}
 
-			// Clear target page cache
-			$GLOBALS['TSFE']->clearPageCacheContent_pidList($redirect);
+			// Clear page cache: FF clearCachePID or $redirectPID
+			$clearCachePID = $this->clearCachePID ? $this->clearCachePID: $redirectPID;
+			$clearCachePID = $this->cObj->getTreeList($clearCachePID, $this->clearCacheRecursive).$clearCachePID;
+			
+			t3lib_div::debug($clearCachePID);
+			
+			$GLOBALS['TSFE']->clearPageCacheContent_pidList($clearCachePID);
 
-			// Redirect to page
-			header('Location: '.t3lib_div::locationHeaderUrl($this->pi_getPageLink($redirect)));
+			// Redirect to page: FF redirectPID or shortcut page of category, see $redirectPID
+			header('Location: '.t3lib_div::locationHeaderUrl($this->pi_getPageLink($redirectPID)));
 			die();
 		}
 
@@ -759,10 +766,13 @@
 			// The piVars given backPid
 			$pid = intval($this->piVars['backPid']);
 
-			// Clear target page cache
-			// Adding writelog support to clear_cacheCmd breaks functionality in T3 4.5
-##			$this->clearPageCache($redirect);
-			$GLOBALS['TSFE']->clearPageCacheContent_pidList($pid);
+			// Clear page cache: FF clearCachePID or $pid
+			$clearCachePID = $this->clearCachePID ? $this->clearCachePID: $pid;
+			$clearCachePID = $this->cObj->getTreeList($clearCachePID, $this->clearCacheRecursive).$clearCachePID;
+			
+			t3lib_div::debug($clearCachePID);
+			
+			$GLOBALS['TSFE']->clearPageCacheContent_pidList($clearCachePID);
 
 			// Redirect
 			header('Location: '.t3lib_div::locationHeaderUrl($this->pi_getPageLink($pid)));
@@ -1032,13 +1042,15 @@
 						$title				 = $arrCatTitle[$sysLang] ? $arrCatTitle[$sysLang] : $row['title'];
 					}
 					$value		 			 = $row['shortcut']>0?$row['uid'].'|'.$row['shortcut']:$row['uid']; // if shortcut is set, put it into the value for redirect after saving the news
-					$selected         		 = $this->piVars['category']==$value?' selected="selected"':'';
-					// AST, 09.05.11: C&P error -> renderHirachicalCategories ???
-#					$selected				 = '';
-#					foreach($this->piVars['category'] as $savedCat) {
-#						if ($savedCat == $value) $selected = ' selected="selected"';
-#					}
+#					$selected         		 = $this->piVars['category'][0]==$value?' selected="selected"':'';
+					$selected		 		 = '';
+					if (isset($this->piVars['category'])) {
+						foreach($this->piVars['category'] as $savedCat) {
+							if ($savedCat == $value) $selected = ' selected="selected"';
+						}
+					}
 					$opts					.= '<option value="'.$value.'"'.$selected.'>'.$title.'</option>'.chr(10);
+					
 				}
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 				
@@ -1123,8 +1135,10 @@
 								$value			 = $array_in['shortcut']>0?$array_in['uid'].'|'.$array_in['shortcut']:$array_in['uid']; // if shortcut is set, put it into the value for redirect after saving the news
 								// Selected values
 								$selected		 = '';
-								foreach($this->piVars['category'] as $savedCat) {
-									if ($savedCat == $value) $selected = ' selected="selected"';
+								if (isset($this->piVars['category'])) {
+									foreach($this->piVars['category'] as $savedCat) {
+										if ($savedCat == $value) $selected = ' selected="selected"';
+									}
 								}
 								$result			.= '<option value="'.$value.'"'.$selected.'>'.$val.'</option>'.chr(10);			
 							}	

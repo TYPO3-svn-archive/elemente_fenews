@@ -39,6 +39,47 @@
 							</config>
 						</TCEforms>
 					</redirectPID>
+					<clearCachePID>
+						<TCEforms>
+							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.clearCachePID.label</label>
+							<config>
+								<type>group</type>
+								<internal_type>db</internal_type>
+								<allowed>pages</allowed>
+								<minitems>0</minitems>
+								<maxitems>1</maxitems>
+								<size>1</size>
+								<show_thumbs>1</show_thumbs>
+							</config>
+						</TCEforms>
+					</clearCachePID>
+					<clearCacheRecursive>
+						<TCEforms>
+							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.clearCacheRecursive</label>
+							<config>
+								<type>select</type>
+								<items type="array">
+									<numIndex index="0" type="array">
+										<numIndex index="0">LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.clearCacheRecursive.0.label</numIndex>
+										<numIndex index="1">0</numIndex>
+									</numIndex>
+									<numIndex index="1" type="array">
+										<numIndex index="0">LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.clearCacheRecursive.1.label</numIndex>
+										<numIndex index="1">1</numIndex>
+									</numIndex>
+									<numIndex index="2" type="array">
+										<numIndex index="0">LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.clearCacheRecursive.2.label</numIndex>
+										<numIndex index="1">2</numIndex>
+									</numIndex>
+									<numIndex index="3" type="array">
+										<numIndex index="0">LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.clearCacheRecursive.99.label</numIndex>
+										<numIndex index="1">99</numIndex>
+									</numIndex>
+								</items>
+							</config>
+						</TCEforms>
+					</clearCacheRecursive>
+					
   					<selectTMPL>
 						<TCEforms>
 							<label>LLL:EXT:elemente_fenews/locallang_tca.php:elemente_fenews.pi_flexform.selectTMPL.label</label>
