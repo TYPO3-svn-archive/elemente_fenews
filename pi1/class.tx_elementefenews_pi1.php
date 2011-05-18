@@ -631,10 +631,12 @@
 
 			// Links reformating
 			if (!empty($this->piVars['links'])) {
-				$links						= t3lib_div::trimExplode('\r\n', $arrNews['links']);
+				$arrLinks					= t3lib_div::trimExplode('\r\n', $arrNews['links']);
+				$arrLinksLen				= count($arrLinks);
 				$arrNews['links']			= '';
-				foreach($links as $url) {
-					if ($this->isURL($url) == true) $arrNews['links'] .= $url.chr(10);
+				for($i=0; $i<$arrLinksLen; $i++) {
+					$nl = $i == $arrLinksLen-1 ? '' : chr(10); // no new line after the last entry
+					if ($this->isURL($arrLinks[$i]) == true) $arrNews['links'] .= $arrLinks[$i].$nl;
 				}
 			}
 
@@ -735,9 +737,6 @@
 			// Clear page cache: FF clearCachePID or $redirectPID
 			$clearCachePID = $this->clearCachePID ? $this->clearCachePID: $redirectPID;
 			$clearCachePID = $this->cObj->getTreeList($clearCachePID, $this->clearCacheRecursive).$clearCachePID;
-			
-			t3lib_div::debug($clearCachePID);
-			
 			$GLOBALS['TSFE']->clearPageCacheContent_pidList($clearCachePID);
 
 			// Redirect to page: FF redirectPID or shortcut page of category, see $redirectPID
@@ -769,9 +768,6 @@
 			// Clear page cache: FF clearCachePID or $pid
 			$clearCachePID = $this->clearCachePID ? $this->clearCachePID: $pid;
 			$clearCachePID = $this->cObj->getTreeList($clearCachePID, $this->clearCacheRecursive).$clearCachePID;
-			
-			t3lib_div::debug($clearCachePID);
-			
 			$GLOBALS['TSFE']->clearPageCacheContent_pidList($clearCachePID);
 
 			// Redirect
