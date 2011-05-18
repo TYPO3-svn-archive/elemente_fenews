@@ -9,9 +9,9 @@
     </meta>
     <data type="array">
         <languageKey index="default" type="array">
-        	<label index="tt_news.tx_elementefenews_feuser">FE-User UID</label>
-			<label index="tt_news.tx_elementefenews_fegroup">FE-User usergroup</label>
-			<label index="tt_news.tx_elementefenews_author">Anonymous author</label>
+        	<label index="tt_news.tx_elementefenews_feuser">FeNews: Creator</label>
+			<label index="tt_news.tx_elementefenews_fegroup">FeNews: Usergroup</label>
+			<label index="tt_news.tx_elementefenews_author">FeNews: Anonymous author</label>
         	<label index="elemente_fenews.pi_flexform.baseConfig">Pages/Template</label>
             <label index="elemente_fenews.pi_flexform.storagePID.label">Page with tt_news records:</label>
             <label index="elemente_fenews.pi_flexform.redirectPID.label">Redirect page after saving (if "News category shortcut" is not set):</label>
@@ -73,9 +73,9 @@
             <label index="elemente_fenews.pi_flexform.autoArchive.label">Use archive date instead of "hide":</label>
         </languageKey>
         <languageKey index="de" type="array">
-        	<label index="tt_news.tx_elementefenews_feuser">FE-User UID</label>
-			<label index="tt_news.tx_elementefenews_fegroup">FE-User Benutzergruppe</label>
-			<label index="tt_news.tx_elementefenews_author">Anonymer Autor</label>
+        	<label index="tt_news.tx_elementefenews_feuser">FeNews: Ersteller</label>
+			<label index="tt_news.tx_elementefenews_fegroup">FeNews: Benutzergruppe</label>
+			<label index="tt_news.tx_elementefenews_author">FeNews: Anonymer Autor</label>
         	<label index="elemente_fenews.pi_flexform.baseConfig">Seiten/Template</label>
             <label index="elemente_fenews.pi_flexform.storagePID.label">Seite mit tt_news-Datensätzen:</label>
             <label index="elemente_fenews.pi_flexform.redirectPID.label">Weiterleitung nach Eintrag (wenn "Verweis auf Kategorie" nicht gesetzt):</label>

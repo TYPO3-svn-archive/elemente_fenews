@@ -33,30 +33,37 @@
 	
 	
 	$tempColumns = Array (
-		'tx_elementefenews_feuser' => Array (
-			'exclude' => 1,
-			'label' => 'LLL:EXT:elemente_fenews/locallang_tca.xml:tt_news.tx_elementefenews_feuser',
-			'config' => Array (
-				'type' => 'none',
-			)
-		),
 		'tx_elementefenews_fegroup' => Array (
 			'exclude' => 1,
 			'label' => 'LLL:EXT:elemente_fenews/locallang_tca.xml:tt_news.tx_elementefenews_fegroup',
-			'config' => Array (
-				'type' => 'none',
-			)
+			'config' => array (
+				'type' => 'group',
+				'internal_type' => 'db',
+				'allowed' => 'fe_groups',
+	            'size' => 1,
+			),
+		),
+		'tx_elementefenews_feuser' => Array (
+			'exclude' => 1,
+			'label' => 'LLL:EXT:elemente_fenews/locallang_tca.xml:tt_news.tx_elementefenews_feuser',
+			'config' => array (
+				'type' => 'group',
+				'internal_type' => 'db',
+				'allowed' => 'fe_users',
+	            'size' => 1,
+			),
 		),
 		'tx_elementefenews_author' => Array (
 			'exclude' => 1,
 			'label' => 'LLL:EXT:elemente_fenews/locallang_tca.xml:tt_news.tx_elementefenews_author',
 			'config' => Array (
 				'type' => 'none',
+				'size' => 20,
 			)
 		),
 	);
 
 	t3lib_div::loadTCA('tt_news');
 	t3lib_extMgm::addTCAcolumns('tt_news',$tempColumns,1);
-	t3lib_extMgm::addToAllTCAtypes('tt_news','tx_elementefenews_feuser,tx_elementefenews_fegroup,tx_elementefenews_author');
+	t3lib_extMgm::addToAllTCAtypes('tt_news','tx_elementefenews_fegroup,tx_elementefenews_feuser,tx_elementefenews_author');
 ?>
