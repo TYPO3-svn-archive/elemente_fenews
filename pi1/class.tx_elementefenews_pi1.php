@@ -56,12 +56,12 @@
 		    // Additional JavaScript to be executed on submit
 		public $additionalJS_submit		= array();
 		public $PA = array(
-			'itemFormElName'			=>  '',
-			'itemFormElValue'			=> '',
+			'itemFormElName' =>  '',
+			'itemFormElValue' => '',
 		);
 		public $specConf = array(
-			'rte_transform'				=> array(
-				'parameters'			=> array('mode' => 'ts_css')
+			'rte_transform' => array(
+				'parameters' => array('mode' => 'ts_css')
 			)
 		);
 		public $thisConfig				= array();
@@ -112,9 +112,9 @@
 
 			// Render/ Requierd fields
 			$renderFields					= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'renderFields', 'fieldConfig');
-			$renderFields					= $renderFields?t3lib_div::trimExplode(',', $renderFields):'title,archivedate,author,author_email,tx_elementefenews_author,short,bodytext,keywords,category,image,links';
+			$renderFields					= $renderFields?t3lib_div::trimExplode(',', $renderFields):t3lib_div::trimExplode(',', 'title,archivedate,author,author_email,tx_elementefenews_author,short,bodytext,keywords,category,image,links');
 			$requiredFields					= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'requiredFields', 'fieldConfig');
-			$requiredFields					= $requiredFields?t3lib_div::trimExplode(',', $requiredFields):'title,author,author_email,bodytext';
+			$requiredFields					= $requiredFields?t3lib_div::trimExplode(',', $requiredFields):t3lib_div::trimExplode(',', 'title,author,author_email,bodytext');
 
 			$this->renderFields				= array(
 				'title'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
@@ -362,7 +362,7 @@
 						$this->formName								= $this->prefixId.'-form';
 						$this->PA['itemFormElName']					= $this->prefixId.'[bodytext]';
 						$this->PA['itemFormElValue']				= $this->piVars['bodytext'];
-						$this->thePidValue							= $GLOBALS['TSFE']->id;
+						$this->thePidValue							= $GLOBALS['TSFE']->id;	
 						$RTEItem = $this->RTEObj->drawRTE(
 							$this,
 							'tt_news',
@@ -375,7 +375,6 @@
 							'',
 							$this->thePidValue
 						);
-						
 						// "Global" marker array
 						$markerArray['###ADDITIONALJS_PRE###']		= $this->additionalJS_initial.'<script type="text/javascript">'. implode(chr(10), $this->additionalJS_pre).'</script>';
 						$markerArray['###ADDITIONALJS_POST###']		= '<script type="text/javascript">'. implode(chr(10), $this->additionalJS_post).'</script>';
@@ -587,6 +586,14 @@
 					$this->thisConfig		= $RTEsetup['default.'];
 					$this->thisConfig		= $this->thisConfig['FE.'];
 					$this->thePidValue		= $GLOBALS['TSFE']->id;
+					// Other transform mode than default?
+					if (isset($RTEsetup['config.']['tt_news.']['bodytext.']['proc.']['overruleMode'])) {
+						$this->specConf = array(
+							'rte_transform' => array(
+								'parameters' => array('mode' => $RTEsetup['config.']['tt_news.']['bodytext.']['proc.']['overruleMode'])
+							)
+						);
+					}
 					$arrNews['bodytext']	= $this->RTEObj->transformContent(
 						'db',
 						$this->piVars['bodytext'],
