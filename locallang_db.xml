@@ -13,5 +13,9 @@
 			<label index="moduleFunction.tx_elementefenews_modfunc1">Frontend News Verwaltung</label>
 			<label index="tt_content.list_type_pi1">Frontend News</label>
 		</languageKey>
+		<languageKey index="fr" type="array">
+			<label index="moduleFunction.tx_elementefenews_modfunc1">Gestion des actualités en Frontend</label>
+			<label index="tt_content.list_type_pi1">Actualités en Frontend</label>
+		</languageKey>
 	</data>
 </T3locallang>

@@ -87,5 +87,45 @@
 			<label index="l_error_file_ext">Die Datei des Feldes ###FIELD### hat eine nicht erlaubte Dateiendung. Erlaubte Endungen sind: ###EXT###.</label>
 			<label index="l_error_file_size">Die Datei des Feldes ###FIELD### ist größer, als maximal erlaubt. Die maximale Dateigröße beträgt: ###SIZE###.</label>
 		</languageKey>
+		<languageKey index="fr" type="array">
+			<label index="form_legend">Créer une nouvelle Actualité</label>
+			<label index="form_submit">Envoyer</label>
+			<label index="form_reset">Réinitialiser le formulaire</label>
+			<label index="form_select">Selectionner</label>
+			<label index="l_title">Titre</label>
+			<label index="l_archivedate">Date d'archivage</label>
+			<label index="l_author">Auteur</label>
+			<label index="l_author_email">Adresse email</label>
+			<label index="l_tx_elementefenews_author">Caher mon nom et mon adresse email</label>
+			<label index="l_short">Sous-titre</label>
+            <label index="l_bodytext">Texte</label>
+            <label index="l_keywords">Mots-clé (séparés par une virgule)</label>
+            <label index="l_category">Categorie</label>
+            <label index="l_current_image">Image actuelle</label>
+            <label index="l_image">Image</label>
+            <label index="l_imagecaption">Légende de l'image</label>
+            <label index="l_imagealttext">Image ALT-text</label>
+            <label index="l_imagetitletext">Image TITLE-text</label>
+            <label index="l_links">Liens (un par ligne)</label>
+            <label index="l_news_files">Fichier</label>
+            <label index="l_captcha">Protection contre le spam</label>
+			<label index="l_captcha_text">Merci de recopier le mot affiché sur l'image.</label>
+            <label index="l_required">###SPAN_BEGIN###*###SPAN_END###</label>
+            <label index="l_required_text">Les champs marqués par ###SPAN_BEGIN###*###SPAN_END### sont obligatoires.</label>
+            <label index="l_mail_subject">L'actualité est proposé à la publication</label>
+            <label index="l_mail_salutation">Cher(e)</label>
+            <label index="l_mail_intro_feed">Vous avez proposé une nouvelle actualité. Pour votre information, voivi les données envoyées.</label>
+            <label index="l_mail_intro_queue">Un utilisateur à proposé une nouvelle actualité. Merci de vous connecter au backend de TYPO3 pour publier cette actualité.</label>
+            <label index="l_mail_regards">Cordialement</label>
+			<label index="l_error_noaccess">Vous n'avez pas le droit d'éditer cet enregistrement</label>
+			<label index="l_error_message">Erreur de saisie !</label>
+			<label index="l_error_field">Merci de renseigner le champ ###FIELD###.</label>
+			<label index="l_error_email">Le champ ###FIELD###doit contenir une adresse eamil valide .</label>
+			<label index="l_error_archivedate">Le champ ###FIELD### doit contenir une date posterieure à aujourd'hui.</label>
+			<label index="l_error_captcha">Le champ ###FIELD### n'est pas identique au mot afficher sur l'image.</label>
+			<label index="l_error_file_mime">Le type du fichier du champ ###FIELD### n'est pas autorisé . Les types de fichiers autorisés sont: ###MIME###.</label>
+			<label index="l_error_file_ext">L'extension du fichier du champ ###FIELD###  n'est pas autorisée. Les extension de fichier autorisées sont: ###EXT###.</label>
+			<label index="l_error_file_size">La taille du fichier du champ ###FIELD### est superieur à la taille autorisée. La taille maximum de fichier autorisée est: ###SIZE###.</label>
+		</languageKey>
 	</data>
 </T3locallang>

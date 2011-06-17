@@ -136,5 +136,54 @@
             <label index="elemente_fenews.pi_flexform.autoEndtime.label">News nach x Tage ausblenden:</label>
             <label index="elemente_fenews.pi_flexform.autoArchive.label">Nutze Archivdatum statt "ausblenden":</label>
         </languageKey>
+		<languageKey index="fr" type="array">
+        	<label index="elemente_fenews.pi_flexform.baseConfig">Pages/Gabarits</label>
+            <label index="elemente_fenews.pi_flexform.storagePID.label">Page de stockage des enregistrements:</label>
+            <label index="elemente_fenews.pi_flexform.redirectPID.label">Rediriger vers la page après la sauvegarde (lorsque le raccourci par catégorie n'est pas défini):</label>
+            <label index="elemente_fenews.pi_flexform.selectTMPL.label">Gabarit HTML:</label>
+            <label index="elemente_fenews.pi_flexform.fieldConfig">Champs</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.label">Champs à afficher:</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.title">Titre</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.archivedate">Date d'archivage</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.author">Auteur</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.author_email">Adresse email de l'auteur</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.short">Sous-titre</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.bodytext">Texte</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.keywords">Mots clé</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.category">Catégories</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.image">Image</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.imagecaption">Légende de l'image</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.imagealttext">Image ALT-text</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.imagetitletext">Image TITLE-text</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.links">Liens</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.news_files">Fichiers</label>
+            <label index="elemente_fenews.pi_flexform.renderFields.tx_elementefenews_author">Auteur anonyme</label>
+            <label index="elemente_fenews.pi_flexform.requiredFields.label">Champs obligatoires:</label>
+            <label index="elemente_fenews.pi_flexform.useCaptcha.label">Utiliser la librairie Captcha:</label>
+			<label index="elemente_fenews.pi_flexform.catConfig">Catégories</label>
+			<label index="elemente_fenews.pi_flexform.categoryDefault">Catégorie par défaut (cachée en FE, uniquement utilisée(s) pour l'enregistrement):</label>
+			<label index="elemente_fenews.pi_flexform.categorySelection">Categories selectionnables en Frontend:</label>
+			<label index="elemente_fenews.pi_flexform.useSubCategories">Utiliser les sous-catégories (Cette fonctionalité n'est pas opérationnelle pour l'instant ):</label>
+            <label index="elemente_fenews.pi_flexform.damConfig">DAM</label>
+            <label index="elemente_fenews.pi_flexform.damUse.label">Utiliser l'extension DAM:</label>
+            <label index="elemente_fenews.pi_flexform.damDisabled.label">Désactivé</label>
+            <label index="elemente_fenews.pi_flexform.damBeUser.label">Utlisateur BE pour l'extension DAM:</label>
+            <label index="elemente_fenews.pi_flexform.damImgPath.label">Enregister les images dans le répertoire:</label>
+            <label index="elemente_fenews.pi_flexform.damFilePath.label">Enregister les fichiers dans le répertoire:</label>
+            <label index="elemente_fenews.pi_flexform.mailConfig">Publier</label>
+            <label index="elemente_fenews.pi_flexform.mailFeedback.label">Envoyer un email de confirmation:</label>
+            <label index="elemente_fenews.pi_flexform.mailHTML.label">Permettre l'envoie au format HTML:</label>
+            <label index="elemente_fenews.pi_flexform.mailFromName.label">Expéditeur:</label>
+            <label index="elemente_fenews.pi_flexform.mailFrom.label">Adresse email de l'expéditeur:</label>
+            <label index="elemente_fenews.pi_flexform.queuePublish.label">Publier manuellement:</label>
+            <label index="elemente_fenews.pi_flexform.queueBeUser.label">Responsable de publication:</label>
+            <label index="elemente_fenews.pi_flexform.optionsConfig">Options</label>
+            <label index="elemente_fenews.pi_flexform.enableRTE.label">Utiliser  htmlArea RTE:</label>
+            <label index="elemente_fenews.pi_flexform.delMode.label">Les enregistrements supprimés par l'auteur seront</label>
+            <label index="elemente_fenews.pi_flexform.delMode.I0.label">... cachés!</label>
+            <label index="elemente_fenews.pi_flexform.delMode.I1.label">... supprimés!</label>
+            <label index="elemente_fenews.pi_flexform.autoEndtime.label">Cacher les actualités dans x jours:</label>
+            <label index="elemente_fenews.pi_flexform.autoArchive.label">Utiliser l'archivage au lieu de "Caché":</label>
+        </languageKey>
     </data>
 </T3locallang>
