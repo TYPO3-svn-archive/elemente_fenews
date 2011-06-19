@@ -1214,33 +1214,34 @@
 		 */
 		function setMailContent($action, $name) {
 			// Templates
-			$tmplPlain	= $this->cObj->getSubpart($this->mainTMPL, '###EMAIL_PLAINTEXT###');
-			$tmplHTML	= $this->cObj->getSubpart($this->mainTMPL, '###EMAIL_HTMLTEXT###');
+			$tmplPlain								 = $this->cObj->getSubpart($this->mainTMPL, '###EMAIL_PLAINTEXT###');
+			$tmplHTML								 = $this->cObj->getSubpart($this->mainTMPL, '###EMAIL_HTMLTEXT###');
 
 			// Marker
-			$markerArray 							= array();
-			$markerArray['###USER_NAME###']			= $name;
-			$markerArray['###MAIL_SALUTATION###']	= $this->pi_getLL('l_mail_salutation', '', 1);
-			$markerArray['###MAIL_INTRODUCTION###']	= $this->pi_getLL('l_mail_intro_'.$action, '', 1);
-			$markerArray['###MAIL_REGARDS###']		= $this->pi_getLL('l_mail_regards', '', 1);
+			$markerArray 							 = array();
+			$markerArray['###USER_NAME###']			 = $name;
+			$markerArray['###MAIL_SALUTATION###']	 = $this->pi_getLL('l_mail_salutation', '', 1);
+			$markerArray['###MAIL_INTRODUCTION###']	 = $this->pi_getLL('l_mail_intro_'.$action, '', 1);
+			$markerArray['###MAIL_REGARDS###']		 = $this->pi_getLL('l_mail_regards', '', 1);
 
 			// piVars
-			$arrHTML	= array();
-			$plainText	= '';
+			$arrHTML								 = array();
+			$plainText								 = '';
+			unset($this->piVars['_TRANSFORM_bodytext']);
 			foreach ($this->piVars as $key => $value) {
-				$label			 = $this->pi_getLL('l_'.$key, '', 1)!=''?$this->pi_getLL('l_'.$key, '', 1).':':ucfirst($key).':';
-				$arrHTML[$label] = $value;
-				$plainText		.= $label.' '.$value.chr(10);
+				$label			 					 = $this->pi_getLL('l_'.$key, '', 1)!=''?$this->pi_getLL('l_'.$key, '', 1).':':ucfirst($key).':';
+				$arrHTML[$label] 					 = $key=='category'?implode(', ', $value):$value;
+				$plainText							.= $key=='category'?$label.' '.implode(',', $value):$label.' '.$value.chr(10);
 			}
 
 			// Content
 			$arrContent = array();
 			// HTML content
-			$markerArray['###ACCOUNT###']	= str_replace(array('<font face="Verdana,Arial" size="1">', '<font face="Verdana,Arial" size="1" color="red">', '</font>'), array('<strong>', '', ''), t3lib_div::view_array($arrHTML));
-			$arrContent['html']				= $this->cObj->substituteMarkerArray($tmplHTML, $markerArray);
+			$markerArray['###MAIL_CONTENT###']		= str_replace(array('<font face="Verdana,Arial" size="1">', '<font face="Verdana,Arial" size="1" color="red">', '</font>'), array('<strong>', '', ''), t3lib_div::view_array($arrHTML));
+			$arrContent['html']						= $this->cObj->substituteMarkerArray($tmplHTML, $markerArray);
 			// Plain text
-			$markerArray['###ACCOUNT###']	= $plainText;
-			$arrContent['plain']			= $this->cObj->substituteMarkerArray($tmplPlain, $markerArray);
+			$markerArray['###MAIL_CONTENT###']		= $plainText;
+			$arrContent['plain']					= $this->cObj->substituteMarkerArray($tmplPlain, $markerArray);
 
 			// Return
 			return $arrContent;
