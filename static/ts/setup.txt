@@ -1,123 +1,70 @@
 # elemente_fenews
-	plugin.tx_elementefenews_pi1 {
-		template				= {$plugin.tx_elementefenews_pi1.template}
-		debug					= {$plugin.tx_elementefenews_pi1.debug}
+plugin.tx_elementefenews_pi1 {
+	template				= {$plugin.tx_elementefenews_pi1.template}
+	debug					= {$plugin.tx_elementefenews_pi1.debug}
+
+	mimeInclude				= image/gif,image/png,image/jpeg,application/x-zip-compressed
+	mimeExclude				= application/octet-stream
+	extExclude				= exe,php,php3
+	extInclude				= *
+	maxsize					= 15728640
+	path_image				= uploads/pics
+	path_news_files			= uploads/media
 	
-		mimeInclude				= image/gif,image/png,image/jpeg,application/x-zip-compressed
-    	mimeExclude				= application/octet-stream
-		extExclude				= exe,php,php3
-    	extInclude				= *
-		maxsize					= 15728640
-		path_image				= uploads/pics
-		path_news_files			= uploads/media
-		
-		preview_image {
-			wrap				= <div class="news-list-img">|</div>
-			filePath			= uploads/pics/
-			file.maxW			= {$plugin.tt_news.listMaxW}
-		    file.maxH			= {$plugin.tt_news.listMaxH}
-		}
-		
-		preview_news_files		= TEXT
-		preview_news_files {
-			wrap				= <div class="news-list-files">|</div>
-			filePath			= uploads/media/
-			typolink.parameter	= PHP_VALUE
-			typolink.ATagParams	= class="download"
-		}
-		
-		# Still in process
-		catMenu_stdWrap.wrap	= <select name="tx_ttnews[cat]" id="tx_ttnews-cat" class="select">|</select>
-	    catMenu1_stdWrap.wrap	= <optgroup class="level1">|</optgroup>
-	    catMenu2_stdWrap.wrap	= <optgroup class="level2">|</optgroup>
-	    catMenu3_stdWrap.wrap	= <optgroup class="level3">|</optgroup>
-	    catMenu4_stdWrap.wrap	= <optgroup class="level4">|</optgroup>
+	preview_image {
+		wrap				= <div class="news-list-img">|</div>
+		filePath			= uploads/pics/
+		file.maxW			= {$plugin.tt_news.listMaxW}
+	    file.maxH			= {$plugin.tt_news.listMaxH}
 	}
-
-
-# Extends tt_news for "edit/delete record hook" ...
-	plugin.tt_news {
-		displaySingle {
-			feEdit {
-				wrap			= {$plugin.tt_news.feEdit.wrap}
-				labelWrap.wrap	= {$plugin.tt_news.feEdit.labelWrap.wrap}
-				editRecord		= {$plugin.tt_news.feEdit.editRecord}
-				editRecord {
-					wrap		= {$plugin.tt_news.feEdit.editRecord.wrap}
-					parameter	= {$plugin.tt_news.feEdit.pidFeNews}
-				}
-				delRecord		= {$plugin.tt_news.feEdit.delRecord}
-				delRecord {
-					wrap		= {$plugin.tt_news.feEdit.delRecord.wrap}
-					parameter	= {$plugin.tt_news.feEdit.pidFeNews}
-					ATagParams	= onclick="if(confirm('Wirklich löschen?')==false) return false;"
-				}
-			}
-		}
-		displayList.feEdit < .displaySingle.feEdit
-		displayLatest.feEdit < .displaySingle.feEdit
-
-		_LOCAL_LANG {
-			default {
-				tx-elementefenews-editRecord = Edit record
-				tx-elementefenews-delRecord = Delete record
-			}
-			de {
-				tx-elementefenews-editRecord = Bearbeite Eintrag
-				tx-elementefenews-delRecord = Lösche Eintrag
-			}
-		}
-
-		_CSS_DEFAULT_STYLE (
-			.tx-elementefenews-form {
-				margin-bottom: 1.5em;
-			}
-
-			.tx-elementefenews-fefunc {
-				margin: 0;
-				padding-top: 1em;
-				clear: both;
-				line-height: normal;
-				border-top: 1px solid #FFF;
-			}
-
-			.tx-elementefenews-edit {
-				float: left;
-			}
-
-			.tx-elementefenews-edit a {
-				display: block;
-				width: 16px;
-				height: 16px;
-				text-decoration: none;
-				background: transparent url(/typo3conf/ext/elemente_fenews/res/ico_edit.gif) no-repeat;
-				border: none;
-			}
-
-			.tx-elementefenews-edit em {
-				display: none;
-			}
-
-			.tx-elementefenews-del {
-				float: left;
-				margin-left: 10px;
-			}
-
-			.tx-elementefenews-del a {
-				display: block;
-				width: 16px;
-				height: 16px;
-				text-decoration: none;
-				background: transparent url(/typo3conf/ext/elemente_fenews/res/ico_del.gif) no-repeat;
-				border: none;
-			}
-
-			.tx-elementefenews-del em {
-				display: none;
-			}
-			
-			.tx-elementefenews-pi1 .htmlarea li {
-				list-style: none !important;
-			}
-		)
+	
+	preview_news_files		= TEXT
+	preview_news_files {
+		wrap				= <div class="news-list-files">|</div>
+		filePath			= uploads/media/
+		typolink.parameter	= PHP_VALUE
+		typolink.ATagParams	= class="download"
 	}
+	
+	# Still in process
+	catMenu_stdWrap.wrap	= <select name="tx_ttnews[cat]" id="tx_ttnews-cat" class="select">|</select>
+    catMenu1_stdWrap.wrap	= <optgroup class="level1">|</optgroup>
+    catMenu2_stdWrap.wrap	= <optgroup class="level2">|</optgroup>
+    catMenu3_stdWrap.wrap	= <optgroup class="level3">|</optgroup>
+    catMenu4_stdWrap.wrap	= <optgroup class="level4">|</optgroup>
+}
+
+
+# Extend tt_news for "edit/delete record hook"
+plugin.tt_news {
+	displaySingle {
+		feEdit {
+			wrap			= {$plugin.tt_news.feEdit.wrap}
+			labelWrap.wrap	= {$plugin.tt_news.feEdit.labelWrap.wrap}
+			editRecord		= {$plugin.tt_news.feEdit.editRecord}
+			editRecord {
+				wrap		= {$plugin.tt_news.feEdit.editRecord.wrap}
+				parameter	= {$plugin.tt_news.feEdit.pidFeNews}
+			}
+			delRecord		= {$plugin.tt_news.feEdit.delRecord}
+			delRecord {
+				wrap		= {$plugin.tt_news.feEdit.delRecord.wrap}
+				parameter	= {$plugin.tt_news.feEdit.pidFeNews}
+				ATagParams	= onclick="if(confirm('Wirklich löschen?')==false) return false;"
+			}
+		}
+	}
+	displayList.feEdit < .displaySingle.feEdit
+	displayLatest.feEdit < .displaySingle.feEdit
+
+	_LOCAL_LANG {
+		default {
+			tx-elementefenews-editRecord = Edit record
+			tx-elementefenews-delRecord = Delete record
+		}
+		de {
+			tx-elementefenews-editRecord = Bearbeite Eintrag
+			tx-elementefenews-delRecord = Lösche Eintrag
+		}
+	}
+}

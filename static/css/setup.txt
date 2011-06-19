@@ -1,0 +1,55 @@
+# elemente_fenews default styles for tt_news
+plugin.tt_news {
+	_CSS_DEFAULT_STYLE (
+		.tx-elementefenews-form {
+			margin-bottom: 1.5em;
+		}
+
+		.tx-elementefenews-fefunc {
+			margin: 0;
+			padding-top: 1em;
+			clear: both;
+			line-height: normal;
+			border-top: 1px solid #FFF;
+		}
+
+		.tx-elementefenews-edit {
+			float: left;
+		}
+
+		.tx-elementefenews-edit a {
+			display: block;
+			width: 16px;
+			height: 16px;
+			text-decoration: none;
+			background: transparent url(/typo3conf/ext/elemente_fenews/res/ico_edit.gif) no-repeat;
+			border: none;
+		}
+
+		.tx-elementefenews-edit em {
+			display: none;
+		}
+
+		.tx-elementefenews-del {
+			float: left;
+			margin-left: 10px;
+		}
+
+		.tx-elementefenews-del a {
+			display: block;
+			width: 16px;
+			height: 16px;
+			text-decoration: none;
+			background: transparent url(/typo3conf/ext/elemente_fenews/res/ico_del.gif) no-repeat;
+			border: none;
+		}
+
+		.tx-elementefenews-del em {
+			display: none;
+		}
+		
+		.tx-elementefenews-pi1 .htmlarea li {
+			list-style: none !important;
+		}
+	)
+}
