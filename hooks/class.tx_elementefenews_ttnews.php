@@ -56,8 +56,12 @@
 			// Wrap output
 			if ($links != '') {
 				$markerArray['###FE_FUNCTIONS###']		= $parentObject->cObj->stdWrap($links, $lConf['feEdit.']);
-			} else $markerArray['###FE_FUNCTIONS###']	= '';
-
+				$markerArray['###ELEMENTE_FENEWS###']	= $parentObject->cObj->stdWrap($links, $lConf['feEdit.']); //v1.1
+			} else {
+				$markerArray['###FE_FUNCTIONS###']		= '';
+				$markerArray['###ELEMENTE_FENEWS###']	= ''; //v1.1
+			}
+			
 			// return
 			return $markerArray;
 		}
