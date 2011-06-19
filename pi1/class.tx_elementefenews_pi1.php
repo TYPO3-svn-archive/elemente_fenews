@@ -399,24 +399,21 @@
 
 				// Captcha
 				if (!$GLOBALS['TSFE']->loginUser) {
-					$markerArray['###LABEL_CAPTCHA###']				= $this->pi_getLL('l_captcha', '', 1);
-	    			// FreeCap
 	    			if ($this->arrCaptcha['ext'] == 'sr_freecap' && is_object($this->arrCaptcha['captcha'])) {
-	     				$markerArray								= array_merge($markerArray, $this->arrCaptcha['captcha']->makeCaptcha());
-	    				$subpart									= $this->cObj->substituteSubpart($subpart, '###CAPTCHA_INSERT###', '');
-	    			// Captcha
+	    				$fieldSubpart								= $this->cObj->getSubpart($subpart, '###SR_FREECAP_INSERT###');
+						$fieldArray['###LABEL_CAPTCHA###']			= $this->pi_getLL('l_captcha');
+						$fieldArray									= array_merge($fieldArray, $this->arrCaptcha['captcha']->makeCaptcha());
+						$subpartArray['###SR_FREECAP_INSERT###']	= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
 	    			} else if ($this->arrCaptcha['ext'] == 'captcha') {
-	    				$markerArray['###CAPTCHA_TEXT###']			= $this->pi_getLL('l_captcha_text', '', 1);
-	    				$markerArray['###CAPTCHA_IMAGE###']			= $this->arrCaptcha['captcha'];
-	    				$subpart									= $this->cObj->substituteSubpart($subpart, '###SR_FREECAP_INSERT###', '');
-	    			// No captcha
-	     			} else {
-	    				$subpart									= $this->cObj->substituteSubpart($subpart, '###SR_FREECAP_INSERT###', '');
-	     				$subpart									= $this->cObj->substituteSubpart($subpart, '###CAPTCHA_INSERT###', '');
+	    				$fieldSubpart								= $this->cObj->getSubpart($subpart, '###CAPTCHA_INSERT###');
+						$fieldArray['###LABEL_CAPTCHA###']			= $this->pi_getLL('l_captcha');
+						$fieldArray['###CAPTCHA_TEXT###']			= $this->pi_getLL('l_captcha_text');
+	    				$fieldArray['###CAPTCHA_IMAGE###']			= $this->arrCaptcha['captcha'];
+						$subpartArray['###CAPTCHA_INSERT###']		= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
 	     			}
 				} else {
-					$subpart										= $this->cObj->substituteSubpart($subpart, '###SR_FREECAP_INSERT###', '');
-					$subpart										= $this->cObj->substituteSubpart($subpart, '###CAPTCHA_INSERT###', '');
+					$subpartArray['###SR_FREECAP_INSERT###']		= '';
+					$subpartArray['###CAPTCHA_INSERT###']			= '';
 				}
 	
 				// Render requird fields info
@@ -425,7 +422,7 @@
 				} else {
 					$subpart										= $this->cObj->substituteSubpart($subpart, '###REQUIRED_INFO###', '');
 				}
-	
+
 				// "Clear" all fields in template an fill in the sorted subpart array: 
 				foreach($subpartArray as $field) $sortedFields .= $field;
 				$subpartArray['###SUBPART_SORTED_FIELDS###']		= $sortedFields;
