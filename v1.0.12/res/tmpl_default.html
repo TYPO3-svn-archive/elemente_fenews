@@ -1,0 +1,216 @@
+<h1>FRONTEND NEWS TEMPLATES</h1>
+<h2>EXAMPLE</h2>
+<br />
+<br />
+<br />
+<hr />
+<br />
+<br />
+<br />
+<!-- ###TEMPLATE_FORM### begin -->
+###ADDITIONALJS_PRE###
+###ERROR_MESSAGE###
+<form name="###PREFIX_ID###-form" method="post" action="###FORM_URL###" enctype="multipart/form-data" ###ADDITIONALJS_SUBMIT###>
+	<input type="hidden" name="###PREFIX_ID###[edit]" value="###FORM_EDIT###" />
+	<fieldset class="mailform tx-elementefenews-form">
+		<legend>###LABEL_LEGEND###</legend>
+		<dl>
+			<!-- ###SUBPART_SORTED_FIELDS### begin - this subpart is filled with the enabled fields -->
+				<!-- ###TITLE### begin this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-title">###LABEL_TITLE###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[title]" id="###PREFIX_ID###-title" value="###VALUE_TITLE###" size="30" type="text" class="input" /></dd>
+				<!-- ###TITLE### end -->
+	
+				<!-- ###ARCHIVEDATE### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-archivedate">###LABEL_ARCHIVEDATE###:</label>###REQMARKER###</dt>
+				<dd>###ARCHIVEDATE_SELECT###</dd>
+				<!-- ###ARCHIVEDATE### end -->
+	
+				<!-- ###AUTHOR### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-author">###LABEL_AUTHOR###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[author]" id="###PREFIX_ID###-author" value="###VALUE_AUTHOR###" size="30" type="text" class="input" /></dd>
+				<!-- ###AUTHOR### end -->
+	
+				<!-- ###AUTHOR_EMAIL### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-author_email">###LABEL_AUTHOR_EMAIL###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[author_email]" id="###PREFIX_ID###-author_email" value="###VALUE_AUTHOR_EMAIL###" size="30" type="text" class="input" /></dd>
+				<!-- ###AUTHOR_EMAIL### end -->
+	
+				<!-- ###TX_ELEMENTEFENEWS_AUTHOR### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-author_anonymous">###LABEL_TX_ELEMENTEFENEWS_AUTHOR###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[tx_elementefenews_author]" value="0" type="hidden" />
+					<input name="###PREFIX_ID###[tx_elementefenews_author]" id="###PREFIX_ID###-author_anonymous" ###CHECKED_TX_ELEMENTEFENEWS_AUTHOR### value="1" type="checkbox" class="check" />
+				</dd>
+				<!-- ###TX_ELEMENTEFENEWS_AUTHOR### end -->
+	
+				<!-- ###CATEGORY### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-category">###LABEL_CATEGORY###:</label>###REQMARKER###</dt>
+				<dd>###CATEGORY_SELECT###</dd>
+				<!-- ###CATEGORY### end -->
+	
+				<!-- ###SHORT### begin-  this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-short">###LABEL_SHORT###:</label>###REQMARKER###</dt>
+				<dd><textarea name="###PREFIX_ID###[short]" id="###PREFIX_ID###-short" cols="70" rows="5" class="text">###VALUE_SHORT###</textarea></dd>
+				<!-- ###SHORT### end -->
+	
+				<!-- ###BODYTEXT### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-bodytext">###LABEL_BODYTEXT###:</label>###REQMARKER###</dt>
+				<dd><textarea name="###PREFIX_ID###[bodytext]" id="###PREFIX_ID###-bodytext" class="text" rows="10" cols="70">###VALUE_BODYTEXT###</textarea></dd>
+				<!-- ###BODYTEXT### end -->
+	
+				<!-- ###BODYTEXT_RTE### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-bodytext">###LABEL_BODYTEXT_RTE###:</label>###REQMARKER###</dt>
+				<dd>###RTE_ITEM###<!--<textarea name="###PREFIX_ID###[bodytext]" id="###PREFIX_ID###-bodytext" class="text" rows="10" cols="70">###VALUE_BODYTEXT_RTE###</textarea>--></dd>
+				<!-- ###BODYTEXT_RTE### end -->
+				
+				<!-- ###KEYWORDS### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-keywords">###LABEL_KEYWORDS###:</label>###REQMARKER###</dt>
+				<dd><textarea name="###PREFIX_ID###[keywords]" id="###PREFIX_ID###-keywords" cols="70" rows="5" class="text">###VALUE_KEYWORDS###</textarea></dd>
+				<!-- ###KEYWORDS### end -->
+	
+				<!-- ###CURRENT_IMAGE### begin - this subpart is removed if is not enabled! -->
+				<dt class="label">###LABEL_CURRENT_IMAGE###:</dt>
+				<dd>###VALUE_CURRENT_IMAGE###</dd>
+				<!-- ###CURRENT_IMAGE### end -->
+	
+				<!-- ###IMAGE### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-image">###LABEL_IMAGE###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[image]" id="###PREFIX_ID###-image" type="file" class="text" /></dd>
+				<!-- ###IMAGE### end -->
+	
+				<!-- ###IMAGECAPTION### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-imagecaption">###LABEL_IMAGECAPTION###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[imagecaption]" id="###PREFIX_ID###-imagecaption" type="text" class="input" /></dd>
+				<!-- ###IMAGECAPTION### end -->
+	
+				<!-- ###IMAGEALTTEXT### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-imagealttext">###LABEL_IMAGEALTTEXT###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[imagealttext]" id="###PREFIX_ID###-imagealttext" type="text" class="input" /></dd>
+				<!-- ###IMAGEALTTEXT### end -->
+	
+				<!-- ###IMAGETITLETEXT### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-imagetitletext">###LABEL_IMAGETITLETEXT###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[imagetitletext]" id="###PREFIX_ID###-imagetitletext" type="text" class="input" /></dd>
+				<!-- ###IMAGETITLETEXT### end -->
+	
+				<!-- ###LINKS### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-links">###LABEL_LINKS###:</label>###REQMARKER###</dt>
+				<dd><textarea name="###PREFIX_ID###[links]" id="###PREFIX_ID###-links" cols="70" rows="5" class="text">###VALUE_LINKS###</textarea></dd>
+				<!-- ###LINKS### end -->
+	
+				<!-- ###NEWS_FILES### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-news_files">###LABEL_NEWS_FILES###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[news_files]" id="###PREFIX_ID###-news_files" type="file" class="text" /></dd>
+				<!-- ###NEWS_FILES### end -->
+	
+				<!-- ###SR_FREECAP_INSERT### - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-freecap">###LABEL_CAPTCHA###:</label><span class="hili">*</span></dt>
+				<dd><input type="text" name="###PREFIX_ID###[captcha_response]" id="###PREFIX_ID###-freecap" value="" class="input" /></dd>
+				<dt class="label">&nbsp;</dt>
+				<dd>###SR_FREECAP_IMAGE###</dd>
+				<dt class="label">&nbsp;</dt>
+				<dd>###SR_FREECAP_NOTICE### ###SR_FREECAP_CANT_READ###<dd>
+				<!-- ###SR_FREECAP_INSERT### -->
+	
+				<!-- ###CAPTCHA_INSERT### - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-captcha">###LABEL_CAPTCHA###:<span class="hili">*</span></label></dt>
+				<dd><input type="text" name="###PREFIX_ID###[captcha_response]" id="###PREFIX_ID###-captcha" value="" class="input" /></dd>
+				<dt class="label">&nbsp;</dt>
+				<dd>###CAPTCHA_IMAGE###</dd>
+				<dt class="label">&nbsp;</dt>
+				<dd>###CAPTCHA_TEXT###<dd>
+				<!-- ###CAPTCHA_INSERT### -->
+			<!-- ###SUBPART_SORTED_FIELDS### end -->
+			
+			<dt class="label">&nbsp;</dt>
+			<dd><input type="submit" name="###PREFIX_ID###[submit]" value="###LABEL_SUBMIT###" class="submit" /> <input type="reset" name="###PREFIX_ID###[reset]" value="###LABEL_RESET###" class="reset" /></dd>
+	
+			<!-- ###REQUIRED_INFO### begin - this subpart is removed if is no field is set to required! -->
+			<dt class="label">&nbsp;</dt>
+			<dd><p>###REQUIRED_TEXT###</p></dd>
+			<!-- ###REQUIRED_INFO### end -->
+		</dl>
+	</fieldset>
+</form>
+###ADDITIONALJS_POST###
+<!-- ###TEMPLATE_FORM### end -->
+<br />
+<br />
+<br />
+<hr />
+<br />
+<br />
+<br />
+<!-- ###TEMPLATE_SELECT### begin -->
+<select name="###PREFIX_ID###[###NAME###]" id="###PREFIX_ID###-###NAME###" size="1">
+	###OPTIONS###
+</select>
+<!-- ###TEMPLATE_SELECT### end -->
+<br />
+<br />
+<br />
+<hr />
+<br />
+<br />
+<br />
+<!-- ###TEMPLATE_NOACCESS### begin -->
+<p>###NOACCESS###</p>
+<!-- ###TEMPLATE_NOACCESS### end -->
+<br />
+<br />
+<br />
+<hr />
+<br />
+<br />
+<br />
+<h3>eMail Plain Text Messages</h3>
+<!-- ###EMAIL_PLAINTEXT### begin -->
+###MAIL_SALUTATION### ###USER_NAME###,
+###MAIL_INTRODUCTION###
+
+###USER_NEWS###
+###MAIL_REGARDS###, 
+News Frontend Submitter
+<!-- ###EMAIL_PLAINTEXT### end -->
+<br />
+<br />
+<br />
+<hr />
+<br />
+<br />
+<br />
+<h2>HTML eMails</h2>
+<!-- ###EMAIL_HTMLTEXT### begin -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+<head>
+<title>News Frontend Submitter</title>
+<style type="text/css">
+body { margin: 0; padding: 0; color: #606060; font-size: 9pt; font-family: Arila, Verdana, sans-serif; }
+hr { height: 1px; color: #FFF; margin: 0 0 1em 0; padding: 0; border: 0; border-bottom: 1px #606060 solid; background: transparent; }
+table { font-size: 99%; width: 50%; border: 1px solid #606060; }
+td { color: #606060; background: #FAFAFA; border: 1px solid #FFF; border-spacing: 2px; border-collapse: collapse; }
+a { color: #B62301; text-decoration: none; }
+.wrapper { border: 1px solid #606060; margin: 10px; width: 90%; }
+.content { padding: 0px 10px; }
+.logo { text-align: right; padding-right: 20px; }
+.red { height: 5px; font-size: 0pt; line-height: 0pt; border-bottom: 1px solid #A52A2A; background: #BA2304; }
+.grey { height: 10px; font-size: 0pt; line-height: 0pt; border-top: 1px solid #606060; background: #CCC; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+	<div class="red"></div>
+	<div class="logo"><img src="/typo3conf/ext/elemente_fenews/res/logo.gif" alt="News Frontend Submitter"></div>
+	<div class="content">
+		<p>###MAIL_SALUTATION### ###USER_NAME###,<br />
+			###MAIL_INTRODUCTION###</p>
+		<p>###USER_NEWS###</p>
+		<p>###MAIL_REGARDS###,<br />
+			News Frontend Submitter</p>
+	</div>
+	<div class="grey"></div>
+</div>
+</body>
+</html>
+<!-- ###EMAIL_HTMLTEXT### end -->
