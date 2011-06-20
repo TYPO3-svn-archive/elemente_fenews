@@ -39,10 +39,6 @@ $EM_CONF[$_EXTKEY] = array(
 			'tt_news' => '2.5-',
 		),
 		'suggests' => array(
-			'dam' => '',
-			'dam_ttnews' => '',
-			'captcha' => '',
-			'sr_freecap' => ''
 		),
 		'conflicts' => array(
 		),
