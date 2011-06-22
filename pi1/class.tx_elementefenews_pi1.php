@@ -362,6 +362,19 @@
 						$this->formName								= $this->prefixId.'-form';
 						$this->PA['itemFormElName']					= $this->prefixId.'[bodytext]';
 						$this->PA['itemFormElValue']				= $this->piVars['bodytext'];
+						// Get RTE.config.FE not only in case of saving the data
+						$pageTSConfig			= $GLOBALS['TSFE']->getPagesTSconfig();
+						$RTEsetup				= $pageTSConfig['RTE.'];
+						$this->thisConfig		= $RTEsetup['default.'];
+						$this->thisConfig		= $this->thisConfig['FE.'];
+						// Other transform mode than default?
+						if (isset($RTEsetup['config.']['tt_news.']['bodytext.']['proc.']['overruleMode'])) {
+							$this->specConf = array(
+								'rte_transform' => array(
+									'parameters' => array('mode' => $RTEsetup['config.']['tt_news.']['bodytext.']['proc.']['overruleMode'])
+								)
+							);
+						}
 						$this->thePidValue							= $GLOBALS['TSFE']->id;	
 						$RTEItem = $this->RTEObj->drawRTE(
 							$this,
@@ -383,7 +396,7 @@
 						$fieldSubpart								= $this->cObj->getSubpart($subpart, '###BODYTEXT_RTE###');
 						$fieldArray['###PREFIX_ID###']				= $this->prefixId;
 						$fieldArray['###LABEL_BODYTEXT_RTE###']		= $this->pi_getLL('l_bodytext', '', 1);
-						$fieldArray['###VALUE_BODYTEXT_RTE###']		= $this->piVars['bodytext']?$this->piVars['bodytext']:'';
+##??						$fieldArray['###VALUE_BODYTEXT_RTE###']		= $this->piVars['bodytext']?$this->piVars['bodytext']:'';
 						$fieldArray['###REQMARKER###']				= $this->renderFields['bodytext']['req']==1?$this->spanReplace($this->pi_getLL('l_required', '', 1), ' class="hili"'):'';
 						$fieldArray['###RTE_ITEM###']				= $RTEItem;
 						// Complete subpart substitution
