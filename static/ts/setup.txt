@@ -50,7 +50,9 @@ plugin.tt_news {
 			delRecord {
 				wrap		= {$plugin.tt_news.feEdit.delRecord.wrap}
 				parameter	= {$plugin.tt_news.feEdit.pidFeNews}
-				ATagParams	= onclick="if(confirm('Wirklich löschen?')==false) return false;"
+				ATagParams.cObject		= TEXT
+				ATagParams.cObject.data	= LLL:EXT:elemente_fenews/pi1/locallang.xml:ts.confirmDelete
+				ATagParams.cObject.wrap	= onclick="if(confirm('|')==false) return false;"
 			}
 		}
 	}
