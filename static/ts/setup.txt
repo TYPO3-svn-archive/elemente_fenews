@@ -1,3 +1,6 @@
+includeLibs.tx_elementefenews_selectionMenu = EXT:elemente_fenews/lib/class.user_selectionMenu.php
+
+
 # elemente_fenews
 plugin.tx_elementefenews_pi1 {
 	template				= {$plugin.tx_elementefenews_pi1.template}
@@ -11,6 +14,7 @@ plugin.tx_elementefenews_pi1 {
 	path_image				= uploads/pics
 	path_news_files			= uploads/media
 	
+	# @description	Render configuration of preview image in edit mode
 	preview_image {
 		wrap				= <div class="news-list-img">|</div>
 		filePath			= uploads/pics/
@@ -18,6 +22,7 @@ plugin.tx_elementefenews_pi1 {
 	    file.maxH			= {$plugin.tt_news.listMaxH}
 	}
 	
+	# @description	Render configuration of preview news_files in edit mode 
 	preview_news_files		= TEXT
 	preview_news_files {
 		wrap				= <div class="news-list-files">|</div>
@@ -25,13 +30,242 @@ plugin.tx_elementefenews_pi1 {
 		typolink.parameter	= PHP_VALUE
 		typolink.ATagParams	= class="download"
 	}
-	
-	# Still in process
-	catMenu_stdWrap.wrap	= <select name="tx_ttnews[cat]" id="tx_ttnews-cat" class="select">|</select>
-    catMenu1_stdWrap.wrap	= <optgroup class="level1">|</optgroup>
-    catMenu2_stdWrap.wrap	= <optgroup class="level2">|</optgroup>
-    catMenu3_stdWrap.wrap	= <optgroup class="level3">|</optgroup>
-    catMenu4_stdWrap.wrap	= <optgroup class="level4">|</optgroup>
+
+	dateConfig {
+		# @description	Enable time for date2cal fields 
+		time.enable			= 1
+		# @description	Position of the hour in a datetime string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 1
+		hour				= 1
+		# @description	Position of the minute in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 2
+		min					= 2
+		# @description	Position of the day in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 3
+		day					= 3
+		# @description	Position of the month in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 4
+		month				= 4
+		# @description	Position of the year in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 5
+		year				= 5
+		# @description	Constrain date/time format as a regular expression to check user input against 
+		constrain.regex		= /(\d{2}):(\d{2}) (\d{2}).(\d{2}).(\d{4})/
+		# @description	Human readable date/time format for error message if vailidation fails 
+		constrain.format	= hh:mm dd.mm.yyyy
+	}
+
+	selectionMenu = COA
+	selectionMenu { 
+		category = HMENU
+		category {	
+			special						= userfunction
+			special.userFunc			= user_selectionMenu->getSelectionMenu
+			special.userFunc.table		= tt_news_cat
+			special.userFunc.select		= uid, title, title_lang_ol, shortcut
+			special.userFunc.where		= PHP_VALUE
+			special.userFunc.order		= title
+			special.userFunc.parent		= tt_news_cat.parent_category
+			special.userFunc.skipFirst	= 1
+			1 = TMENU
+	 		1 {
+				expAll = 1
+	    		wrap = <ul>|</ul>
+				NO {
+					wrapItemAndSub = <li>|</li>
+					stdWrap.cObject = COA
+					stdWrap.cObject {
+						10 = TEXT
+						10.value = <input type="checkbox"
+						20 = TEXT
+						20.field = uid
+						20.noTrimWrap = | id="tx_elementefenews_pi1_category_|" name="tx_elementefenews_pi1[category][]"|
+						30 = TEXT
+						30.field = uid
+						30.noTrimWrap = | value="|"|
+						30.if.isFalse.field = shortcut
+						// if shortcut is set, put it into the value for redirect after saving
+						40 = TEXT
+						40.field = uid
+						40.noTrimWrap = | value="|,{field:shortcut}"|
+						40.if.isTrue.field = shortcut 
+						40.insertData = 1
+#						50 = TEXT
+#						50.value = checked="checked"
+#						50.noTrimWrap = | ||
+#						50.if.isTrue = GPvar:elemente_fenews|category
+						60 = TEXT
+						60.value = class="ckeck"
+						60.noTrimWrap = | | |
+						70 = TEXT
+						70.value = />
+# ToDo: Language
+						80 = TEXT
+						80.field = title
+						80.noTrimWrap = | <label for="tx_elementefenews_pi1_category_{field:uid}">|</label>
+						80.insertData = 1
+					}
+					doNotLinkIt = 1
+				}
+			}
+			2 < .1
+#			3 < .1
+
+/*
+			# Example: Configuration as multi-select field
+			1 = TMENU
+	 		1 {
+				expAll = 1
+	    		wrap = <select name="tx_elementefenews_pi1[category][]" id="tx_elementefenews_pi1_category" size="10" class="select" multiple="multiple">|</select>
+				NO {
+					stdWrap.cObject = COA
+					stdWrap.cObject {
+						10 = TEXT
+						10.value = <option
+						20 = TEXT
+						20.field = uid
+						20.noTrimWrap = | value="|"|
+						20.if.isFalse.field = shortcut
+						// if shortcut is set, put it into the value for redirect after saving
+						30 = TEXT
+						30.field = uid
+						30.noTrimWrap = | value="|,{field:shortcut}"|
+						30.if.isTrue.field = shortcut 
+						30.insertData = 1
+#						40 = TEXT
+#						40.value = checked="checked"
+#						40.noTrimWrap = | ||
+#						40.if.isTrue = GPvar:elemente_fenews|category
+						50 = TEXT
+						50.field = title
+						50.wrap = >|</option>
+					}
+					doNotLinkIt = 1
+				}
+			}
+			2 < .1
+			2.wrap = <optgroup>|</optgroup>
+#			3 < .1
+#			3.wrap = <optgroup>|</optgroup>
+*/
+		}
+		related = HMENU
+		related {
+			special						= userfunction
+			special.userFunc			= user_selectionMenu->getSelectionMenu
+			special.userFunc.table		= tt_news
+			special.userFunc.select		= uid, title
+			special.userFunc.where		= pid IN ({$plugin.tx_elementefenews_pi1.related.pid})
+			special.userFunc.order		= title
+			special.userFunc.parent		= 
+			special.userFunc.skipFirst	= 0
+			1 = TMENU
+	 		1 {
+				expAll = 0
+				wrap = <select name="tx_elementefenews_pi1[related][]" id="tx_elementefenews_pi1_related" size="5" class="select" multiple="multiple">|</select>
+				NO {
+					stdWrap.cObject = COA
+					stdWrap.cObject {
+						10 = TEXT
+						10.value = <option
+						20 = TEXT
+						20.field = uid
+						20.noTrimWrap = | value="|"|
+#						30 = TEXT
+#						30.value = checked="checked"
+#						30.noTrimWrap = | ||
+#						30.if.isTrue = GPvar:elemente_fenews|related
+						40 = TEXT
+						40.field = title
+						40.wrap = >|</option>
+					}
+					doNotLinkIt = 1
+				}
+			}
+		}
+		fe_group = HMENU
+		fe_group {
+			special						= userfunction
+			special.userFunc			= user_selectionMenu->getSelectionMenu
+			special.userFunc.table		= fe_groups
+			special.userFunc.select		= uid, title
+			special.userFunc.where		= pid IN ({$plugin.tx_elementefenews_pi1.fe_group.pid})
+			special.userFunc.order		= title
+			special.userFunc.parent		= 
+			special.userFunc.skipFirst	= 0
+			1 = TMENU
+	 		1 {
+				expAll = 1
+	    		wrap = <ul>|</ul>
+				NO {
+					wrapItemAndSub = <li>|</li>
+					stdWrap.cObject = COA
+					stdWrap.cObject {
+						10 = TEXT
+						10.value = <input type="checkbox"
+						20 = TEXT
+						20.field = uid
+						20.noTrimWrap = | id="tx_elementefenews_pi1_fe_group_|" name="tx_elementefenews_pi1[fe_group][]"|
+						30 = TEXT
+						30.field = uid
+						30.noTrimWrap = | value="|"|
+						40 = TEXT
+						40.value = checked="checked"
+						40.noTrimWrap = | ||
+						40.if {
+							value.field = uid
+						 	equals.data = GPvar:elemente_fenews|fe_group|
+						}
+						50 = TEXT
+						50.value = class="ckeck"
+						50.noTrimWrap = | | |
+						60 = TEXT
+						60.value = />
+						70 = TEXT
+						70.field = title
+						70.noTrimWrap = | <label for="tx_elementefenews_pi1_fe_group_{field:uid}">|</label>
+						70.insertData = 1
+					}
+					doNotLinkIt = 1
+				}
+			}
+		}
+		sys_language_uid = HMENU
+		sys_language_uid {
+			special						= userfunction
+			special.userFunc			= user_selectionMenu->getSelectionMenu
+			special.userFunc.table		= sys_language
+			special.userFunc.select		= uid, title
+			special.userFunc.where		= 1=1
+			special.userFunc.order		= title
+			special.userFunc.parent		= 
+			special.userFunc.skipFirst	= 0
+			1 = TMENU
+	 		1 {
+				expAll = 0
+	    		wrap (
+					<select name="tx_elementefenews_pi1[sys_language_uid]" id="tx_elementefenews_pi1_sys_language_uid" size="1" class="select">
+							<option value="">{LLL:EXT:elemente_fenews/pi1/locallang.xml:form_select}</option>
+							<option value="-1">{LLL:EXT:elemente_fenews/pi1/locallang.xml:form_sys_language_all}</option>
+						|
+					</select>
+				)
+				NO {
+					stdWrap.cObject = COA
+					stdWrap.cObject {
+						10 = TEXT
+						10.value = <option
+						20 = TEXT
+						20.field = uid
+						20.noTrimWrap = | value="|"|
+#						30 = TEXT
+#						30.value = checked="checked"
+#						30.noTrimWrap = | ||
+#						30.if.isTrue = GPvar:elemente_fenews|related
+						40 = TEXT
+						40.field = title
+						40.wrap = >|</option>
+					}
+					doNotLinkIt = 1
+				}
+			}
+		}
+	}
 }
 
 
@@ -51,7 +285,7 @@ plugin.tt_news {
 				wrap		= {$plugin.tt_news.feEdit.delRecord.wrap}
 				parameter	= {$plugin.tt_news.feEdit.pidFeNews}
 				ATagParams.cObject		= TEXT
-				ATagParams.cObject.data	= LLL:EXT:elemente_fenews/pi1/locallang.xml:ts.confirmDelete
+				ATagParams.cObject.data	= LLL:EXT:elemente_fenews/pi1/locallang.xml:l_confirm_delete
 				ATagParams.cObject.wrap	= onclick="if(confirm('|')==false) return false;"
 			}
 		}

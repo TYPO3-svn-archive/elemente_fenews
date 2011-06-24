@@ -46,6 +46,8 @@
 			<label index="l_error_file_ext">The file of field ###FIELD### has a not allowed file extension. Allowed extensions are: ###EXT###.</label>
 			<label index="l_error_file_size">The file of field ###FIELD### filesize is bigger than allowed. The max. allowed filesize is: ###SIZE###.</label>
 			
+			<label index="form_sys_language_all">All</label>
+			<label index="l_confirm_delete">Are you sure you want to delete this record?</label>
 			<label index="l_no_auto_pb">No automatic pagebreaks</label>
             <label index="l_datetime">Date/Time</label>
             <label index="l_sys_language_uid">Language</label>
@@ -53,7 +55,8 @@
             <label index="l_starttime">Start</label>
             <label index="l_endtime">Stop</label>
             <label index="l_fe_group">Access</label>
-            <label index="ts.confirmDelete">Are you sure you want to delete this record?</label>
+            <label index="l_error_date">Field ###FIELD### must contain a vail date format (###FORMAT###).</label>
+            
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="form_legend">Neue Nachricht erstellen</label>
@@ -89,13 +92,15 @@
 			<label index="l_error_noaccess">Sie haben nicht die erforderlichen Rechte, um diesen Datensatz bearbeiten zu dürfen.</label>
 			<label index="l_error_message">Eingabefehler!</label>
 			<label index="l_error_field">Bitte füllen Sie das Feld ###FIELD### aus.</label>
-			<label index="l_error_email">Das Feld ###FIELD### muss eine gültige Mail-Adresse sein.</label>
+			<label index="l_error_email">Das Feld ###FIELD### muss eine gültige Mail-Adresse beinhalten.</label>
 			<label index="l_error_archivedate">Das Feld ###FIELD### muss ein zukünftiges Datum enthalten.</label>
 			<label index="l_error_captcha">Die Datei des Feldes ###FIELD### ist nicht identisch mit dem Wort, welches im Bild gezeigt wird.</label>
 			<label index="l_error_file_mime">Die Datei des Feldes ###FIELD### ist nicht vom erlaubten Typ. Erlaubte Dateitypen sind: ###MIME###.</label>
 			<label index="l_error_file_ext">Die Datei des Feldes ###FIELD### hat eine nicht erlaubte Dateiendung. Erlaubte Endungen sind: ###EXT###.</label>
 			<label index="l_error_file_size">Die Datei des Feldes ###FIELD### ist größer, als maximal erlaubt. Die maximale Dateigröße beträgt: ###SIZE###.</label>
 			
+			<label index="form_sys_language_all">All</label>
+			<label index="l_confirm_delete">Diesen Datensatz tatsächlich löschen?</label>
 			<label index="l_no_auto_pb">Keine Seitenumbrüche</label>
             <label index="l_datetime">Datum/Zeit</label>
             <label index="l_sys_language_uid">Sprache</label>
@@ -103,7 +108,7 @@
             <label index="l_starttime">Start</label>
             <label index="l_endtime">Stop</label>
             <label index="l_fe_group">Zugriff</label>
-            <label index="ts.confirmDelete">Diesen Datensatz tatsächlich löschen?</label>
+            <label index="l_error_date">Das Feld ###FIELD### muss ein gültiges Datum (###FORMAT###) beinhalten.</label>
 		</languageKey>
 		<languageKey index="fr" type="array">
 			<label index="form_legend">Créer une nouvelle Actualité</label>
@@ -144,15 +149,16 @@
 			<label index="l_error_file_mime">Le type du fichier du champ ###FIELD### n'est pas autorisé . Les types de fichiers autorisés sont: ###MIME###.</label>
 			<label index="l_error_file_ext">L'extension du fichier du champ ###FIELD###  n'est pas autorisée. Les extension de fichier autorisées sont: ###EXT###.</label>
 			<label index="l_error_file_size">La taille du fichier du champ ###FIELD### est superieur à la taille autorisée. La taille maximum de fichier autorisée est: ###SIZE###.</label>
-			
-			<label index="l_no_auto_pb">No automatic pagebreaks</label>
-            <label index="l_datetime">Date/Heure</label>
+
+            <label index="form_sys_language_all">All</label>
+			<label index="l_confirm_delete">Êtes-vous sûr de vouloir supprimer cet élément?</label>
+			<label index="l_datetime">Date/Heure</label>
             <label index="l_sys_language_uid">Langue</label>
             <label index="l_related">Nouvelles en relations</label>
             <label index="l_starttime">Lancement</label>
             <label index="l_endtime">Arrêt</label>
             <label index="l_fe_group">Accès</label>
-            <label index="ts.confirmDelete">Êtes-vous sûr de vouloir supprimer cet élément ?</label>
+            <label index="l_error_date">Field ###FIELD### must contain a vail date format (###FORMAT###).</label>
 		</languageKey>
 	</data>
 </T3locallang>

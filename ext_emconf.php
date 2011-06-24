@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'Frontend News',
-	'description' => 'Frontend news submitter with RTE support (htmlArea RTE) and upload capabilities. Supports CAPTCHA (captcha, sr_freecap) for none access protected sites and DAM references (dam_ttnews) for image and file upload.',
+	'description' => 'Frontend news submitter with RTE support (htmlArea RTE) and upload capabilities. Supports CAPTCHA (captcha, sr_freecap), DAM references (dam_ttnews) and date selector (date2cal).',
 	'category' => 'plugin',
 	'author' => 'Andre Steiling',
 	'author_email' => 'steiling@elemente.ms',
@@ -30,13 +30,13 @@ $EM_CONF[$_EXTKEY] = array(
 	'clearCacheOnLoad' => 0,
 	'lockType' => '',
 	'version' => '1.1pre',
-	'TYPO3_version' => '4.4.0-',
+	'TYPO3_version' => '4.5.0-',
 	'PHP_version' => '5.2-',
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '4.4.0-',
+			'typo3' => '4.5.0-',
 			'php' => '5.2.0-',
-			'tt_news' => '2.5-',
+			'tt_news' => '3.0-',
 		),
 		'suggests' => array(
 		),

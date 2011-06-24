@@ -1,12 +1,12 @@
 # Extends tt_news for "edit/delete record hook" ...
 	plugin.tt_news {
-		# cat=plugin.tt_news/links/20; type=text; label= Starting Point: The PID of the page including the plugin "Frontend News" (needed for "edit record").
+		# cat=plugin.tt_news/links/20; type=text; label= pidFeNews: Page id which includes the plugin "Frontend News".
   		feEdit.pidFeNews	= 
 
-		# cat=plugin.tt_news/enable/20; type=int+; label= Edit record: Enable marker "edit record" for extension "Frontend News".
+		# cat=plugin.tt_news/enable/20; type=int+; label= editRecord: Enable "edit record" feature for extension "Frontend News".
 		feEdit.editRecord	= 1
 
-		# cat=plugin.tt_news/enable/21; type=int+; label= Delete record: Enable marker "delete record" for extension "Frontend News".
+		# cat=plugin.tt_news/enable/21; type=int+; label= delRecord: Enable "delete record" feature for extension "Frontend News".
 		feEdit.delRecord	= 1
 
 		feEdit {
@@ -20,9 +20,15 @@
 	
 # elemente_fenews
 	plugin.tx_elementefenews_pi1 {
-		# cat= plugin.tx_elementefenews_pi1//; type= string; label= Template path: Path to the template file.
+		# cat= plugin.tx_elementefenews_pi1//; type= string; label= template: Path to the template file.
 		template = EXT:elemente_fenews/res/tmpl_default.html
 		
 		# cat=plugin.tx_elementefenews_pi1//; type= int+; label= Debug mode: Enable extension "Frontend News" to store some log data (requires an extension such as devlog).
 		debug = 0
+
+		# cat=plugin.tx_elementefenews_pi1//; type=text; label= fe_group.pid: Comma separated list of folder id's containing which contain frontend usergroup records.
+		fe_group.pid =
+
+		# cat=plugin.tx_elementefenews_pi1//; type=text; label= related.pid: Comma separated list of folder id's containing which contain news records.
+		related.pid =
 	}

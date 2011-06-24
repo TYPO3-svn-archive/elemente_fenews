@@ -39,7 +39,6 @@
 		public $extKey        = 'elemente_fenews';	// The extension key.
 		public $pi_checkCHash = true;
 
-
 		// Start adding fields for the RTE API
 		public $RTEObj;
 		public $docLarge				= 0;
@@ -64,10 +63,13 @@
 				'parameters' => array('mode' => 'ts_css')
 			)
 		);
-		public $thisConfig				= array();
-		public $RTEtypeVal				= 'text';
+		public $thisConfig			= array();
+		public $RTEtypeVal			= 'text';
 		public $thePidValue;		
 		// End adding fields for the RTE API
+		
+		// Date2Cal
+		public $JSCalendar;
 
 
 		/**
@@ -77,7 +79,7 @@
 		 *	@param		array		$conf: The Plugin configuration
 		 *	@return		The content that is displayed on the website
 		 */
-		function main($content, $conf) {
+		public function main($content, $conf) {
 			$this->conf = $conf;
 			$this->pi_setPiVarDefaults();
 			$this->pi_loadLL();
@@ -91,9 +93,7 @@
 			// Category settings
 			$this->categoryDefault	 		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryDefault', 'catConfig');
 			$this->categorySelection 		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categorySelection', 'catConfig');
-			$this->categoryMultiSelection	= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryMultiSelection', 'catConfig');
 			$this->categoryShortcutStorage	= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryShortcutStorage', 'catConfig');
-			$this->categoryOrdering			= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'categoryOrdering', 'catConfig');
 			
 			// Storage PID
 			$this->storagePID				= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'storagePID', 'baseConfig');
@@ -117,21 +117,28 @@
 			$requiredFields					= $requiredFields?t3lib_div::trimExplode(',', $requiredFields):t3lib_div::trimExplode(',', 'title,author,author_email,bodytext');
 
 			$this->renderFields				= array(
-				'title'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'archivedate'				=> array('render' => 0, 'req' => 1, 'file' => 0, 'sort' => 0, 'htmlsp' => 0), // if archivedate is set, it has always to be filled in!
-				'author'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'author_email'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'tx_elementefenews_author'	=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'short'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'bodytext'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'keywords'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'category'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'image'						=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0, 'htmlsp' => 0),
-				'imagecaption'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'imagealttext'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'imagetitletext'			=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'links'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0),
-				'news_files'				=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0, 'htmlsp' => 0)
+				'title'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'short'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'bodytext'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'no_auto_pb'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'datetime'					=> array('render' => 0, 'req' => 1, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 1, 'sel' => 0), // if datetime is set, it has always to be filled in!
+				'archivedate'				=> array('render' => 0, 'req' => 1, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 1, 'sel' => 0), // if archivedate is set, it has always to be filled in!
+				'author'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'author_email'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'keywords'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'sys_language_uid'			=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 1),
+				'image'						=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'imagecaption'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'imagealttext'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'imagetitletext'			=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'links'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'news_files'				=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
+				'category'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 1),
+				'related'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 1),
+				'starttime'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 1, 'sel' => 0),
+				'endtime'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 1, 'sel' => 0),
+				'fe_group'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 1),
+				'tx_elementefenews_author'	=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0)
 			);
 			
 			if (is_array($renderFields)) {
@@ -162,7 +169,7 @@
 			// Select key 'sort', it will do the sorting 
 			array_multisort($arrSort['sort'], SORT_ASC, $this->renderFields); 
 
-			// Captcha
+			// Captcha support
 			$useCaptcha	= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'useCaptcha', 'fieldConfig');
 			if (t3lib_extMgm::isLoaded('sr_freecap') && $useCaptcha == 'sr_freecap' && !$GLOBALS['TSFE']->loginUser) {
 				require_once(t3lib_extMgm::extPath('sr_freecap').'pi2/class.tx_srfreecap_pi2.php');
@@ -171,6 +178,21 @@
  			} else if (t3lib_extMgm::isLoaded('captcha') && $useCaptcha == 'captcha' && !$GLOBALS['TSFE']->loginUser) {
  				$this->arrCaptcha['ext']		= 'captcha';
 				$this->arrCaptcha['captcha']	= '<img src="'.t3lib_extMgm::siteRelPath('captcha').'captcha/captcha.php" alt="" />';
+			}
+			
+			// RTE support
+			$this->enableRTE = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'enableRTE', 'fieldConfig');
+			if ($this->enableRTE == 1) {
+				require_once(t3lib_extMgm::extPath('rtehtmlarea').'pi2/class.tx_rtehtmlarea_pi2.php');
+			}
+			
+			// Date2Cal support
+			$this->enable2Cal = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'enableDate2cal', 'fieldConfig');
+			if ($this->enable2Cal == 1) {
+				require_once(t3lib_extMgm::siteRelPath('date2cal').'/src/class.jscalendar.php');
+				$this->JSCalendar = JSCalendar::getInstance();
+				$this->JSCalendar->setDateFormat($this->conf['dateConfig.']['time.']['enable']);
+				if (($jsCode = $this->JSCalendar->getMainJS()) != '') $GLOBALS['TSFE']->additionalHeaderData['powermail_date2cal'] = $jsCode;
 			}
 
 			// DAM support
@@ -201,12 +223,6 @@
 			$this->queuePublish		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'queuePublish', 'mailConfig');
 			$this->queueBeUser		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'queueBeUser', 'mailConfig');
 
-			// "Render" options
-			$this->enableRTE		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'enableRTE', 'optionsConfig');
-			if ($this->enableRTE == 1) {
-				require_once(t3lib_extMgm::extPath('rtehtmlarea').'pi2/class.tx_rtehtmlarea_pi2.php');
-			}
-
 			// "Time" options
 			$this->autoEndtime		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'autoEndtime', 'optionsConfig');
 			$this->autoArchive		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'autoArchive', 'optionsConfig');
@@ -214,7 +230,7 @@
 			// Enable FE group editing
 			$this->feeditGroup		= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'feeditGroup', 'optionsConfig');
 			
-			// Record delete mode
+			// record delete mode
 			$this->delMode			= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'delMode', 'optionsConfig');
 
 			// return
@@ -230,7 +246,7 @@
 		 *
 		 *	@return		Rendered form by "renderForm()" or void
 		 */
-		function controller() {
+		protected function controller() {
 			// Validate & save record
 			if ($this->piVars['submit']) {
 				$error = $this->validateForm();
@@ -253,7 +269,7 @@
 		 *	@param:		string		$error: piVars validation feedback returned by "checkForm()"
 		 *	@return		Rendered form based on a HTML template
 		 */
-		function renderForm($error='') {
+		protected function renderForm($error='') {
 			// Set flag/uid to differ between new/edit record mode
 			$editMode												= $this->piVars['edit']==1?$this->piVars['uid']:0;
 			
@@ -298,37 +314,44 @@
 	
 				// Render fields
 				foreach($this->renderFields as $field => $conf) {
-					$fieldUpper										= strtoupper($field);
+					$fieldUpper											= ($this->enable2Cal == 1 && $conf['d2c'] == 1) ? strtoupper($field).'_2CAL' : strtoupper($field);
 					if ($conf['render'] == 1) {
-						$fieldSubpart								= $this->cObj->getSubpart($subpart, '###'.$fieldUpper.'###');
-						$fieldArray['###PREFIX_ID###']				= $this->prefixId;
-						$fieldArray['###LABEL_'.$fieldUpper.'###']	= $this->pi_getLL('l_'.$field, '', 1);
-						$fieldArray['###VALUE_'.$fieldUpper.'###']	= $this->piVars[$field]?($conf['htmlsp']==1?htmlspecialchars($this->piVars[$field]):$this->piVars[$field]):'';
-						$fieldArray['###CHECKED_'.$fieldUpper.'###']= $this->piVars[$field]?'checked="checked"':'';
-						$fieldArray['###REQMARKER###']				= $conf['req']==1?$this->spanReplace($this->pi_getLL('l_required', '', 1), ' class="hili"'):'';
-						// Render category selector
-						if ($field == 'category') {
-							$fieldArray['###CATEGORY_SELECT###']	= $this->getCategories();
+						$fieldSubpart									= $this->cObj->getSubpart($subpart, '###'.$fieldUpper.'###');
+						$fieldArray['###PREFIX_ID###']					= $this->prefixId;
+						$fieldArray['###LABEL_'.$fieldUpper.'###']		= $this->pi_getLL('l_'.$field);
+						$fieldArray['###VALUE_'.$fieldUpper.'###']		= $this->piVars[$field]?($conf['htmlsp']==1?htmlspecialchars($this->piVars[$field]):$this->piVars[$field]):'';
+						$fieldArray['###CHECKED_'.$fieldUpper.'###']	= $this->piVars[$field]?'checked="checked"':'';
+						$fieldArray['###REQMARKER###']					= $conf['req']==1?$this->spanReplace($this->pi_getLL('l_required', '', 1), ' class="hili"'):'';
+						// date2cal integration
+						if ($this->enable2Cal == 1 && $conf['d2c'] == 1) {
+							$d2cParams = array (
+								'checkboxField' => array (
+									'name'	=> $this->prefixId.'['.$field.']',
+									'class'	=> 'jscalendar_cb check'
+								),
+								'inputField' => array (
+									'name'	=> $this->prefixId.'['.$field.']',
+									'class'	=> 'jscalendar input'
+								)
+							);
+							$this->JSCalendar->setInputField($this->prefixId.'-'.$field);
+							$fieldArray['###VALUE_'.$fieldUpper.'###']	= $this->JSCalendar->render($this->piVars[$field], $d2cParams);
 						}
-						// Render archivedate selectors
-						if ($field == 'archivedate') {
-							$fieldArray['###ARCHIVEDATE_SELECT###']	= $this->setArchivedate('adate').' '.$this->setArchivedate('amonth').' '.$this->setArchivedate('ayear');
-						}
-						// Complete subpart substitution
-						$subpartArray['###'.$fieldUpper.'###']		= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
-					} else {
-						$subpartArray['###'.$fieldUpper.'###']		= '';
+						// Render selection fields
+						if ($conf['sel'] == 1) {
+							$fieldArray['###'.$fieldUpper.'_SELECT###']	= $this->renderSelection($field);
+						}						
+						// Subpart substitution
+						$subpartArray['###'.$fieldUpper.'###']			= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
 					}
 				}
-	
+
 				// Render current image in edit mode
 				if ($this->piVars['uid'] && $this->renderFields['image']['render'] == 1) {
 					$fieldSubpart									= $this->cObj->getSubpart($subpart, '###CURRENT_IMAGE###');
 					$fieldArray['###LABEL_CURRENT_IMAGE###']		= $this->pi_getLL('l_current_image', '', 1);
 					$fieldArray['###VALUE_CURRENT_IMAGE###']		= $this->getPreviewFile($this->piVars['uid'], 'image');
 					$subpartArray['###CURRENT_IMAGE###']			= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
-				} else {
-					$subpartArray['###CURRENT_IMAGE###']			= '';
 				}
 				
 				// Render current files in edit mode
@@ -337,8 +360,6 @@
 					$fieldArray['###LABEL_CURRENT_NEWS_FILES###']	= $this->pi_getLL('l_current_news_files', '', 1);
 					$fieldArray['###VALUE_CURRENT_NEWS_FILES###']	= $this->getPreviewFile($this->piVars['uid'], 'news_files');
 					$subpartArray['###CURRENT_NEWS_FILES###']		= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
-				} else {
-					$subpartArray['###CURRENT_NEWS_FILES###']		= '';
 				}
 	
 				// loginUser?
@@ -352,7 +373,7 @@
 					$subpartArray['###ARCHIVEDATE###']				= '';
 				}
 	
-				// Enable htmlAreaRTE? (rtehtmlarea_api_manual v2.1.0)
+				// Enable htmlAreaRTE (rtehtmlarea_api_manual v2.1.0)
 				if ($this->renderFields['bodytext']['render'] == 1 && $this->enableRTE == 1) {
 					if (!$this->RTEObj) $this->RTEObj				= t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
 					if ($this->RTEObj->isAvailable()) {
@@ -395,19 +416,16 @@
 						// "Field" marker array
 						$fieldSubpart								= $this->cObj->getSubpart($subpart, '###BODYTEXT_RTE###');
 						$fieldArray['###PREFIX_ID###']				= $this->prefixId;
-						$fieldArray['###LABEL_BODYTEXT_RTE###']		= $this->pi_getLL('l_bodytext', '', 1);
-##??						$fieldArray['###VALUE_BODYTEXT_RTE###']		= $this->piVars['bodytext']?$this->piVars['bodytext']:'';
+						$fieldArray['###LABEL_BODYTEXT_RTE###']		= $this->pi_getLL('l_bodytext');
 						$fieldArray['###REQMARKER###']				= $this->renderFields['bodytext']['req']==1?$this->spanReplace($this->pi_getLL('l_required', '', 1), ' class="hili"'):'';
 						$fieldArray['###RTE_ITEM###']				= $RTEItem;
 						// Complete subpart substitution
 						$subpartArray['###BODYTEXT###']				= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
-						$subpartArray['###BODYTEXT_RTE###']			= ''; // Unset "RTE" bodytext field
 					}
 				} else {
 					$markerArray['###ADDITIONALJS_PRE###']			= '';
 					$markerArray['###ADDITIONALJS_POST###']			= '';
 					$markerArray['###ADDITIONALJS_SUBMIT###']		= '';
-					$subpartArray['###BODYTEXT_RTE###']				= ''; // Unset RTE bodytext field
 				}
 
 				// Captcha
@@ -424,20 +442,15 @@
 	    				$fieldArray['###CAPTCHA_IMAGE###']			= $this->arrCaptcha['captcha'];
 						$subpartArray['###CAPTCHA_INSERT###']		= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
 	     			}
-				} else {
-					$subpartArray['###SR_FREECAP_INSERT###']		= '';
-					$subpartArray['###CAPTCHA_INSERT###']			= '';
 				}
 	
 				// Render requird fields info
 				if ($this->requiredFields == 1 || is_array($this->arrCaptcha)) {
-					$markerArray['###REQUIRED_TEXT###']				= $this->spanReplace($this->pi_getLL('l_required_text', '', 1), ' class="hili"');
-				} else {
-					$subpart										= $this->cObj->substituteSubpart($subpart, '###REQUIRED_INFO###', '');
+					$markerArray['###REQUIRED_TEXT###']				= $this->spanReplace($this->pi_getLL('l_required_text'), ' class="hili"');
 				}
 
 				// "Clear" all fields in template an fill in the sorted subpart array: 
-				foreach($subpartArray as $field) $sortedFields .= $field;
+				foreach($subpartArray as $field) $sortedFields 		.= $field;
 				$subpartArray['###SUBPART_SORTED_FIELDS###']		= $sortedFields;
 			}
 
@@ -454,37 +467,27 @@
 		 *
 		 *	@return		A unsorted list with user feedback or void
 		 */
-		function validateForm() {
+		protected function validateForm() {
 			$error		= '';
 			// Check fields
 			foreach ($this->renderFields as $field => $conf) {
-				if ($conf['file']==0) { // Normal fields excluding archivedate!
-					if ((empty($this->piVars[$field]) || empty($this->piVars[$field][0])) && $field!='archivedate' && $conf['render']==1 && $conf['req']==1) {
+				// Normal fields
+				if ((empty($this->piVars[$field]) || !is_string($this->piVars[$field][0])) && $conf['file']==0 && $conf['render']==1 && $conf['req']==1) {
+					$error	.= '<li>'.str_replace('###FIELD###', '<strong>'.$this->pi_getLL('l_'.$field).'</strong>', $this->pi_getLL('l_error_field')).'</li>'.chr(10);
+				}
+				// Upload fields
+				if ($_FILES[$this->prefixId]['error'][$field] > 0 && $conf['file'] == 1 && $conf['render']==1 && $conf['req']==1) { 
 						$error	.= '<li>'.str_replace('###FIELD###', '<strong>'.$this->pi_getLL('l_'.$field, '', 1).'</strong>', $this->pi_getLL('l_error_field', '', 1)).'</li>'.chr(10);
-					}
-				} else { // Upload fields
-					if ($_FILES[$this->prefixId]['error'][$field] > 0 && $conf['req']==1) {
-						$error	.= '<li>'.str_replace('###FIELD###', '<strong>'.$this->pi_getLL('l_'.$field, '', 1).'</strong>', $this->pi_getLL('l_error_field', '', 1)).'</li>'.chr(10);
-					}
+				}
+				// Date fields
+				if (!empty($this->piVars[$field]) && $conf['d2c'] == 1 && !preg_match($this->conf['dateConfig.']['constrain.']['regex'], $this->piVars[$field])) {
+					$error	.= '<li>'.str_replace(array('###FIELD###','###FORMAT###'), array('<strong>'.$this->pi_getLL('l_'.$field).'</strong>','<strong>'.$this->conf['dateConfig.']['constrain.']['format'].'</strong>'), $this->pi_getLL('l_error_date')).'</li>'.chr(10);
 				}
 			}
 			// Check vaild mail
-			if (!empty($this->piVars['author_email']) && $this->renderFields['author_email']['render']==1 && $this->renderFields['author_email']['req']==1) {
+			if (is_string($this->piVars['author_email']) && $this->renderFields['author_email']['render']==1 && $this->renderFields['author_email']['req']==1) {
 				if (t3lib_div::validEmail($this->piVars['author_email']) == false) {
 					$error .= '<li>'.str_replace('###FIELD###', '<strong>'.$this->pi_getLL('l_author_email', '', 1).'</strong>', $this->pi_getLL('l_error_email', '', 1)).'</li>'.chr(10);
-				}
-			}
-			// Check ALWAYS archivedate if it is set
-			if ($this->renderFields['archivedate']['render']==1) {
-				$noDate  = 0;
-				$noDate  = empty($this->piVars['adate'])?1:0;
-				$noDate += empty($this->piVars['amonth'])?1:0;
-				$noDate += empty($this->piVars['ayear'])?1:0;
-				$tsDate	 = mktime(0, 0, 0, intval($this->piVars['amonth']), intval($this->piVars['adate']), intval($this->piVars['ayear']));
-				if ($noDate > 0) {
-					$error	.= '<li>'.str_replace('###FIELD###', '<strong>'.$this->pi_getLL('l_archivedate', '', 1).'</strong>', $this->pi_getLL('l_error_field', '', 1)).'</li>'.chr(10);
-				} else if ($tsDate <= time()) {
-					$error	.= '<li>'.str_replace('###FIELD###', '<strong>'.$this->pi_getLL('l_archivedate', '', 1).'</strong>', $this->pi_getLL('l_error_archivedate', '', 1)).'</li>'.chr(10);
 				}
 			}
 			// Check captcha
@@ -523,14 +526,14 @@
 		 *
 		 *	@return		Void (redirection to defined page)
 		 */
-		function saveForm() {
+		protected function saveForm() {
 			// New or edit record
 			$newsUID						= $this->piVars['edit']>0?intval($this->piVars['edit']):false;
 
 			// Count categories & redirect settings
 			// TODO: Recursive search for shortcut page definitions?
 			if (is_array($this->piVars['category'])) {
-				$arrCat						= t3lib_div::trimExplode('|', $this->piVars['category'][0]);
+				$arrCat						= t3lib_div::trimExplode(',', $this->piVars['category'][0]);
 				$redirectPID				= isset($arrCat[1])?$arrCat[1]:$this->redirectPID; // Redirect to the 1st category shortcut page, if set
 				$countCat					= count($this->piVars['category']);
 			} else {
@@ -540,43 +543,33 @@
 
 			// News settings
 			$arrNews						= array();
-			$arrNews['pid']					= ($this->categoryShortcutStorage == 1 && $this->categoryMultiSelection == 0 && isset($arrCat[1]))?$arrCat[1]:$this->storagePID; // Save news on category shortcut page, if set & multiSelection is off
+			$arrNews['pid']					= ($this->categoryShortcutStorage == 1 && isset($arrCat[1]))?$arrCat[1]:$this->storagePID; // Save news on category shortcut page, if set & multiSelection is off
 			$arrNews['tstamp']				= time();
 			$arrNews['crdate']				= time();
 			$arrNews['hidden']				= $this->queuePublish==1?1:0; // queuePublish?
 			$arrNews['datetime']			= time();
 			$arrNews['category']			= $countCat;
-			$arrNews['sys_language_uid']	= $this->languageUID;
-
-			// Archivedate or auto-hide / auto-archive?
-			$day							= date('j', time());
-			$month							= date('n', time());
-			$year							= date('Y', time());
-			if ($this->autoEndtime > 0) {
-				$tsNow	= mktime(0, 0, 0, $month, $day, $year);
-				$tsEnd	= $tsNow+(86400*$this->autoEndtime); // This time + days from FF
-				if ($this->autoArchive == 1) {
-					$arrNews['archivedate']	= $tsEnd;
-				} else {
-					$arrNews['endtime']		= $tsEnd;
-				}
-			} else if ($this->renderFields['archivedate']['render']==1) {
-				$arrNews['archivedate']		= mktime(0, 0, 0, intval($this->piVars['amonth']), intval($this->piVars['adate']), intval($this->piVars['ayear']));
-			}
-			
+	
 			// Unset not needed piVars & quote inputs
 			unset($this->piVars['edit']);
-			unset($this->piVars['adate']);
-			unset($this->piVars['amonth']);
-			unset($this->piVars['ayear']);
 			unset($this->piVars['submit']);
 			foreach($this->piVars as $field => $input) {
 				// Replace '\r\n' in field short
 				if ($field == 'short') {
 					$arrNews[$field] = str_replace('\r\n', chr(10), $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news'));
+				} else if ($field == 'datetime' || $field == 'archivedate' || $field == 'starttime' || $field == 'endtime') {
+					preg_match($this->conf['dateConfig.']['constrain.']['regex'], $this->piVars[$field], $matches);
+					$arrNews[$field] = mktime($matches[$this->conf['dateConfig.']['hour']], $matches[$this->conf['dateConfig.']['min']], 0, $matches[$this->conf['dateConfig.']['month']], $matches[$this->conf['dateConfig.']['day']], $matches[$this->conf['dateConfig.']['year']]);
 				} else {
 					$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news');
 				}
+			}
+
+			// Archivedate or auto-hide / auto-archive?
+			if ($this->autoEndtime > 0) {
+				$newEndTime = time() + (86400 * $this->autoEndtime); // This time + days from FF
+				if ($this->autoArchive == 1) $arrNews['archivedate'] = $newEndTime;
+					else $arrNews['endtime'] = $newEndTime;
 			}
 			
 			// loginUser?
@@ -646,7 +639,7 @@
 				$this->piVars['news_files']	= $this->arrUploads['news_files']['name']; // Put into piVars for mail content
 			}
 
-			// Links reformating
+			// Link reformating
 			if (!empty($this->piVars['links'])) {
 				$arrLinks					= t3lib_div::trimExplode('\r\n', $arrNews['links']);
 				$arrLinksLen				= count($arrLinks);
@@ -768,7 +761,7 @@
 		 *
 		 * @return		void (redirection to defined page)
 		 */
-		function deleteRecord() {
+		protected function deleteRecord() {
 			// DB: Set record to deleted
 			$GLOBALS['TYPO3_DB']->exec_UPDATEquery('tt_news', 'uid='.intval($this->piVars['uid']), array($this->delMode => 1));
 			if ($this->conf['debug'] == 1) t3lib_div::devLog('deleteRecord - dam: delete', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->UPDATEquery('tt_news', 'uid='.intval($this->piVars['uid']), array($this->delMode => 1))));
@@ -793,6 +786,74 @@
 		}
 
 
+		/**
+		 * Renders the given tt_news field by cObjGetSingle and the defined TypoScript configuration.
+		 * No HTML template is needed, pure TypoScript configuration.
+		 * 
+		 * @param	string	$field: tt_news field to render
+		 * 
+		 * @return	array
+		 */
+		protected function renderSelection($field) {
+			// Special setup for field category: Get fronten category selection 
+			if ($field == 'category') {
+				$this->conf['selectionMenu.'][$field.'.']['special.']['userFunc.']['where'] = 'uid IN ('.$this->categorySelection.')';
+			}
+			// return
+			return $this->cObj->cObjGetSingle($this->conf['selectionMenu.'][$field], $this->conf['selectionMenu.'][$field.'.']);
+		}
+
+
+
+/*		protected function renderSelection($arrConf) {
+			$tmpl					 	 		 = $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_SELECT###');
+			$options 			 	 			 = $arrConf['options'];
+
+			// Marker
+			$markerArray						 = array();
+			$markerArray['###PREFIX_ID###']		 = $this->prefixId;
+			$markerArray['###NAME###']			 = $arrConf['name'];
+			
+			// 
+			$arrFields							 = t3lib_div::trimExplode(',', $arrConf['fields']);
+			$res				 				 = $GLOBALS['TYPO3_DB']->exec_SELECTquery($arrConf['fields'], $arrConf['table'], $arrConf['where'].$this->cObj->enableFields($arrConf['table']), '', $arrConf['order']);			
+			if ($res) {
+				while (($row	 				 = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
+					$title						 = $row[$arrFields[1]];
+					$value		 				 = $row[$arrFields[0]];
+					// Exeptions for tt_news category
+					if ($this->languageUID && $arrConf['name'] == 'category') {
+						$arrLang				 = t3lib_div::trimExplode('|', $row[$arrFields[2]]);
+						$sysLang				 = $this->languageUID-1;
+						$title					 = $arrLang[$sysLang] ? $arrLang[$sysLang] : $row[$arrFields[1]];
+						// if shortcut is set, put it into the value for redirect after saving
+						$value		 			 = $row[$arrFields[3]] > 0 ? $row[$arrFields[0]].'|'.$row[$arrFields[3]] : $row[$arrFields[0]];
+						
+					}
+					// Selected values
+					$selected		 			 = '';
+					if (isset($this->piVars[$arrConf['name']])) {
+						foreach($this->piVars[$arrConf['name']] as $piValue) {
+							if ($piValue == $value) $selected = ' selected="selected"';
+						}
+					}
+					$options					.= '<option value="'.$value.'"'.$selected.'>'.$title.'</option>'.chr(10);
+				}
+				$markerArray['###SIZE###']		 = 'size="'.$arrConf['size'].'"';
+				$markerArray['###OPTIONS###']	 = $options;
+			
+
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
+
+				// return
+				return $this->cObj->substituteMarkerArray($tmpl, $markerArray);
+				
+			} else {
+				return $this->pi_getLL('l_no_record');
+			}
+		}
+*/
+
 
 		/**
 		 *	Function to validate and move the uploaded file.
@@ -801,7 +862,7 @@
 		 * @param		string		$field: Name of the upload field
 		 * @return		A unsorted list with user feedback or void
 		 */
-		function handleUpload($field) {
+		protected function handleUpload($field) {
 			// Error handling
 			$error	= '';
 			// Is a file out there?
@@ -852,7 +913,7 @@
 		 * @param		string		$file: Filename with complete path
 		 * @return		integer		UID of the DAM record
 		 */
-		function handleDAM($file) {
+		protected function handleDAM($file) {
 			// Simulate BeUser
 			$this->setBeUser();
 
@@ -883,7 +944,7 @@
 		 *
 		 *	@return		array		Array with keys "name" and "email"
 		 */
-		function getBeUser() {
+		protected function getBeUser() {
 			$res	= $GLOBALS['TYPO3_DB']->exec_SELECTquery ('realName AS name, email', 'be_users', 'uid='.intval($this->queueBeUser).$this->cObj->enableFields('be_users'));
 			$row	= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
@@ -898,7 +959,7 @@
 		 *
 		 *	@return		void
 		 */
-		function setBeUser() {
+		protected function setBeUser() {
 			global $BE_USER;
 			unset($BE_USER);
 
@@ -917,7 +978,7 @@
 		 *
 		 *	@return		void
 		 */
-		function unsetBeUser() {
+		protected function unsetBeUser() {
 			global $BE_USER;
 			unset($BE_USER);
 		}
@@ -931,7 +992,7 @@
 		 *	@param		interger	$type: 'image' oder 'news_files'
 		 *	@return		string		Thumbnail image or file link
 		 */
-		function getPreviewFile($newsUID, $type) {
+		protected function getPreviewFile($newsUID, $type) {
 			// Config
 			$damIdent	= $type == 'image' ? 'images' : 'media';
 			$lconf 		= $this->conf['preview_'.$type.'.'];
@@ -995,225 +1056,13 @@
 		 *	@param		integer		$uid: UID of fielmount
 		 *	@return		string		Filemount path
 		 */
-		function getFileMount($uid) {
+		protected function getFileMount($uid) {
 			$res	= $GLOBALS['TYPO3_DB']->exec_SELECTquery ('path, base', 'sys_filemounts', 'uid='.intval($uid).$this->cObj->enableFields('sys_filemounts'));
 			$row	= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 			$path	= $row['base']==1?'fileadmin/'.$row['path']:$row['path'];
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			// return
 			return $path;
-		}
-
-		
-		/**
-		 * Renders a news category select field based upon a subpart in the template.
-		 * TODO: Substitute hardcoded HTML by TypoScript / Flexform
-		 * TODO: Use sys_language_content oder sys_language_uid?
-		 *
-		 * @return		string		Select field
-		 */
-		function getCategories() {
-			$tmpl					 	 	 = $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_SELECT###');
-			$opts 				 	 		 = '<option value="">'.$this->pi_getLL('form_select', '', 1).'</option>';
-
-			// Marker
-			$marker							 = array();
-			$marker['###PREFIX_ID###']		 = $this->prefixId;
-			$marker['###NAME###']			 = 'category';
-				
-			// Multi selection
-			if ($this->categoryMultiSelection == 1) {
-				$arrCats				 	 = array();
-				$res	 				 	 = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid, title, title_lang_ol, shortcut', 'tt_news_cat', 'uid IN ('.$this->categorySelection.')'.$this->cObj->enableFields('tt_news_cat'), '', $this->categoryOrdering);
-				while (($row			 	 = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-					$arrCats[]			 	 = $row;
-					$subCats			 	 = $this->getSubCategories($row['uid']);
-					if (count($subCats)) {
-						$arrCats[]	 		 = $subCats;
-					}
-				}
-				$GLOBALS['TYPO3_DB']->sql_free_result($res);
-
-				// Unset $this->categorySelection, TODO: Flexform config?
-				unset($arrCats[0]);
-##				t3lib_div::devLog('getCategories', 'elemente_fenews', 0, $arrCats);
-				// Marker
-				$marker['###SIZE###']		 = 'size="15" multiple="multiple"'; // TODO: size config
-				$marker['###OPTIONS###']	 = $this->renderHirachicalCategories($arrCats);
-
-			// Single selection
-			} else {
-				$res			 			 = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid, title, title_lang_ol, shortcut', 'tt_news_cat', 'uid IN ('.$this->categorySelection.')'.$this->cObj->enableFields('tt_news_cat'), '', $this->categoryOrdering);
-				while (($row	 			 = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-					// Get translations of category titles
-#					if ($GLOBALS['TSFE']->sys_language_content) {
-					$title					 = $row['title'];
-					if ($this->languageUID) {
-						$arrCatTitle		 = t3lib_div::trimExplode('|', $row['title_lang_ol']);
-#						$sysLang			 = $GLOBALS['TSFE']->sys_language_content - 1;
-						$sysLang			 = $this->languageUID-1;
-						$title				 = $arrCatTitle[$sysLang] ? $arrCatTitle[$sysLang] : $row['title'];
-					}
-					$value		 			 = $row['shortcut']>0?$row['uid'].'|'.$row['shortcut']:$row['uid']; // if shortcut is set, put it into the value for redirect after saving the news
-#					$selected         		 = $this->piVars['category'][0]==$value?' selected="selected"':'';
-					$selected		 		 = '';
-					if (isset($this->piVars['category'])) {
-						foreach($this->piVars['category'] as $savedCat) {
-							if ($savedCat == $value) $selected = ' selected="selected"';
-						}
-					}
-					$opts					.= '<option value="'.$value.'"'.$selected.'>'.$title.'</option>'.chr(10);
-					
-				}
-				$GLOBALS['TYPO3_DB']->sql_free_result($res);
-				
-				// Marker
-				$marker['###SIZE###']		 = 'size="1"';
-				$marker['###OPTIONS###']	 = $opts;	
-			}
-			
-			// return
-			return $this->cObj->substituteMarkerArray($tmpl, $marker);
-		}
-		
-		
-		/**
-		 * Needful method adapted from extension "tt_news":
-		 * Extends a given list of categories by their subcategories.
-		 * This function returns a nested array with subcategories.
-		 *
-		 * @param	string		$catlist: list of categories which will be extended by subcategories
-		 * @return	array		All categories in a nested array
-		 */
-		function getSubCategories($catlist) {
-			$arrSubCats				= array();
-			$res					= $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid, title, title_lang_ol, shortcut', 'tt_news_cat', 'tt_news_cat.parent_category IN ('.$catlist.')'.$this->cObj->enableFields('tt_news_cat'), '', $this->categoryOrdering);
-			while (($row			= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-				$cc++;
-				if ($cc > 10000) {
-					$GLOBALS['TT']->setTSlogMessage('elemente_fenews: one or more recursive categories where found');
-					return $arrSubCats;
-				}
-				$subCats			= $this->getSubCategories($row['uid']);
-				// Seperate levels
-				// TODO: Better solutions to seperate levels?
-				$subs				= array();
-				if (is_array($subCats)) {
-					$subs['begin']	= 'begin';
-					array_push($subs, $subCats);
-					$subs['end']	= 'end';	
-				}
-				$arrSubCats[]		= is_array($subCats)?array_merge($row, $subs):'';
-			}
-			$GLOBALS['TYPO3_DB']->sql_free_result($res);
-			// return
-			return $arrSubCats;
-		}
-		
-		
-		/**
-		 * Needful method adapted from extension "tt_news":
-		 * This function calls itself recursively to convert the nested category array to HTML.
-		 * TODO: Substitute hardcoded HTML by TypoScript / Flexform
-		 * TODO: Use sys_language_content oder sys_language_uid?
-		 *
-		 * @param	array		$array_in: the nested categories
-		 * @param	integer		$level: level counter
-		 * @return	string		HTML for the category menu
-		 */
-		function renderHirachicalCategories($array_in, $level=0) {
-			$titlefield	= 'title';
-			if (is_array($array_in)) {
-				$result = '';
-				foreach ($array_in as $key => $val) {
-					if ($key == $titlefield || is_array($array_in[$key])) {
-						// Für die optgroups ...
-						if ($key == 'begin' && $level == 2) {
-							$catMenuLevel_stdWrap = explode('|||', $this->cObj->stdWrap('|||', $this->conf['catMenu'.$level.'_stdWrap.']));
-							$result .= $catMenuLevel_stdWrap[0];
-						}
-						if (is_array($array_in[$key])) {
-							$result				 .= $this->renderHirachicalCategories($array_in[$key], $level+1);
-							
-						} elseif ($key == $titlefield) {
-							// Get translations of category titles
-#							if ($GLOBALS['TSFE']->sys_language_content && $array_in['uid']) {
-							if ($this->languageUID && $array_in['uid']) {
-								$arrCatTitle	 = t3lib_div::trimExplode('|', $array_in['title_lang_ol']);
-#								$syslang		 = $GLOBALS['TSFE']->sys_language_content - 1;
-								$sysLang		 = $this->languageUID-1;
-								$val			 = $arrCatTitle[$syslang] ? $arrCatTitle[$syslang] : $val;
-							}
-							if ($array_in['uid']) {
-								$value			 = $array_in['shortcut']>0?$array_in['uid'].'|'.$array_in['shortcut']:$array_in['uid']; // if shortcut is set, put it into the value for redirect after saving the news
-								// Selected values
-								$selected		 = '';
-								if (isset($this->piVars['category'])) {
-									foreach($this->piVars['category'] as $savedCat) {
-										if ($savedCat == $value) $selected = ' selected="selected"';
-									}
-								}
-								$result			.= '<option value="'.$value.'"'.$selected.'>'.$val.'</option>'.chr(10);			
-							}	
-						}
-						// Für die optgroups ...
-						if ($key == 'end' && $level == 2) {
-							$result .= $catMenuLevel_stdWrap[1];
-						}
-					}
-				}
-			}	
-			// return
-			return $result;
-		}
-
-
-		/**
-		 *	Renders a date select field based upon a subpart in the template.
-		 *	Possible outputs are: "adate", "amonth", "ayear". In first line this
-		 *	function is needed for output the archivedate field.
-		 *	TODO: Substitute hardcoded HTML by TypoScript / Flexform
-		 *
-		 *	@param		string		$pos: "Date position"
-		 *	@return		string		Select field
-		 */
-		function setArchivedate($pos) {
-			// Subpart
-			$tmpl = $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_SELECT###');
-			// Options
-			switch($pos) {
-				case 'adate':
-					$opts = '<option value=""></option>';
-					for($x=1; $x<=31; $x++) {
-						$selected	 = $this->piVars['adate']==sprintf('%02d', $x)?' selected="selected"':'';
-						$opts		.= '<option value="'.sprintf('%02d', $x).'"'.$selected.'>'.sprintf('%02d', $x).'</option>'.chr(10);
-					}
-				break;
-				case 'amonth':
-					$opts = '<option value=""></option>';
-					for($x=1; $x<=12; $x++) {
-						$year	= date('Y', time());
-						$month	= mktime(0, 0, 0, $x, 1, $year);
-						$selected	 = $this->piVars['amonth']==sprintf('%02d', $x)?' selected="selected"':'';
-						$opts		.= '<option value="'.sprintf('%02d', $x).'"'.$selected.'>'.strftime('%B', $month).'</option>'.chr(10);
-					}
-				break;
-				case 'ayear':
-					$opts = '<option value=""></option>';
-					$year = date('Y', time())-1;
-					for($x=1; $x<=3; $x++) {
-						$selected	 = $this->piVars['ayear']==($year+$x)?' selected="selected"':'';
-						$opts		.= '<option value="'.($year+$x).'"'.$selected.'>'.($year+$x).'</option>'.chr(10);
-					}
-				break;
-			}
-			// Marker
-			$marker							= array();
-			$marker['###PREFIX_ID###']		= $this->prefixId;
-			$marker['###NAME###']			= $pos;
-			$marker['###OPTIONS###']		= $opts;
-			// return
-			return $this->cObj->substituteMarkerArray($tmpl, $marker);
 		}
 
 		
@@ -1318,7 +1167,7 @@
 		 *	@param		string		$strong=0: Use <strong> instead of <span>
 		 *	@return		Formated string
 		 */
-		function spanReplace($str, $class='', $strong=0) {
+		public function spanReplace($str, $class='', $strong=0) {
 			if ($strong == 0) {
 				return str_replace(array('###SPAN_BEGIN###', '###SPAN_END###'), array('<span'.$class.'>', '</span>'), $str);
 			} else {
@@ -1335,7 +1184,7 @@
 		 *	@param		integer		Precision of post decimal positions, default: 2
 		 *	@return		Calculated human readable measure
 		 */
-		function setBytesToHuman($bytes, $precision=2) {
+		public function setBytesToHuman($bytes, $precision=2) {
 			if (!is_numeric($bytes) || $bytes < 0) {
 				return false;
 			}
@@ -1365,33 +1214,53 @@
 
 
 		/**
-		 *	Needful method adapted from extension "ve_guestbook":
+		 *	Method adapted from extension "ve_guestbook":
 		 *	Preg_match URL validation.
 		 *
 		 * @param	string		$url: URL to validate
 		 * @return	boolean		Success: valid / not valid
 		 */
-		function isURL($url) {
+		public function isURL($url) {
 			if (!preg_match('#^http\\:\\/\\/[a-z0-9\-]+\.([a-z0-9\-]+\.)?[a-z]+#i', $url)) {
 				return false;
 			} else {
 				return true;
 			}
 		}
-
+		
 		
 		/**
-		 *	DEPRECATED: Helpful function when updating or deleting news records:
-		 *	Clears the page cache of page where the news records are related to.
+		 * Method adapted from extension "date2cal":
+		 * Sets the date format of datetime fields. If the format parameter isn't set, then
+		 * the default TYPO3 settings are used instead ($GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy']).
 		 *
-		 *	@param		integer		Target page uid
-		 *	@return		void
+		 * @param bool $time set this option if you want to define the time
+		 * @param string $format the date format which should be used (optional)
+		 * @return void
 		 */
-		function clearPageCache($pid) {
-			$TCE		= t3lib_div::makeInstance('t3lib_TCEmain');
-			$TCE->admin	= 1;
-			$TCE->clear_cacheCmd('pages');
-			$TCE->clear_cacheCmd($pid);
+		public function __setDateFormat($time = false, $format = '') {
+			if ($format == '') {
+				$format = preg_replace(
+					'/([a-z])/i',
+					'%\1',
+					$GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy']
+				);
+	
+				# default format if ddmmyy option is empty
+				$format = ($format !== '' ? $format : '%d-%m-%Y');
+	
+				# we need to switch month and day for the USdateFormat
+				if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['USdateFormat']) {
+					# contains a small hack with a temporary replacement %#
+					$format = str_replace(array('%d', '%m', '%#'), array('%#', '%d', '%m'), $format);
+				}
+			}
+			$jsDate = ($time ? '%H:%M ' : '') . $format;
+	
+			$value = ($time ? 'true' : 'false');
+			$this->setConfigOption('showsTime', $value, true);
+			$this->setConfigOption('time24', $value, true);
+			$this->setConfigOption('ifFormat', $jsDate);
 		}
 
 

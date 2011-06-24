@@ -21,33 +21,6 @@
 				<dd><input name="###PREFIX_ID###[title]" id="###PREFIX_ID###-title" value="###VALUE_TITLE###" size="30" type="text" class="input" /></dd>
 				<!-- ###TITLE### end -->
 	
-				<!-- ###ARCHIVEDATE### begin - this subpart is removed if is not enabled! -->
-				<dt class="label"><label for="###PREFIX_ID###-archivedate">###LABEL_ARCHIVEDATE###:</label>###REQMARKER###</dt>
-				<dd>###ARCHIVEDATE_SELECT###</dd>
-				<!-- ###ARCHIVEDATE### end -->
-	
-				<!-- ###AUTHOR### begin - this subpart is removed if is not enabled! -->
-				<dt class="label"><label for="###PREFIX_ID###-author">###LABEL_AUTHOR###:</label>###REQMARKER###</dt>
-				<dd><input name="###PREFIX_ID###[author]" id="###PREFIX_ID###-author" value="###VALUE_AUTHOR###" size="30" type="text" class="input" /></dd>
-				<!-- ###AUTHOR### end -->
-	
-				<!-- ###AUTHOR_EMAIL### begin - this subpart is removed if is not enabled! -->
-				<dt class="label"><label for="###PREFIX_ID###-author_email">###LABEL_AUTHOR_EMAIL###:</label>###REQMARKER###</dt>
-				<dd><input name="###PREFIX_ID###[author_email]" id="###PREFIX_ID###-author_email" value="###VALUE_AUTHOR_EMAIL###" size="30" type="text" class="input" /></dd>
-				<!-- ###AUTHOR_EMAIL### end -->
-	
-				<!-- ###TX_ELEMENTEFENEWS_AUTHOR### begin - this subpart is removed if is not enabled! -->
-				<dt class="label"><label for="###PREFIX_ID###-author_anonymous">###LABEL_TX_ELEMENTEFENEWS_AUTHOR###:</label>###REQMARKER###</dt>
-				<dd><input name="###PREFIX_ID###[tx_elementefenews_author]" value="0" type="hidden" />
-					<input name="###PREFIX_ID###[tx_elementefenews_author]" id="###PREFIX_ID###-author_anonymous" ###CHECKED_TX_ELEMENTEFENEWS_AUTHOR### value="1" type="checkbox" class="check" />
-				</dd>
-				<!-- ###TX_ELEMENTEFENEWS_AUTHOR### end -->
-	
-				<!-- ###CATEGORY### begin - this subpart is removed if is not enabled! -->
-				<dt class="label"><label for="###PREFIX_ID###-category">###LABEL_CATEGORY###:</label>###REQMARKER###</dt>
-				<dd>###CATEGORY_SELECT###</dd>
-				<!-- ###CATEGORY### end -->
-	
 				<!-- ###SHORT### begin-  this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-short">###LABEL_SHORT###:</label>###REQMARKER###</dt>
 				<dd><textarea name="###PREFIX_ID###[short]" id="###PREFIX_ID###-short" cols="70" rows="5" class="text">###VALUE_SHORT###</textarea></dd>
@@ -63,11 +36,51 @@
 				<dd>###RTE_ITEM###</dd>
 				<!-- ###BODYTEXT_RTE### end -->
 				
+				<!-- ###NO_AUTO_PB### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-no_auto_pb">###LABEL_NO_AUTO_PB###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[no_auto_pb]" id="###PREFIX_ID###-no_auto_pb" ###CHECKED_NO_AUTO_PB### value="1" type="checkbox" class="check" /></dd>
+				<!-- ###NO_AUTO_PB### end -->
+	
+				<!-- ###DATETIME### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-datetime">###LABEL_DATETIME###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[datetime]" id="###PREFIX_ID###-datetime" value="###VALUE_DATETIME###" size="30" type="text" class="input" /></dd>
+				<!-- ###DATETIME### end -->
+				
+				<!-- ###DATETIME_2CAL### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-datetime_hr">###LABEL_DATETIME_2CAL###:</label>###REQMARKER###</dt>
+				<dd>###VALUE_DATETIME_2CAL###</dd>
+				<!-- ###DATETIME_2CAL### end -->
+	
+				<!-- ###ARCHIVEDATE### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-archivedate">###LABEL_ARCHIVEDATE###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[archivedate]" id="###PREFIX_ID###-archivedate" value="###VALUE_ARCHIVEDATE###" size="30" type="text" class="input" /></dd>
+				<!-- ###ARCHIVEDATE### end -->
+				
+				<!-- ###ARCHIVEDATE_2CAL### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-archivedate_hr">###LABEL_ARCHIVEDATE_2CAL###:</label>###REQMARKER###</dt>
+				<dd>###VALUE_ARCHIVEDATE_2CAL###</dd>
+				<!-- ###ARCHIVEDATE_2CAL### end -->
+	
+				<!-- ###AUTHOR### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-author">###LABEL_AUTHOR###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[author]" id="###PREFIX_ID###-author" value="###VALUE_AUTHOR###" size="30" type="text" class="input" /></dd>
+				<!-- ###AUTHOR### end -->
+	
+				<!-- ###AUTHOR_EMAIL### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-author_email">###LABEL_AUTHOR_EMAIL###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[author_email]" id="###PREFIX_ID###-author_email" value="###VALUE_AUTHOR_EMAIL###" size="30" type="text" class="input" /></dd>
+				<!-- ###AUTHOR_EMAIL### end -->
+	
 				<!-- ###KEYWORDS### begin - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-keywords">###LABEL_KEYWORDS###:</label>###REQMARKER###</dt>
 				<dd><textarea name="###PREFIX_ID###[keywords]" id="###PREFIX_ID###-keywords" cols="70" rows="5" class="text">###VALUE_KEYWORDS###</textarea></dd>
 				<!-- ###KEYWORDS### end -->
-	
+				
+				<!-- ###SYS_LANGUAGE_UID### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-sys_language_uid">###LABEL_SYS_LANGUAGE_UID###:</label>###REQMARKER###</dt>
+				<dd>###SYS_LANGUAGE_UID_SELECT###</dd>
+				<!-- ###SYS_LANGUAGE_UID### end -->
+				
 				<!-- ###CURRENT_IMAGE### begin - this subpart is removed if is not enabled! -->
 				<dt class="label">###LABEL_CURRENT_IMAGE###:</dt>
 				<dd>###VALUE_CURRENT_IMAGE###</dd>
@@ -77,7 +90,7 @@
 				<dt class="label"><label for="###PREFIX_ID###-image">###LABEL_IMAGE###:</label>###REQMARKER###</dt>
 				<dd><input name="###PREFIX_ID###[image]" id="###PREFIX_ID###-image" type="file" class="text" /></dd>
 				<!-- ###IMAGE### end -->
-	
+				
 				<!-- ###IMAGECAPTION### begin - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-imagecaption">###LABEL_IMAGECAPTION###:</label>###REQMARKER###</dt>
 				<dd><input name="###PREFIX_ID###[imagecaption]" id="###PREFIX_ID###-imagecaption" value="###VALUE_IMAGECAPTION###" type="text" class="input" /></dd>
@@ -98,16 +111,58 @@
 				<dd><textarea name="###PREFIX_ID###[links]" id="###PREFIX_ID###-links" cols="70" rows="5" class="text">###VALUE_LINKS###</textarea></dd>
 				<!-- ###LINKS### end -->
 	
-				<!-- ###NEWS_FILES### begin - this subpart is removed if is not enabled! -->
-				<dt class="label"><label for="###PREFIX_ID###-news_files">###LABEL_NEWS_FILES###:</label>###REQMARKER###</dt>
-				<dd><input name="###PREFIX_ID###[news_files]" id="###PREFIX_ID###-news_files" type="file" class="text" /></dd>
-				<!-- ###NEWS_FILES### end -->
-				
 				<!-- ###CURRENT_NEWS_FILES### begin - this subpart is removed if is not enabled! -->
 				<dt class="label">###LABEL_CURRENT_NEWS_FILES###:</dt>
 				<dd>###VALUE_CURRENT_NEWS_FILES###</dd>
 				<!-- ###CURRENT_NEWS_FILES### end -->
 	
+				<!-- ###NEWS_FILES### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-news_files">###LABEL_NEWS_FILES###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[news_files]" id="###PREFIX_ID###-news_files" type="file" class="text" /></dd>
+				<!-- ###NEWS_FILES### end -->
+				
+				<!-- ###CATEGORY### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-category">###LABEL_CATEGORY###:</label>###REQMARKER###</dt>
+				<dd>###CATEGORY_SELECT###</dd>
+				<!-- ###CATEGORY### end -->
+				
+				<!-- ###RELATED### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-related">###LABEL_RELATED###:</label>###REQMARKER###</dt>
+				<dd>###RELATED_SELECT###</dd>
+				<!-- ###RELATED### end -->
+				
+				<!-- ###STARTTIME### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-starttime">###LABEL_STARTTIME###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[starttime]" id="###PREFIX_ID###-starttime" value="###VALUE_STARTTIME###" size="30" type="text" class="input" /></dd>
+				<!-- ###STARTTIME### end -->
+				
+				<!-- ###STARTTIME_2CAL### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-starttime_hr">###LABEL_STARTTIME_2CAL###:</label>###REQMARKER###</dt>
+				<dd>###VALUE_STARTTIME_2CAL###</dd>
+				<!-- ###STARTTIME_2CAL### end -->
+				
+				<!-- ###ENDTIME### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-endtime">###LABEL_ENDTIME###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[endtime]" id="###PREFIX_ID###-endtime" value="###VALUE_ENDTIME###" size="30" type="text" class="input" /></dd>
+				<!-- ###ENDTIME### end -->
+				
+				<!-- ###ENDTIME_2CAL### - this subpart is removed if is not enabled! begin -->
+				<dt class="label"><label for="###PREFIX_ID###-endtime_hr">###LABEL_ENDTIME_2CAL###:</label>###REQMARKER###</dt>
+				<dd>###VALUE_ENDTIME_2CAL###</dd>
+				<!-- ###ENDTIME_2CAL### end -->
+				
+				<!-- ###FE_GROUP### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-fe_group">###LABEL_FE_GROUP###:</label>###REQMARKER###</dt>
+				<dd>###FE_GROUP_SELECT###</dd>
+				<!-- ###FE_GROUP### end -->
+	
+				<!-- ###TX_ELEMENTEFENEWS_AUTHOR### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-author_anonymous">###LABEL_TX_ELEMENTEFENEWS_AUTHOR###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[tx_elementefenews_author]" value="0" type="hidden" />
+					<input name="###PREFIX_ID###[tx_elementefenews_author]" id="###PREFIX_ID###-author_anonymous" ###CHECKED_TX_ELEMENTEFENEWS_AUTHOR### value="1" type="checkbox" class="check" />
+				</dd>
+				<!-- ###TX_ELEMENTEFENEWS_AUTHOR### end -->
+
 				<!-- ###SR_FREECAP_INSERT### - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-freecap">###LABEL_CAPTCHA###:</label><span class="hili">*</span></dt>
 				<dd><input type="text" name="###PREFIX_ID###[captcha_response]" id="###PREFIX_ID###-freecap" value="" class="input" /></dd>
@@ -125,6 +180,7 @@
 				<dt class="label">&nbsp;</dt>
 				<dd>###CAPTCHA_TEXT###<dd>
 				<!-- ###CAPTCHA_INSERT### -->
+
 			<!-- ###SUBPART_SORTED_FIELDS### end -->
 			
 			<dt class="label">&nbsp;</dt>
