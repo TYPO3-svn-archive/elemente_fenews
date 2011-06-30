@@ -117,28 +117,28 @@
 			$requiredFields					= $requiredFields?t3lib_div::trimExplode(',', $requiredFields):t3lib_div::trimExplode(',', 'title,author,author_email,bodytext');
 
 			$this->renderFields				= array(
-				'title'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'short'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'bodytext'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'no_auto_pb'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'datetime'					=> array('render' => 0, 'req' => 1, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 1, 'sel' => 0), // if datetime is set, it has always to be filled in!
-				'archivedate'				=> array('render' => 0, 'req' => 1, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 1, 'sel' => 0), // if archivedate is set, it has always to be filled in!
-				'author'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'author_email'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'keywords'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'sys_language_uid'			=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 1),
-				'image'						=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'imagecaption'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'imagealttext'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'imagetitletext'			=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'links'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'news_files'				=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0),
-				'category'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 1),
-				'related'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 1),
-				'starttime'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 1, 'sel' => 0),
-				'endtime'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 1, 'sel' => 0),
-				'fe_group'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 1),
-				'tx_elementefenews_author'	=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'htmlsp' => 0, 'd2c' => 0, 'sel' => 0)
+				'title'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'short'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'bodytext'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'no_auto_pb'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'datetime'					=> array('render' => 0, 'req' => 1, 'file' => 0, 'sort' => 0, 'd2c' => 1, 'sel' => 0), // if datetime is set, it has always to be filled in!
+				'archivedate'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 1, 'sel' => 0),
+				'author'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'author_email'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'keywords'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'sys_language_uid'			=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 1),
+				'image'						=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'imagecaption'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'imagealttext'				=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'imagetitletext'			=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'links'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'news_files'				=> array('render' => 0, 'req' => 0, 'file' => 1, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
+				'category'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 1),
+				'related'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 1),
+				'starttime'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 1, 'sel' => 0),
+				'endtime'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 1, 'sel' => 0),
+				'fe_group'					=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 1),
+				'tx_elementefenews_author'	=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0)
 			);
 			
 			if (is_array($renderFields)) {
@@ -279,14 +279,17 @@
 				if ($this->renderFields['category']['render'] == 1) {
 					$res											= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
 					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+					$GLOBALS['TYPO3_DB']->sql_free_result($res);
 					$this->piVars['category']						= array();
 					$res											= $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query('tt_news_cat.uid, tt_news_cat.shortcut', 'tt_news', 'tt_news_cat_mm', 'tt_news_cat', ' AND tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
 					while(($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
 						$this->piVars['category'][]					= $row['shortcut']!=0?$row['uid'].'|'.$row['shortcut']:$row['uid']; // If shortcut is set, put it into the value for redirect after saving the news		
 					}
+					$GLOBALS['TYPO3_DB']->sql_free_result($res);
 				} else {
 					$res											= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
 					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+					$GLOBALS['TYPO3_DB']->sql_free_result($res);
 				}
 				// Check current user or its group is owner of record
 				$this->piVars['owner']								= ($this->piVars['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'] || t3lib_div::inList($GLOBALS['TSFE']->fe_user->user['usergroup'], $this->piVars['tx_elementefenews_fegroup']))?true:false;	
@@ -311,7 +314,7 @@
 				$markerArray['###LABEL_SUBMIT###']					= $this->pi_getLL('form_submit');
 				$markerArray['###LABEL_RESET###']					= $this->pi_getLL('form_reset');
 				$markerArray['###ERROR_MESSAGE###']					= $error;
-	
+
 				// Render fields
 				foreach($this->renderFields as $field => $conf) {
 					$fieldUpper											= ($this->enable2Cal == 1 && $conf['d2c'] == 1) ? strtoupper($field).'_2CAL' : strtoupper($field);
@@ -319,23 +322,28 @@
 						$fieldSubpart									= $this->cObj->getSubpart($subpart, '###'.$fieldUpper.'###');
 						$fieldArray['###PREFIX_ID###']					= $this->prefixId;
 						$fieldArray['###LABEL_'.$fieldUpper.'###']		= $this->pi_getLL('l_'.$field);
-						$fieldArray['###VALUE_'.$fieldUpper.'###']		= $this->piVars[$field]?($conf['htmlsp']==1?htmlspecialchars($this->piVars[$field]):$this->piVars[$field]):'';
-						$fieldArray['###CHECKED_'.$fieldUpper.'###']	= $this->piVars[$field]?'checked="checked"':'';
-						$fieldArray['###REQMARKER###']					= $conf['req']==1?$this->spanReplace($this->pi_getLL('l_required', '', 1), ' class="hili"'):'';
-						// date2cal integration
-						if ($this->enable2Cal == 1 && $conf['d2c'] == 1) {
-							$d2cParams = array (
-								'checkboxField' => array (
-									'name'	=> $this->prefixId.'['.$field.']',
-									'class'	=> 'jscalendar_cb check'
-								),
-								'inputField' => array (
-									'name'	=> $this->prefixId.'['.$field.']',
-									'class'	=> 'jscalendar input'
-								)
-							);
-							$this->JSCalendar->setInputField($this->prefixId.'-'.$field);
-							$fieldArray['###VALUE_'.$fieldUpper.'###']	= $this->JSCalendar->render($this->piVars[$field], $d2cParams);
+						$fieldArray['###VALUE_'.$fieldUpper.'###']		= $this->piVars[$field] ? stripslashes($this->piVars[$field]) : '';
+						$fieldArray['###CHECKED_'.$fieldUpper.'###']	= $this->piVars[$field] ? 'checked="checked"' : '';
+						$fieldArray['###REQMARKER###']					= $conf['req']==1 ? $this->spanReplace($this->pi_getLL('l_required'), ' class="hili"') : '';
+						// Datetime fields
+						if ($conf['d2c'] == 1) {
+							$dateValue									= $this->piVars[$field] != 0 ? strftime($this->conf['dateConfig.']['strftime.']['format'], $this->piVars[$field]) : '';
+							$fieldArray['###VALUE_'.$fieldUpper.'###']	= $dateValue;
+							// date2cal integration
+							if ($this->enable2Cal == 1) {
+								$d2cParams = array (
+									'checkboxField' => array (
+										'name'	=> $this->prefixId.'['.$field.']',
+										'class'	=> 'jscalendar_cb check'
+									),
+									'inputField' => array (
+										'name'	=> $this->prefixId.'['.$field.']',
+										'class'	=> 'jscalendar input'
+									)
+								);
+								$this->JSCalendar->setInputField($this->prefixId.'-'.$field);
+								$fieldArray['###VALUE_'.$fieldUpper.'###']	= $this->JSCalendar->render($dateValue, $d2cParams);
+							}
 						}
 						// Render selection fields
 						if ($conf['sel'] == 1) {
@@ -554,14 +562,22 @@
 			unset($this->piVars['edit']);
 			unset($this->piVars['submit']);
 			foreach($this->piVars as $field => $input) {
-				// Replace '\r\n' in field short
+				// Field short preparation
 				if ($field == 'short') {
-					$arrNews[$field] = str_replace('\r\n', chr(10), $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news'));
+					$arrNews[$field] = str_replace('\r\n', chr(10), $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input), ENT_QUOTES), 'tt_news'));
+				
+				// Datetime fields preparation
 				} else if ($field == 'datetime' || $field == 'archivedate' || $field == 'starttime' || $field == 'endtime') {
 					preg_match($this->conf['dateConfig.']['constrain.']['regex'], $this->piVars[$field], $matches);
-					$arrNews[$field] = mktime($matches[$this->conf['dateConfig.']['hour']], $matches[$this->conf['dateConfig.']['min']], 0, $matches[$this->conf['dateConfig.']['month']], $matches[$this->conf['dateConfig.']['day']], $matches[$this->conf['dateConfig.']['year']]);
+					if (count($matches) > 0) {
+						$arrNews[$field] = mktime($matches[$this->conf['dateConfig.']['mktime.']['hour']], $matches[$this->conf['dateConfig.']['mktime.']['min']], 0, $matches[$this->conf['dateConfig.']['mktime.']['month']], $matches[$this->conf['dateConfig.']['mktime.']['day']], $matches[$this->conf['dateConfig.']['mktime.']['year']]);
+					} else {
+						$arrNews[$field] = 0;
+					}
+
+				// All other fields
 				} else {
-					$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news');
+					$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input), ENT_QUOTES), 'tt_news');
 				}
 			}
 
@@ -611,7 +627,7 @@
 				}
 				unset($arrNews['_TRANSFORM_bodytext']); // Unset not needed field
 			} else {
-				$arrNews['bodytext']		= str_replace('\r\n', chr(10), htmlspecialchars($this->piVars['bodytext']));
+				$arrNews['bodytext']		= $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($arrNews['bodytext']), ENT_QUOTES), 'tt_news');
 			}
 
 			// Image handling
@@ -655,7 +671,7 @@
 				// DB: Insert news
 				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news', $arrNews);
 				$newsUID = $GLOBALS['TYPO3_DB']->sql_insert_id();
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: record', 'elemente_fenews', 0, array('newsUID' => $newsUID));
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: record', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tt_news', $arrNews)));
 
 				// DB: Default category
 				if (!empty($this->categoryDefault)) {
@@ -804,57 +820,6 @@
 		}
 
 
-
-/*		protected function renderSelection($arrConf) {
-			$tmpl					 	 		 = $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_SELECT###');
-			$options 			 	 			 = $arrConf['options'];
-
-			// Marker
-			$markerArray						 = array();
-			$markerArray['###PREFIX_ID###']		 = $this->prefixId;
-			$markerArray['###NAME###']			 = $arrConf['name'];
-			
-			// 
-			$arrFields							 = t3lib_div::trimExplode(',', $arrConf['fields']);
-			$res				 				 = $GLOBALS['TYPO3_DB']->exec_SELECTquery($arrConf['fields'], $arrConf['table'], $arrConf['where'].$this->cObj->enableFields($arrConf['table']), '', $arrConf['order']);			
-			if ($res) {
-				while (($row	 				 = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-					$title						 = $row[$arrFields[1]];
-					$value		 				 = $row[$arrFields[0]];
-					// Exeptions for tt_news category
-					if ($this->languageUID && $arrConf['name'] == 'category') {
-						$arrLang				 = t3lib_div::trimExplode('|', $row[$arrFields[2]]);
-						$sysLang				 = $this->languageUID-1;
-						$title					 = $arrLang[$sysLang] ? $arrLang[$sysLang] : $row[$arrFields[1]];
-						// if shortcut is set, put it into the value for redirect after saving
-						$value		 			 = $row[$arrFields[3]] > 0 ? $row[$arrFields[0]].'|'.$row[$arrFields[3]] : $row[$arrFields[0]];
-						
-					}
-					// Selected values
-					$selected		 			 = '';
-					if (isset($this->piVars[$arrConf['name']])) {
-						foreach($this->piVars[$arrConf['name']] as $piValue) {
-							if ($piValue == $value) $selected = ' selected="selected"';
-						}
-					}
-					$options					.= '<option value="'.$value.'"'.$selected.'>'.$title.'</option>'.chr(10);
-				}
-				$markerArray['###SIZE###']		 = 'size="'.$arrConf['size'].'"';
-				$markerArray['###OPTIONS###']	 = $options;
-			
-
-				$GLOBALS['TYPO3_DB']->sql_free_result($res);
-
-				// return
-				return $this->cObj->substituteMarkerArray($tmpl, $markerArray);
-				
-			} else {
-				return $this->pi_getLL('l_no_record');
-			}
-		}
-*/
-
-
 		/**
 		 *	Function to validate and move the uploaded file.
 		 *	Checks upload for allowed file extension & mime type and max filesize.
@@ -997,6 +962,17 @@
 			$damIdent	= $type == 'image' ? 'images' : 'media';
 			$lconf 		= $this->conf['preview_'.$type.'.'];
 
+/*
+$cObj = t3lib_div::makeInstance('tslib_cObj');		
+		$damFiles = tx_dam_db::getReferencedFiles($config['dam']['tablenames'], (int)$record['uid'], $config['dam']['ident']);
+		foreach ($damFiles['files'] as $key => $file) {
+			$cObj->start($damFiles['rows'][$key], 'tx_dam');
+			$imgConf = $this->conf['outputFilter.']['dam.'];
+			$imgConf['file'] = $file;
+			$content = $cObj->IMAGE($imgConf);
+ 		}
+*/
+
 			// DAM reference
 			if ($this->damUse == 1) {
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query (
@@ -1025,6 +1001,7 @@
 					$lconf['typolink.']['parameter']	= $arrFile['file_path'].$arrFile['file_name'];
 					$preview							= $this->cObj->cObjGetSingle($this->conf['preview_'.$type], $lconf, 'preview_'.$type);
 				}
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
 			// File list
 			} else {
@@ -1042,6 +1019,7 @@
 					$lconf['typolink.']['parameter']	= $lconf['filePath'].$imgTmp[0];
 					$preview							= $this->cObj->cObjGetSingle($this->conf['preview_'.$type], $lconf, 'preview_'.$type);
 				}
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			}
 
 			// return

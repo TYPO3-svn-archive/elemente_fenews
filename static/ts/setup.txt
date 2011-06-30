@@ -32,22 +32,27 @@ plugin.tx_elementefenews_pi1 {
 	}
 
 	dateConfig {
-		# @description	Enable time for date2cal fields 
+		# @description	Enable time in date2cal fields 
 		time.enable			= 1
-		# @description	Position of the hour in a datetime string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 1
-		hour				= 1
-		# @description	Position of the minute in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 2
-		min					= 2
-		# @description	Position of the day in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 3
-		day					= 3
-		# @description	Position of the month in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 4
-		month				= 4
-		# @description	Position of the year in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 5
-		year				= 5
-		# @description	Constrain date/time format as a regular expression to check user input against 
+
+		# @description	Edit news: PHP strftime format 
+		strftime.format		= %H:%M %d.%m.%Y
+
+		# @description	Validate news: Constrain datetime format as a regular expression to check user input against 
 		constrain.regex		= /(\d{2}):(\d{2}) (\d{2}).(\d{2}).(\d{4})/
-		# @description	Human readable date/time format for error message if vailidation fails 
+		# @description	Validate news: Human readable datetime format for error message if vailidation fails 
 		constrain.format	= hh:mm dd.mm.yyyy
+
+		# @description	Save news: Position of the hour in a datetime string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 1
+		mktime.hour			= 1
+		# @description	Save news: Position of the minute in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 2
+		mktime.min			= 2
+		# @description	Save news: Position of the day in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 3
+		mktime.day			= 3
+		# @description	Save news: Position of the month in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 4
+		mktime.month		= 4
+		# @description	Save news: Position of the year in a date string (1/2/3/4/5). Example: 10:00 25.06.2011 -> 5
+		mktime.year			= 5
 	}
 
 	selectionMenu = COA
