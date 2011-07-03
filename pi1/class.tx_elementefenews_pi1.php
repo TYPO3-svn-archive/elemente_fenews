@@ -472,7 +472,7 @@
 				foreach($subpartArray as $field) $sortedFields 		.= $field;
 				$subpartArray['###SUBPART_SORTED_FIELDS###']		= $sortedFields;
 			}
-t3lib_div::debug($this->piVars);
+
 			// return
 			return $this->cObj->substituteMarkerArrayCached($subpart, $markerArray, $subpartArray, array());
 		}
