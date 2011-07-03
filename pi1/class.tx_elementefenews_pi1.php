@@ -574,9 +574,9 @@
 			unset($this->piVars['submit']);
 			foreach($this->piVars as $field => $input) {
 				// Field short preparation
-				if ($field == 'short' && field == 'bodytext') {
+				if ($field == 'short' || $field == 'bodytext') {
 					$arrNews[$field] = str_replace('\r\n', chr(10), $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news'));
-				
+
 				// Datetime fields preparation
 				} else if ($field == 'datetime' || $field == 'archivedate' || $field == 'starttime' || $field == 'endtime') {
 					preg_match($this->conf['dateConfig.']['constrain.']['regex'], $this->piVars[$field], $matches);
@@ -637,8 +637,6 @@
 					);
 				}
 				unset($arrNews['_TRANSFORM_bodytext']); // Unset not needed field
-#			} else {
-#				$arrNews['bodytext']		= $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($arrNews['bodytext'])), 'tt_news');
 			}
 
 			// Image handling

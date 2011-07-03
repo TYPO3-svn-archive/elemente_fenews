@@ -1,5 +1,5 @@
 <?php
-		/***************************************************************
+	/***************************************************************
 	*  Copyright notice
 	*
 	*  (c) 2011 Andre Steiling <steiling@elemente.ms>
@@ -31,7 +31,6 @@
 	 * @subpackage	tx_elementefenews
 	 */
 	class user_selectionMenu { 
-
 
 		/**
 		 * Method adapted from extension "tt_news":
@@ -104,6 +103,6 @@
 			// return
 			return $menuSubArr;
 		}
-   
+
 	}
 ?>
