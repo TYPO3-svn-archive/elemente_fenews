@@ -275,22 +275,33 @@
 			
 			// Get record
 			if ($editMode > 0) {
-				// Check for use of categories
+				$res												= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
+				$this->piVars										= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
+				
+				// Get fe_groups entries
+				$this->piVars['fe_group']							= t3lib_div::trimExplode(',', $this->piVars['fe_group']);
+				
+				// Get categories
 				if ($this->renderFields['category']['render'] == 1) {
-					$res											= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
-					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-					$GLOBALS['TYPO3_DB']->sql_free_result($res);
 					$this->piVars['category']						= array();
-					$res											= $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query('tt_news_cat.uid, tt_news_cat.shortcut', 'tt_news', 'tt_news_cat_mm', 'tt_news_cat', ' AND tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
+					$res											= $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query('tt_news_cat.uid, tt_news_cat.shortcut', 'tt_news', 'tt_news_cat_mm', 'tt_news_cat', ' AND tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news_cat'));
 					while(($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
 						$this->piVars['category'][]					= $row['shortcut']!=0?$row['uid'].'|'.$row['shortcut']:$row['uid']; // If shortcut is set, put it into the value for redirect after saving the news		
 					}
 					$GLOBALS['TYPO3_DB']->sql_free_result($res);
-				} else {
-					$res											= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
-					$this->piVars									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				}
+				
+				// Get related entries
+				if ($this->renderFields['related']['render'] == 1) {
+					$this->piVars['related']						= array();
+					$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid_foreign', 'tt_news_related_mm', 'uid_local='.intval($this->piVars['uid']));
+					while(($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
+						$this->piVars['related'][]					= $row['uid_foreign'];
+					}
 					$GLOBALS['TYPO3_DB']->sql_free_result($res);
 				}
+				
 				// Check current user or its group is owner of record
 				$this->piVars['owner']								= ($this->piVars['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'] || t3lib_div::inList($GLOBALS['TSFE']->fe_user->user['usergroup'], $this->piVars['tx_elementefenews_fegroup']))?true:false;	
 			}
@@ -370,7 +381,7 @@
 					$subpartArray['###CURRENT_NEWS_FILES###']		= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
 				}
 	
-				// loginUser?
+				// If a user is logged in the input fields are not rendering, the fields are filled with data from the fe_users record
 				if ($GLOBALS['TSFE']->loginUser) {
 					$subpartArray['###AUTHOR###']					= '';
 					$subpartArray['###AUTHOR_EMAIL###']				= '';
@@ -461,7 +472,7 @@
 				foreach($subpartArray as $field) $sortedFields 		.= $field;
 				$subpartArray['###SUBPART_SORTED_FIELDS###']		= $sortedFields;
 			}
-
+t3lib_div::debug($this->piVars);
 			// return
 			return $this->cObj->substituteMarkerArrayCached($subpart, $markerArray, $subpartArray, array());
 		}
@@ -563,8 +574,8 @@
 			unset($this->piVars['submit']);
 			foreach($this->piVars as $field => $input) {
 				// Field short preparation
-				if ($field == 'short') {
-					$arrNews[$field] = str_replace('\r\n', chr(10), $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input), ENT_QUOTES), 'tt_news'));
+				if ($field == 'short' && field == 'bodytext') {
+					$arrNews[$field] = str_replace('\r\n', chr(10), $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news'));
 				
 				// Datetime fields preparation
 				} else if ($field == 'datetime' || $field == 'archivedate' || $field == 'starttime' || $field == 'endtime') {
@@ -577,7 +588,7 @@
 
 				// All other fields
 				} else {
-					$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input), ENT_QUOTES), 'tt_news');
+					$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news');
 				}
 			}
 
@@ -626,8 +637,8 @@
 					);
 				}
 				unset($arrNews['_TRANSFORM_bodytext']); // Unset not needed field
-			} else {
-				$arrNews['bodytext']		= $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($arrNews['bodytext']), ENT_QUOTES), 'tt_news');
+#			} else {
+#				$arrNews['bodytext']		= $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($arrNews['bodytext'])), 'tt_news');
 			}
 
 			// Image handling
@@ -811,10 +822,14 @@
 		 * @return	array
 		 */
 		protected function renderSelection($field) {
-			// Special setup for field category: Get fronten category selection 
+			// Field category: Get frontend category selection 
 			if ($field == 'category') {
 				$this->conf['selectionMenu.'][$field.'.']['special.']['userFunc.']['where'] = 'uid IN ('.$this->categorySelection.')';
 			}
+			
+			// Transfer selected entries for edit mode
+			$this->conf['selectionMenu.'][$field.'.']['special.']['userFunc.']['selected']	= $this->piVars[$field];
+			
 			// return
 			return $this->cObj->cObjGetSingle($this->conf['selectionMenu.'][$field], $this->conf['selectionMenu.'][$field.'.']);
 		}

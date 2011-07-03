@@ -50,12 +50,22 @@
 				if ($lConf['parent'] != '') {
 					$arrSub['_SUB_MENU']	= $this->getSubSelectionMenu($row['uid'], $lConf);
 					$menuArr[]				= is_array($arrSub['_SUB_MENU']) ? array_merge($row, $arrSub) : '';
-				} else $menuArr[]			= $row;
+				} else {
+					// Selected entries
+					$row['selected'] 		= 0;
+					if (isset($lConf['selected'])) {
+						foreach($lConf['selected'] as $sel) {
+							if ($sel == $row['uid']) $row['selected'] = 1;
+						}
+					}
+					$menuArr[]				= $row;
+				}
 			}
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			
 			// skipFirst is used for category menu, it skips the root category - something like entrylevel ...
-			if ($lConf['skipFirst'] == 1) $menuArr = $menuArr[0]['_SUB_MENU']; 
+			if ($lConf['skipFirst'] == 1) $menuArr = $menuArr[0]['_SUB_MENU'];
+			
 			// return
 			return $menuArr;
 		}
@@ -81,6 +91,13 @@
 					return $menuSubArr;
 				}
 				$arrSub['_SUB_MENU']	= $this->getSubSelectionMenu($row['uid'], $lConf);
+				// Selected entries
+				$row['selected'] 		= 0;
+				if (isset($lConf['selected'])) {
+					foreach($lConf['selected'] as $sel) {
+						if ($sel == $row['uid']) $row['selected'] = 1;
+					}
+				}
 				$menuSubArr[]			= is_array($arrSub['_SUB_MENU']) ? array_merge($row, $arrSub) : '';
 			}
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);

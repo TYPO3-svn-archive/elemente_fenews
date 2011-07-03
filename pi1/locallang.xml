@@ -46,7 +46,10 @@
 			<label index="l_error_file_ext">The file of field ###FIELD### has a not allowed file extension. Allowed extensions are: ###EXT###.</label>
 			<label index="l_error_file_size">The file of field ###FIELD### filesize is bigger than allowed. The max. allowed filesize is: ###SIZE###.</label>
 			
-			<label index="form_sys_language_all">All</label>
+			<label index="ts_fe_group_hide">Hide at login</label>
+			<label index="ts_fe_group_show">Show at any login</label>
+			<label index="ts_sys_language_default">Default</label>
+			<label index="ts_sys_language_all">All</label>
 			<label index="l_confirm_delete">Are you sure you want to delete this record?</label>
 			<label index="l_no_auto_pb">No automatic pagebreaks</label>
             <label index="l_datetime">Date/Time</label>
@@ -99,7 +102,10 @@
 			<label index="l_error_file_ext">Die Datei des Feldes ###FIELD### hat eine nicht erlaubte Dateiendung. Erlaubte Endungen sind: ###EXT###.</label>
 			<label index="l_error_file_size">Die Datei des Feldes ###FIELD### ist größer, als maximal erlaubt. Die maximale Dateigröße beträgt: ###SIZE###.</label>
 			
-			<label index="form_sys_language_all">All</label>
+			<label index="ts_fe_group_hide">Nach Anmeldung verbergen</label>
+			<label index="ts_fe_group_show">Anzeigen, wenn angemeldet</label>
+			<label index="ts_sys_language_default">Standard</label>
+			<label index="ts_sys_language_all">Alle</label>
 			<label index="l_confirm_delete">Diesen Datensatz tatsächlich löschen?</label>
 			<label index="l_no_auto_pb">Keine Seitenumbrüche</label>
             <label index="l_datetime">Datum/Zeit</label>
@@ -150,7 +156,10 @@
 			<label index="l_error_file_ext">L'extension du fichier du champ ###FIELD###  n'est pas autorisée. Les extension de fichier autorisées sont: ###EXT###.</label>
 			<label index="l_error_file_size">La taille du fichier du champ ###FIELD### est superieur à la taille autorisée. La taille maximum de fichier autorisée est: ###SIZE###.</label>
 
-            <label index="form_sys_language_all">All</label>
+			<label index="ts_fe_group_hide">Cacher à la connexion</label>
+			<label index="ts_fe_group_show">Afficher à toutes les connexions</label>
+			<label index="ts_sys_language_default">Par défaut</label>
+            <label index="form_sys_language_all">Tout</label>
 			<label index="l_confirm_delete">Êtes-vous sûr de vouloir supprimer cet élément?</label>
 			<label index="l_datetime">Date/Heure</label>
             <label index="l_sys_language_uid">Langue</label>

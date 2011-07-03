@@ -31,35 +31,36 @@
 		function extraItemMarkerProcessor($markerArray, $row, $lConf, $parentObject) {
 			$links		 = '';
 
-			// Edit record
-			if ($lConf['feEdit.']['editRecord'] == 1 && ($row['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'] || t3lib_div::inList($GLOBALS['TSFE']->fe_user->user['usergroup'], $row['tx_elementefenews_fegroup']))) {
-				$label													 = $parentObject->cObj->stdWrap($parentObject->pi_getLL('tx-elementefenews-editRecord'), $lConf['feEdit.']['labelWrap.']);
-				$lConf['feEdit.']['editRecord.']['title']				 = $parentObject->pi_getLL('tx-elementefenews-editRecord');
-				$lConf['feEdit.']['editRecord.']['additionalParams']	.= '&tx_elementefenews_pi1[edit]=1&tx_elementefenews_pi1[uid]='.$row['uid'];
-				$links													.= $parentObject->cObj->typoLink($label, $lConf['feEdit.']['editRecord.']);
-			}
-
-			// Delete record
-			if ($lConf['feEdit.']['delRecord'] == 1 && ($row['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'] || t3lib_div::inList($GLOBALS['TSFE']->fe_user->user['usergroup'], $row['tx_elementefenews_fegroup']))) {
-				$label	 												 = $parentObject->cObj->stdWrap($parentObject->pi_getLL('tx-elementefenews-delRecord'), $lConf['feEdit.']['labelWrap.']);
-				$lConf['feEdit.']['delRecord.']['title']				 = $parentObject->pi_getLL('tx-elementefenews-delRecord'); 
-				$lConf['feEdit.']['delRecord.']['additionalParams']		.= '&tx_elementefenews_pi1[del]=1&tx_elementefenews_pi1[uid]='.$row['uid'].'&tx_elementefenews_pi1[backPid]='.$GLOBALS['TSFE']->id;
-				$links													.= $parentObject->cObj->typoLink($label, $lConf['feEdit.']['delRecord.']);
-			}
-
-			// Hide author when checkbox "anonymous record" is set:
-			if ($row['tx_elementefenews_author'] == 1) {
-				$markerArray['###NEWS_AUTHOR###']		= '';
-				$markerArray['###NEWS_EMAIL###']		= '';
+			// FE editing only for logged in users
+			if ($GLOBALS['TSFE']->loginUser) {
+				// Edit record
+				if ($lConf['feEdit.']['editRecord'] == 1 && ($row['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'] || t3lib_div::inList($GLOBALS['TSFE']->fe_user->user['usergroup'], $row['tx_elementefenews_fegroup']))) {
+					$label													 = $parentObject->cObj->stdWrap($parentObject->pi_getLL('tx-elementefenews-editRecord'), $lConf['feEdit.']['labelWrap.']);
+					$lConf['feEdit.']['editRecord.']['title']				 = $parentObject->pi_getLL('tx-elementefenews-editRecord');
+					$lConf['feEdit.']['editRecord.']['additionalParams']	.= '&tx_elementefenews_pi1[edit]=1&tx_elementefenews_pi1[uid]='.$row['uid'];
+					$links													.= $parentObject->cObj->typoLink($label, $lConf['feEdit.']['editRecord.']);
+				}
+	
+				// Delete record
+				if ($lConf['feEdit.']['delRecord'] == 1 && ($row['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'] || t3lib_div::inList($GLOBALS['TSFE']->fe_user->user['usergroup'], $row['tx_elementefenews_fegroup']))) {
+					$label	 												 = $parentObject->cObj->stdWrap($parentObject->pi_getLL('tx-elementefenews-delRecord'), $lConf['feEdit.']['labelWrap.']);
+					$lConf['feEdit.']['delRecord.']['title']				 = $parentObject->pi_getLL('tx-elementefenews-delRecord'); 
+					$lConf['feEdit.']['delRecord.']['additionalParams']		.= '&tx_elementefenews_pi1[del]=1&tx_elementefenews_pi1[uid]='.$row['uid'].'&tx_elementefenews_pi1[backPid]='.$GLOBALS['TSFE']->id;
+					$links													.= $parentObject->cObj->typoLink($label, $lConf['feEdit.']['delRecord.']);
+				}
+	
+				// Hide author when checkbox "anonymous record" is set:
+				if ($row['tx_elementefenews_author'] == 1) {
+					$markerArray['###NEWS_AUTHOR###']		= '';
+					$markerArray['###NEWS_EMAIL###']		= '';
+				}
 			}
 
 			// Wrap output
 			if ($links != '') {
-				$markerArray['###FE_FUNCTIONS###']		= $parentObject->cObj->stdWrap($links, $lConf['feEdit.']);
-				$markerArray['###ELEMENTE_FENEWS###']	= $parentObject->cObj->stdWrap($links, $lConf['feEdit.']); //v1.1
+				$markerArray['###ELEMENTE_FENEWS###']	= $parentObject->cObj->stdWrap($links, $lConf['feEdit.']);
 			} else {
-				$markerArray['###FE_FUNCTIONS###']		= '';
-				$markerArray['###ELEMENTE_FENEWS###']	= ''; //v1.1
+				$markerArray['###ELEMENTE_FENEWS###']	= '';
 			}
 			
 			// return
