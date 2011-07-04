@@ -58,7 +58,8 @@
             <label index="l_starttime">Start</label>
             <label index="l_endtime">Stop</label>
             <label index="l_fe_group">Access</label>
-            <label index="l_error_date">Field ###FIELD### must contain a vail date format (###FORMAT###).</label>
+            <label index="l_error_datetime">Field ###FIELD### must contain a vail date format (###FORMAT###).</label>
+			<label index="l_format_datetime">Date format: ###FORMAT###</label>
             
 		</languageKey>
 		<languageKey index="de" type="array">
@@ -114,7 +115,8 @@
             <label index="l_starttime">Start</label>
             <label index="l_endtime">Stop</label>
             <label index="l_fe_group">Zugriff</label>
-            <label index="l_error_date">Das Feld ###FIELD### muss ein gültiges Datum (###FORMAT###) beinhalten.</label>
+            <label index="l_error_datetime">Das Feld ###FIELD### muss ein gültiges Datum (###FORMAT###) beinhalten.</label>
+			<label index="l_format_datetime">Datumsformat: ###FORMAT###</label>
 		</languageKey>
 		<languageKey index="fr" type="array">
 			<label index="form_legend">Créer une nouvelle Actualité</label>
@@ -167,7 +169,8 @@
             <label index="l_starttime">Lancement</label>
             <label index="l_endtime">Arrêt</label>
             <label index="l_fe_group">Accès</label>
-            <label index="l_error_date">Field ###FIELD### must contain a vail date format (###FORMAT###).</label>
+            <label index="l_error_datetime">Field ###FIELD### must contain a vail date format (###FORMAT###).</label>
+			<label index="l_format_datetime">Date format: ###FORMAT###</label>
 		</languageKey>
 	</data>
 </T3locallang>

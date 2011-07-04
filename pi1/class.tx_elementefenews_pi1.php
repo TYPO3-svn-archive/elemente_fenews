@@ -336,6 +336,7 @@
 						$fieldArray['###VALUE_'.$fieldUpper.'###']		= $this->piVars[$field] ? stripslashes($this->piVars[$field]) : '';
 						$fieldArray['###CHECKED_'.$fieldUpper.'###']	= $this->piVars[$field] ? 'checked="checked"' : '';
 						$fieldArray['###REQMARKER###']					= $conf['req']==1 ? $this->spanReplace($this->pi_getLL('l_required'), ' class="hili"') : '';
+						$fieldArray['###FORMAT_DATETIME###']			= str_replace('###FORMAT###', $this->conf['dateConfig.']['constrain.']['format'], $this->pi_getLL('l_format_datetime'));
 						// Datetime fields
 						if ($conf['d2c'] == 1) {
 							$dateValue									= $this->piVars[$field] != 0 ? strftime($this->conf['dateConfig.']['strftime.']['format'], $this->piVars[$field]) : '';
@@ -500,7 +501,7 @@
 				}
 				// Date fields
 				if (!empty($this->piVars[$field]) && $conf['d2c'] == 1 && !preg_match($this->conf['dateConfig.']['constrain.']['regex'], $this->piVars[$field])) {
-					$error	.= '<li>'.str_replace(array('###FIELD###','###FORMAT###'), array('<strong>'.$this->pi_getLL('l_'.$field).'</strong>','<strong>'.$this->conf['dateConfig.']['constrain.']['format'].'</strong>'), $this->pi_getLL('l_error_date')).'</li>'.chr(10);
+					$error	.= '<li>'.str_replace(array('###FIELD###','###FORMAT###'), array('<strong>'.$this->pi_getLL('l_'.$field).'</strong>','<strong>'.$this->conf['dateConfig.']['constrain.']['format'].'</strong>'), $this->pi_getLL('l_error_datetime')).'</li>'.chr(10);
 				}
 			}
 			// Check vaild mail
