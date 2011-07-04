@@ -575,7 +575,7 @@
 			foreach($this->piVars as $field => $input) {
 				// Field short preparation
 				if ($field == 'short' || $field == 'bodytext') {
-					$arrNews[$field] = str_replace('\r\n', chr(10), $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news'));
+					$arrNews[$field] = str_replace('\r\n', chr(10), trim($input));
 
 				// Datetime fields preparation
 				} else if ($field == 'datetime' || $field == 'archivedate' || $field == 'starttime' || $field == 'endtime') {
@@ -588,7 +588,7 @@
 
 				// All other fields
 				} else {
-					$arrNews[$field] = $GLOBALS['TYPO3_DB']->quoteStr(htmlspecialchars(trim($input)), 'tt_news');
+					$arrNews[$field] = trim($input);
 				}
 			}
 
@@ -646,10 +646,10 @@
 					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - handleDAM', 'elemente_fenews', 0, array('damUidImg' => $damUidImg));
 					$arrNews['tx_damnews_dam_images'] = 1;
 				} else {
-					$arrNews['image']		= $GLOBALS['TYPO3_DB']->quoteStr($this->arrUploads['image']['hash'], 'tt_news');
+					$arrNews['image']		= $this->arrUploads['image']['hash'];
 				}
-				$arrNews['imagealttext']	= !$arrNews['imagealttext']?$GLOBALS['TYPO3_DB']->quoteStr($this->arrUploads['image']['name'], 'tt_news'):$arrNews['imagealttext']; // ALT tag
-				$arrNews['imagetitletext']	= !$arrNews['imagetitletext']?$GLOBALS['TYPO3_DB']->quoteStr($this->arrUploads['image']['name'], 'tt_news'):$arrNews['imagetitletext']; // TITLE tag
+				$arrNews['imagealttext']	= !$arrNews['imagealttext']		? $this->arrUploads['image']['name'] : $arrNews['imagealttext']; // ALT tag
+				$arrNews['imagetitletext']	= !$arrNews['imagetitletext']	? $this->arrUploads['image']['name'] : $arrNews['imagetitletext']; // TITLE tag
 				$this->piVars['image']		= $this->arrUploads['image']['name']; // Put into piVars for mail content
 			}
 
@@ -659,7 +659,7 @@
 					$damUidFile				= $this->handleDAM($this->arrUploads['news_files']['path']);
 					$arrNews['tx_damnews_dam_media'] = 1;
 				} else {
-					$arrNews['news_files']	= $GLOBALS['TYPO3_DB']->quoteStr($this->arrUploads['news_files']['hash'], 'tt_news');
+					$arrNews['news_files']	= $this->arrUploads['news_files']['hash'];
 				}
 				$this->piVars['news_files']	= $this->arrUploads['news_files']['name']; // Put into piVars for mail content
 			}

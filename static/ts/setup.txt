@@ -1,5 +1,4 @@
 includeLibs.tx_elementefenews_selectionMenu = EXT:elemente_fenews/lib/class.user_selectionMenu.php
-includeLibs.tx_elementefenews_stdWrapPreUserFunc = EXT:elemente_fenews/lib/class.user_stdWrapPreUserFunc.php
 
 # elemente_fenews
 plugin.tx_elementefenews_pi1 {
@@ -314,14 +313,6 @@ plugin.tt_news {
 	}
 	displayList.feEdit < .displaySingle.feEdit
 	displayLatest.feEdit < .displaySingle.feEdit
-
-	# @description stdWrap preUserFunc to strip the backslashes from content. Use it for other fields too.
-	displaySingle.title_stdWrap.preUserFunc		= user_stdWrapPreUserFunc->stripSlashes
-	displaySingle.subheader_stdWrap.preUserFunc	= user_stdWrapPreUserFunc->stripSlashes
-	displayList.title_stdWrap.preUserFunc		= user_stdWrapPreUserFunc->stripSlashes
-	displayList.subheader_stdWrap.preUserFunc	= user_stdWrapPreUserFunc->stripSlashes
-	displayLatest.title_stdWrap.preUserFunc		= user_stdWrapPreUserFunc->stripSlashes
-	displayLatest.subheader_stdWrap.preUserFunc	= user_stdWrapPreUserFunc->stripSlashes
 
 	_LOCAL_LANG {
 		default {
