@@ -62,10 +62,16 @@ plugin.tx_elementefenews_pi1 {
 			special.userFunc			= user_selectionMenu->getSelectionMenu
 			special.userFunc.table		= tt_news_cat
 			special.userFunc.select		= uid, title, title_lang_ol, shortcut
+			# @description	Parameter is set directly by the plugin and predicates on the FlexForm category settings 
 			special.userFunc.where		= PHP_VALUE
+			# @description	Parameter is set directly by the plugin and holds an array with selected items for edit mode
 			special.userFunc.selected	= PHP_VALUE
 			special.userFunc.order		= title
 			special.userFunc.parent		= tt_news_cat.parent_category
+			# @description	Parameter slices the first category out of tree, example:
+			# If you have a hierachical category-tree, the defined category under FlexForm config "Selection for user in Frontend" as the "starting point",
+			# but you don't want to show itself, only its childs. Therefor you could set skipFirst = 1 to slice the parent category out of the tree and
+			# start one level deeper. But if you have a one-level category-tree or two hierachical category-trees besides, skipFirst = 0 would be right!
 			special.userFunc.skipFirst	= 1
 			1 = TMENU
 	 		1 {
@@ -156,9 +162,14 @@ plugin.tx_elementefenews_pi1 {
 			special.userFunc.table		= tt_news
 			special.userFunc.select		= uid, title
 			special.userFunc.where		= pid IN ({$plugin.tx_elementefenews_pi1.related.pid})
+			# @description	Parameter is set directly by the plugin and holds an array with selected items for edit mode
 			special.userFunc.selected	= PHP_VALUE
 			special.userFunc.order		= title
 			special.userFunc.parent		= 
+			# @description	Parameter slices the first category out of tree, example:
+			# If you have a hierachical category-tree, the defined category under FlexForm config "Selection for user in Frontend" as the "starting point",
+			# but you don't want to show itself, only its childs. Therefor you could set skipFirst = 1 to slice the parent category out of the tree and
+			# start one level deeper. But if you have a one-level category-tree or two hierachical category-trees besides, skipFirst = 0 would be right!
 			special.userFunc.skipFirst	= 0
 			1 = TMENU
 	 		1 {
@@ -191,9 +202,14 @@ plugin.tx_elementefenews_pi1 {
 			special.userFunc.table		= fe_groups
 			special.userFunc.select		= uid, title
 			special.userFunc.where		= pid IN ({$plugin.tx_elementefenews_pi1.fe_group.pid})
+			# @description	Parameter is set directly by the plugin and holds an array with selected items for edit mode
 			special.userFunc.selected	= PHP_VALUE
 			special.userFunc.order		= title
 			special.userFunc.parent		= 
+			# @description	Parameter slices the first category out of tree, example:
+			# If you have a hierachical category-tree, the defined category under FlexForm config "Selection for user in Frontend" as the "starting point",
+			# but you don't want to show itself, only its childs. Therefor you could set skipFirst = 1 to slice the parent category out of the tree and
+			# start one level deeper. But if you have a one-level category-tree or two hierachical category-trees besides, skipFirst = 0 would be right!
 			special.userFunc.skipFirst	= 0
 			1 = TMENU
 	 		1 {
@@ -247,9 +263,14 @@ plugin.tx_elementefenews_pi1 {
 			special.userFunc.table		= sys_language
 			special.userFunc.select		= uid, title
 			special.userFunc.where		= 1=1
+			# @description	Parameter is set directly by the plugin and holds an array with selected items for edit mode
 			special.userFunc.selected	= PHP_VALUE
 			special.userFunc.order		= title
 			special.userFunc.parent		= 
+			# @description	Parameter slices the first category out of tree, example:
+			# If you have a hierachical category-tree, the defined category under FlexForm config "Selection for user in Frontend" as the "starting point",
+			# but you don't want to show itself, only its childs. Therefor you could set skipFirst = 1 to slice the parent category out of the tree and
+			# start one level deeper. But if you have a one-level category-tree or two hierachical category-trees besides, skipFirst = 0 would be right!
 			special.userFunc.skipFirst	= 0
 			1 = TMENU
 	 		1 {
