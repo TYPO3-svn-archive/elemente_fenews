@@ -40,15 +40,15 @@
 		 * 
 		 * @return	array		All categories in a nested array
 		 */
-		function getSelectionMenu($menuArr, $conf) {
+		function getSelectionMenu($arrMenu, $conf) {
 			$lConf							= $conf['userFunc.']; 
-			$menuArr				 		= array();
+			$arrMenu				 		= array();
 			$res	 						= $GLOBALS['TYPO3_DB']->exec_SELECTquery($lConf['select'], $lConf['table'], $lConf['where'].$this->cObj->enableFields($lConf['table']), '', $lConf['order']);
 			while (($row					= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
 				// Recursive only if a field "parent" is given in database table
 				if ($lConf['parent'] != '') {
 					$arrSub['_SUB_MENU']	= $this->getSubSelectionMenu($row['uid'], $lConf);
-					$menuArr[]				= is_array($arrSub['_SUB_MENU']) ? array_merge($row, $arrSub) : '';
+					$arrMenu[]				= is_array($arrSub['_SUB_MENU']) ? array_merge($row, $arrSub) : '';
 				} else {
 					// Selected entries
 					$row['selected'] 		= 0;
@@ -57,16 +57,16 @@
 							if ($sel == $row['uid']) $row['selected'] = 1;
 						}
 					}
-					$menuArr[]				= $row;
+					$arrMenu[]				= $row;
 				}
 			}
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			
 			// skipFirst is used for category menu, it skips the root category - something like entrylevel ...
-			if ($lConf['skipFirst'] == 1) $menuArr = $menuArr[0]['_SUB_MENU'];
+			if ($lConf['skipFirst'] == 1) $arrMenu = $arrMenu[0]['_SUB_MENU'];
 			
 			// return
-			return $menuArr;
+			return $arrMenu;
 		}
 
 	
@@ -81,13 +81,13 @@
 		 * @return	array		All categories in a nested array
 		 */
 		function getSubSelectionMenu($item, $lConf) {
-			$menuSubArr					= array();
+			$arrMenuSub					= array();
 			$res						= $GLOBALS['TYPO3_DB']->exec_SELECTquery($lConf['select'], $lConf['table'], $lConf['parent'].' IN ('.$item.')'.$this->cObj->enableFields($lConf['table']), '', $lConf['order']);
 			while (($row				= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
 				$cc++;
 				if ($cc > 10000) {
 					$GLOBALS['TT']->setTSlogMessage('elemente_fenews: one or more recursive categories were found');
-					return $menuSubArr;
+					return $arrMenuSub;
 				}
 				$arrSub['_SUB_MENU']	= $this->getSubSelectionMenu($row['uid'], $lConf);
 				// Selected entries
@@ -97,11 +97,11 @@
 						if ($sel == $row['uid']) $row['selected'] = 1;
 					}
 				}
-				$menuSubArr[]			= is_array($arrSub['_SUB_MENU']) ? array_merge($row, $arrSub) : '';
+				$arrMenuSub[]			= is_array($arrSub['_SUB_MENU']) ? array_merge($row, $arrSub) : '';
 			}
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			// return
-			return $menuSubArr;
+			return $arrMenuSub;
 		}
 
 	}
