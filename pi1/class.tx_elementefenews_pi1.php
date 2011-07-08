@@ -339,7 +339,13 @@
 						$fieldArray['###FORMAT_DATETIME###']			= str_replace('###FORMAT###', $this->conf['dateConfig.']['constrain.']['format'], $this->pi_getLL('l_format_datetime'));
 						// Datetime fields
 						if ($conf['d2c'] == 1) {
-							$dateValue									= $this->piVars[$field] != 0 ? strftime($this->conf['dateConfig.']['strftime.']['format'], $this->piVars[$field]) : '';
+							// Open news in edit mode will return timestamp values, not the HR format
+							if (!preg_match($this->conf['dateConfig.']['constrain.']['regex'], $this->piVars[$field]) && $this->piVars[$field] > 0) {
+								$dateValue								= strftime($this->conf['dateConfig.']['strftime.']['format'], $this->piVars[$field]);
+							// In case of an error, the datetime field contains the HR format and could returned untouched 
+							} else {
+								$dateValue								= $this->piVars[$field] > 0 ? $this->piVars[$field] : '';
+							}
 							$fieldArray['###VALUE_'.$fieldUpper.'###']	= $dateValue;
 							// date2cal integration
 							if ($this->enable2Cal == 1) {
