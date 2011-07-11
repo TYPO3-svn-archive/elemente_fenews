@@ -279,9 +279,6 @@
 				$this->piVars										= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 				
-				// Get fe_groups entries
-				$this->piVars['fe_group']							= t3lib_div::trimExplode(',', $this->piVars['fe_group']);
-				
 				// Get categories
 				if ($this->renderFields['category']['render'] == 1) {
 					$this->piVars['category']						= array();
@@ -301,6 +298,12 @@
 					}
 					$GLOBALS['TYPO3_DB']->sql_free_result($res);
 				}
+				
+				// Get fe_group entries
+				$this->piVars['fe_group']							= t3lib_div::trimExplode(',', $this->piVars['fe_group']);
+				
+				// Get language
+				$this->piVars['sys_language_uid']					= array($this->piVars['sys_language_uid']);
 				
 				// Check current user or its group is owner of record
 				$this->piVars['owner']								= ($this->piVars['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'] || t3lib_div::inList($GLOBALS['TSFE']->fe_user->user['usergroup'], $this->piVars['tx_elementefenews_fegroup']))?true:false;	
@@ -598,6 +601,11 @@
 					$arrNews[$field] = trim($input);
 				}
 			}
+			
+			// FeGroup
+			if (!empty($this->piVars['fe_group'])) {
+				$arrNews['fe_group'] = implode(',', $this->piVars['fe_group']);
+			}
 
 			// Archivedate or auto-hide / auto-archive?
 			if ($this->autoEndtime > 0) {
@@ -655,6 +663,7 @@
 				} else {
 					$arrNews['image']		= $this->arrUploads['image']['hash'];
 				}
+				// @Todo: Fields have to go into DAM too
 				$arrNews['imagealttext']	= !$arrNews['imagealttext']		? $this->arrUploads['image']['name'] : $arrNews['imagealttext']; // ALT tag
 				$arrNews['imagetitletext']	= !$arrNews['imagetitletext']	? $this->arrUploads['image']['name'] : $arrNews['imagetitletext']; // TITLE tag
 				$this->piVars['image']		= $this->arrUploads['image']['name']; // Put into piVars for mail content
@@ -787,6 +796,28 @@
 		}
 
 
+		/**
+		 *	
+		 *
+		 * @return		void 
+		 */
+		protected function setRelation($field) {
+		// DB: Insert image DAM relation
+			if (!empty($_FILES[$this->prefixId]['name']['image']) && $this->damUse == 1) {
+				$arrMM = array('uid_local' => $damUidImg, 'uid_foreign' => $newsUID, 'tablenames' => 'tt_news', 'ident' => $this->damIdent.'_dam_images', 'sorting' => 0, 'sorting_foreign' => 1);
+				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM);
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - dam: insert img', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tx_dam_mm_ref', $arrMM)));
+			}
+
+			// DB: Insert file DAM relation
+			if (!empty($_FILES[$this->prefixId]['name']['news_files']) && $this->damUse == 1) {
+				$arrMM = array('uid_local' => $damUidFile, 'uid_foreign' => $newsUID, 'tablenames' => 'tt_news', 'ident' => $this->damIdent.'_dam_media', 'sorting' => 0, 'sorting_foreign' => 1);
+				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM);
+				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - dam: insert file', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tx_dam_mm_ref', $arrMM)));
+			}
+		}
+		
+		
 		/**
 		 *	Sets selected news record to deleted, clears the page cache of actual news plugin
 		 *	and redirects to it after finishing the job.
@@ -1226,41 +1257,6 @@ $cObj = t3lib_div::makeInstance('tslib_cObj');
 			}
 		}
 		
-		
-		/**
-		 * Method adapted from extension "date2cal":
-		 * Sets the date format of datetime fields. If the format parameter isn't set, then
-		 * the default TYPO3 settings are used instead ($GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy']).
-		 *
-		 * @param bool $time set this option if you want to define the time
-		 * @param string $format the date format which should be used (optional)
-		 * @return void
-		 */
-		public function __setDateFormat($time = false, $format = '') {
-			if ($format == '') {
-				$format = preg_replace(
-					'/([a-z])/i',
-					'%\1',
-					$GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy']
-				);
-	
-				# default format if ddmmyy option is empty
-				$format = ($format !== '' ? $format : '%d-%m-%Y');
-	
-				# we need to switch month and day for the USdateFormat
-				if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['USdateFormat']) {
-					# contains a small hack with a temporary replacement %#
-					$format = str_replace(array('%d', '%m', '%#'), array('%#', '%d', '%m'), $format);
-				}
-			}
-			$jsDate = ($time ? '%H:%M ' : '') . $format;
-	
-			$value = ($time ? 'true' : 'false');
-			$this->setConfigOption('showsTime', $value, true);
-			$this->setConfigOption('time24', $value, true);
-			$this->setConfigOption('ifFormat', $jsDate);
-		}
-
 
 	} // class
 

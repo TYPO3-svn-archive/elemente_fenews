@@ -43,6 +43,22 @@
 		function getSelectionMenu($arrMenu, $conf) {
 			$lConf							= $conf['userFunc.']; 
 			$arrMenu				 		= array();
+			
+			// Default items of a selection field
+			if ($lConf['defaultItems'] == 1) {
+				switch ($lConf['table']) {
+					case 'fe_groups':
+						$arrMenu[]			= array('uid' => '-1', 'LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_fe_group_hide');
+						$arrMenu[]			= array('uid' => '-2', 'LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_fe_group_show');
+					break;
+					case 'sys_language':
+						$arrMenu[]			= array('uid' => '0', 'LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_sys_language_default');
+						$arrMenu[]			= array('uid' => '-1', 'LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_sys_language_all');
+					break;
+				}
+			}
+			
+			// Database items
 			$res	 						= $GLOBALS['TYPO3_DB']->exec_SELECTquery($lConf['select'], $lConf['table'], $lConf['where'].$this->cObj->enableFields($lConf['table']), '', $lConf['order']);
 			while (($row					= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
 				// Recursive only if a field "parent" is given in database table
@@ -61,10 +77,9 @@
 				}
 			}
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
-			
 			// skipFirst is used for category menu, it skips the root category - something like entrylevel ...
 			if ($lConf['skipFirst'] == 1) $arrMenu = $arrMenu[0]['_SUB_MENU'];
-			
+			t3lib_div::debug($arrMenu);
 			// return
 			return $arrMenu;
 		}

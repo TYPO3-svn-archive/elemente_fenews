@@ -207,30 +207,31 @@ plugin.tx_elementefenews_pi1 {
 		fe_group = HMENU
 		fe_group {
 			# @description	See .category
-			special						= userfunction
-			special.userFunc			= user_selectionMenu->getSelectionMenu
-			special.userFunc.table		= fe_groups
-			special.userFunc.select		= uid, title
-			special.userFunc.where		= pid IN ({$plugin.tx_elementefenews_pi1.fe_group.pid})
-			special.userFunc.selected	= PHP_VALUE
-			special.userFunc.order		= title
-			special.userFunc.parent		= 
-			special.userFunc.skipFirst	= 0
+			special							= userfunction
+			special.userFunc				= user_selectionMenu->getSelectionMenu
+			special.userFunc.table			= fe_groups
+			special.userFunc.select			= uid, title
+			special.userFunc.where			= pid IN ({$plugin.tx_elementefenews_pi1.fe_group.pid})
+			special.userFunc.selected		= PHP_VALUE
+			special.userFunc.order			= title
+			special.userFunc.parent			= 
+			special.userFunc.skipFirst		= 0
+			special.userFunc.defaultItems	= 1
 			1 = TMENU
 	 		1 {
 				expAll = 1
 	    		wrap = <ul>|</ul>
 				# Default settings
 				# ToDo: Check if a value is checked
-	    		stdWrap.prepend = COA
-				stdWrap.prepend {
-					10 = TEXT
-					10.data = LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_fe_group_hide
-					10.wrap = <li><input type="checkbox" id="tx_elementefenews_pi1_fe_group_hide" name="tx_elementefenews_pi1[fe_group][]" value="-1" class="check" /> <label for="tx_elementefenews_pi1_fe_group_hide">|</label></li>
-					20 = TEXT
-					20.data = LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_fe_group_show
-					20.wrap = <li><input type="checkbox" id="tx_elementefenews_pi1_fe_group_show" name="tx_elementefenews_pi1[fe_group][]" value="-2" class="check" /> <label for="tx_elementefenews_pi1_fe_group_show">|</label></li>
-				}
+#	    		stdWrap.prepend = COA
+#				stdWrap.prepend {
+#					10 = TEXT
+#					10.data = LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_fe_group_hide
+#					10.wrap = <li><input type="checkbox" id="tx_elementefenews_pi1_fe_group_hide" name="tx_elementefenews_pi1[fe_group][]" value="-1" class="check" /> <label for="tx_elementefenews_pi1_fe_group_hide">|</label></li>
+#					20 = TEXT
+#					20.data = LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_fe_group_show
+#					20.wrap = <li><input type="checkbox" id="tx_elementefenews_pi1_fe_group_show" name="tx_elementefenews_pi1[fe_group][]" value="-2" class="check" /> <label for="tx_elementefenews_pi1_fe_group_show">|</label></li>
+#				}
 				NO {
 					wrapItemAndSub = <li>|</li>
 					stdWrap.cObject = COA
@@ -264,30 +265,31 @@ plugin.tx_elementefenews_pi1 {
 		sys_language_uid = HMENU
 		sys_language_uid {
 			# @description	See .category
-			special						= userfunction
-			special.userFunc			= user_selectionMenu->getSelectionMenu
-			special.userFunc.table		= sys_language
-			special.userFunc.select		= uid, title
-			special.userFunc.where		= 1=1
-			special.userFunc.selected	= PHP_VALUE
-			special.userFunc.order		= title
-			special.userFunc.parent		= 
-			special.userFunc.skipFirst	= 0
+			special							= userfunction
+			special.userFunc				= user_selectionMenu->getSelectionMenu
+			special.userFunc.table			= sys_language
+			special.userFunc.select			= uid, title
+			special.userFunc.where			= 1=1
+			special.userFunc.selected		= PHP_VALUE
+			special.userFunc.order			= title
+			special.userFunc.parent			= 
+			special.userFunc.skipFirst		= 0
+			special.userFunc.defaultItems	= 1
 			1 = TMENU
 	 		1 {
 				expAll = 0
 				wrap = <select name="tx_elementefenews_pi1[sys_language_uid]" id="tx_elementefenews_pi1_sys_language_uid" size="1" class="select">|</select>
 				# Default settings
 				# ToDo: Check if a value is checked
-	    		stdWrap.prepend = COA
-				stdWrap.prepend {
-					10 = TEXT
-					10.data = LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_sys_language_default
-					10.wrap = <option value="">|</option>
-					20 = TEXT
-					20.data = LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_sys_language_all
-					20.wrap = <option value="-1">|</option>
-				}
+#	    		stdWrap.prepend = COA
+#				stdWrap.prepend {
+#					10 = TEXT
+#					10.data = LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_sys_language_default
+#					10.wrap = <option value="0">|</option>
+#					20 = TEXT
+#					20.data = LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_sys_language_all
+#					20.wrap = <option value="-1">|</option>
+#				}
 				NO {
 					stdWrap.cObject = COA
 					stdWrap.cObject {
