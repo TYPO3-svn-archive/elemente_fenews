@@ -377,18 +377,34 @@
 
 				// Render current image in edit mode
 				if ($this->piVars['uid'] && $this->renderFields['image']['render'] == 1) {
-					$fieldSubpart									 = $this->cObj->getSubpart($subpart, '###CURRENT_IMAGE###');
-					$fieldArray['###LABEL_CURRENT_IMAGE###']		 = $this->pi_getLL('l_current_image');
-					$fieldArray['###VALUE_CURRENT_IMAGE###']		 = $this->getPreviewFile($this->piVars['uid'], 'image');
-					$subpartArray['###IMAGE###']					.= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
+					$currentImage											 = $this->getPreviewFile($this->piVars['uid'], 'image');
+					if ($currentImage != false) {
+						// Render current image
+						$fieldSubpart										 = $this->cObj->getSubpart($subpart, '###CURRENT_IMAGE###');
+						$fieldArray['###LABEL_CURRENT_IMAGE###']			 = $this->pi_getLL('l_current_image');
+						$fieldArray['###VALUE_CURRENT_IMAGE###']			 = $currentImage;
+						$subpartArray['###IMAGE###']						.= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
+						// Render del current image
+						$fieldSubpart										 = $this->cObj->getSubpart($subpart, '###DEL_CURRENT_IMAGE###');
+						$fieldArray['###LABEL_DEL_CURRENT_IMAGE###']		 = $this->pi_getLL('l_del_current_image');
+						$subpartArray['###IMAGE###']						.= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
+					}
 				}
 				
 				// Render current files in edit mode
 				if ($this->piVars['uid'] && $this->renderFields['news_files']['render'] == 1) {
-					$fieldSubpart									 = $this->cObj->getSubpart($subpart, '###CURRENT_NEWS_FILES###');
-					$fieldArray['###LABEL_CURRENT_NEWS_FILES###']	 = $this->pi_getLL('l_current_news_files');
-					$fieldArray['###VALUE_CURRENT_NEWS_FILES###']	 = $this->getPreviewFile($this->piVars['uid'], 'news_files');
-					$subpartArray['###NEWS_FILES###']				.= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
+					$currentFile											= $this->getPreviewFile($this->piVars['uid'], 'news_files');
+					if ($currentFile != false) {
+						// Render current file
+						$fieldSubpart										 = $this->cObj->getSubpart($subpart, '###CURRENT_NEWS_FILES###');
+						$fieldArray['###LABEL_CURRENT_NEWS_FILES###']		 = $this->pi_getLL('l_current_news_files');
+						$fieldArray['###VALUE_CURRENT_NEWS_FILES###']		 = $currentFile;
+						$subpartArray['###NEWS_FILES###']					.= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
+						// Render del current file
+						$fieldSubpart										 = $this->cObj->getSubpart($subpart, '###DEL_CURRENT_NEWS_FILES###');
+						$fieldArray['###LABEL_DEL_CURRENT_NEWS_FILES###']	 = $this->pi_getLL('l_del_current_news_files');
+						$subpartArray['###NEWS_FILES###']					.= $this->cObj->substituteMarkerArray($fieldSubpart, $fieldArray);
+					}
 				}
 	
 				// If a user is logged in the input fields are not rendering, the fields are filled with data from the fe_users record
@@ -560,7 +576,7 @@
 			$newsUID						= $this->piVars['edit']>0?intval($this->piVars['edit']):false;
 
 			// Count categories & redirect settings
-			// TODO: Recursive search for shortcut page definitions?
+			// TODO: Recursive search for shortcut page definitions, really?
 			if (is_array($this->piVars['category'])) {
 				$arrCat						= t3lib_div::trimExplode(',', $this->piVars['category'][0]);
 				$redirectPID				= isset($arrCat[1])?$arrCat[1]:$this->redirectPID; // Redirect to the 1st category shortcut page, if set
@@ -651,25 +667,41 @@
 						$this->thePidValue
 					);
 				}
-				unset($arrNews['_TRANSFORM_bodytext']); // Unset not needed field
+				unset($arrNews['_TRANSFORM_bodytext']); // Unset unused field
 			}
 
-			// Image handling
+			// Image handling, part one
+			// @TODO: Support multi uploads and rewrite this part for v1.2
 			if (!empty($_FILES[$this->prefixId]['name']['image'])) {
 				if ($this->damUse == 1) {
-					$damUidImg				= $this->handleDAM($this->arrUploads['image']['path']);
+					$damUidImg							= $this->handleDAM($this->arrUploads['image']['path']);
 					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - handleDAM', 'elemente_fenews', 0, array('damUidImg' => $damUidImg));
-					$arrNews['tx_damnews_dam_images'] = 1;
+					$arrNews['tx_damnews_dam_images']	= 1;
 				} else {
-					$arrNews['image']		= $this->arrUploads['image']['hash'];
+					$arrNews['image']					= $this->arrUploads['image']['hash'];
 				}
-				// @Todo: Fields have to go into DAM too
-				$arrNews['imagealttext']	= !$arrNews['imagealttext']		? $this->arrUploads['image']['name'] : $arrNews['imagealttext']; // ALT tag
-				$arrNews['imagetitletext']	= !$arrNews['imagetitletext']	? $this->arrUploads['image']['name'] : $arrNews['imagetitletext']; // TITLE tag
-				$this->piVars['image']		= $this->arrUploads['image']['name']; // Put into piVars for mail content
+				// @TODO: Fields have to go into DAM too
+				$arrNews['imagealttext']				= !$arrNews['imagealttext']		? $this->arrUploads['image']['name'] : $arrNews['imagealttext'];
+				$arrNews['imagetitletext']				= !$arrNews['imagetitletext']	? $this->arrUploads['image']['name'] : $arrNews['imagetitletext'];
+				$this->piVars['image']					= $this->arrUploads['image']['name']; // Put into piVars for mail content
+			}
+			
+			// Image handling, part two
+			if ($this->piVars['del_current_image'] == 1) {
+				if ($this->damUse == 1) {
+					$this->handleRelationDAM('del', $newsUID, array(), 'images');
+					$arrNews['tx_damnews_dam_images']	= 0;
+				} else {
+					$arrNews['image']					= '';
+				}
+				$arrNews['imagealttext']				= '';
+				$arrNews['imagetitletext']				= '';
+				$arrNews['imagecaption']				= '';
+				unset($arrNews['del_current_image']);
 			}
 
 			// File handling
+			// @TODO: Support multi uploads and rewrite this part for v1.2
 			if (!empty($_FILES[$this->prefixId]['name']['news_files'])) {
 				if ($this->damUse == 1) {
 					$damUidFile				= $this->handleDAM($this->arrUploads['news_files']['path']);
@@ -679,6 +711,20 @@
 				}
 				$this->piVars['news_files']	= $this->arrUploads['news_files']['name']; // Put into piVars for mail content
 			}
+			
+			// File handling, part two
+			if ($this->piVars['del_current_news_files'] == 1) {
+				if ($this->damUse == 1) {
+					$this->handleRelationDAM('del', $newsUID, array(), 'media');
+					$arrNews['tx_damnews_dam_media']	= 0;
+				} else {
+					$arrNews['news_files']				= '';
+				}
+				$arrNews['imagealttext']				= '';
+				$arrNews['imagetitletext']				= '';
+				$arrNews['imagecaption']				= '';
+				unset($arrNews['del_current_news_files']);
+			}			
 
 			// Link reformating
 			if (!empty($this->piVars['links'])) {
@@ -827,16 +873,18 @@
 		 */
 		protected function handleRelationDAM($mode, $newsUID, $arrFiles, $field) {
 			// Delete old relation in edit mode or if user wish to delete the current file
-			// @TODO: Delete current files
-			if ($mode == 'edit') {
+			// @TODO: Delete current files in fileadmin
+			if ($mode == 'edit' || $mode == 'del') {
 				$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_'.$field.'\'');
 				if ($this->conf['debug'] == 1) t3lib_div::devLog('handleRelationDAM - '.$mode.': del '.$field.' mm', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_'.$field.'\'')));
 			}
 			// Add new relation
-			foreach($arrFiles as $sort => $file) {
-				$arrMM = array('uid_local' => $file, 'uid_foreign' => $newsUID, 'tablenames' => 'tt_news', 'ident' => $this->damIdent.'_dam_'.$field, 'sorting' => 0, 'sorting_foreign' => $sort+1);
-				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM);
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('handleRelationDAM - '.$mode.': add '.$field.' mm', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tx_dam_mm_ref', $arrMM)));
+			if (count($arrFiles) > 0) {
+				foreach($arrFiles as $sort => $file) {
+					$arrMM = array('uid_local' => $file, 'uid_foreign' => $newsUID, 'tablenames' => 'tt_news', 'ident' => $this->damIdent.'_dam_'.$field, 'sorting' => 0, 'sorting_foreign' => $sort+1);
+					$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM);
+					if ($this->conf['debug'] == 1) t3lib_div::devLog('handleRelationDAM - '.$mode.': add '.$field.' mm', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tx_dam_mm_ref', $arrMM)));
+				}
 			}
 		}
 
@@ -1066,7 +1114,7 @@ $cObj = t3lib_div::makeInstance('tslib_cObj');
 				}
 				
 				$arrFile									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-				if (is_array($arrFile)) {
+				if ($arrFile['file_name']) {
 					if ($type == 'image') {
 						$lconf['file']						= $arrFile['file_path'].$arrFile['file_name'];
 						$lconf['altText']					= $arrFile['alt_text'];
@@ -1078,7 +1126,7 @@ $cObj = t3lib_div::makeInstance('tslib_cObj');
 					}
 					$GLOBALS['TYPO3_DB']->sql_free_result($res);
 				} else {
-					$preview								= $this->pi_getLL('l_error_nofile');
+					return false;
 				}
 
 			// File list
@@ -1087,23 +1135,22 @@ $cObj = t3lib_div::makeInstance('tslib_cObj');
 				if ($this->conf['debug'] == 1) t3lib_div::devLog('getPreviewFile - normal: '.$type, 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->SELECTquery($type.', imagealttext, imagetitletext', 'tt_news', 'tt_news.uid='.$newsUID)));
 				
 				$arrFile									= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-				if (is_array($arrFile)) {
-					$tmpFile								= t3lib_div::trimExplode(',', $arrFile[$type]);
+				$tmpFile									= t3lib_div::trimExplode(',', $arrFile[$type]);
+				if ($tmpFile[0]) {
 					if ($type == 'image') {
-						$lconf['file']						= $lconf['filePath'].$imgTmp[0];
+						$lconf['file']						= $lconf['filePath'].$tmpFile[0];
 						$lconf['altText']					= $arrFile['imagealttext'];
 						$lconf['titleText']					= $arrFile['imagetitletext'];
 						$preview							= $this->cObj->IMAGE($lconf);
 					} else {
-						$lconf['typolink.']['parameter']	= $lconf['filePath'].$imgTmp[0];
+						$lconf['typolink.']['parameter']	= $lconf['filePath'].$tmpFile[0];
 						$preview							= $this->cObj->cObjGetSingle($this->conf['preview_'.$type], $lconf, 'preview_'.$type);
 					}
 					$GLOBALS['TYPO3_DB']->sql_free_result($res);
 				} else {
-					$preview								= $this->pi_getLL('l_error_nofile');
+					return false;
 				}
 			}
-
 			// return
 			return $preview;
 		}
