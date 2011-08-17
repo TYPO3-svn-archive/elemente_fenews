@@ -720,9 +720,6 @@
 				} else {
 					$arrNews['news_files']				= '';
 				}
-				$arrNews['imagealttext']				= '';
-				$arrNews['imagetitletext']				= '';
-				$arrNews['imagecaption']				= '';
 				unset($arrNews['del_current_news_files']);
 			}			
 
