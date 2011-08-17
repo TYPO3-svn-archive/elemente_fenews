@@ -30,7 +30,10 @@
 	 * @package	TYPO3
 	 * @subpackage	tx_elementefenews
 	 */
-	class user_selectionMenu { 
+	class user_selectionMenu {
+		public		$extKey		= 'elemente_fenews';
+		protected	$getLL		= 'LLL:EXT:elemente_fenews/pi1/locallang.xml';
+
 
 		/**
 		 * Method adapted from extension "tt_news":
@@ -40,7 +43,7 @@
 		 * 
 		 * @return	array		All categories in a nested array
 		 */
-		function getSelectionMenu($arrMenu, $conf) {
+		public function getSelectionMenu($arrMenu, $conf) {
 			$lConf							= $conf['userFunc.']; 
 			$arrMenu				 		= array();
 			
@@ -48,12 +51,28 @@
 			if ($lConf['defaultItems'] == 1) {
 				switch ($lConf['table']) {
 					case 'fe_groups':
-						$arrMenu[]			= array('uid' => '-1', 'LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_fe_group_hide');
-						$arrMenu[]			= array('uid' => '-2', 'LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_fe_group_show');
+						$arrMenu[]			= array(
+												'uid'		=> '-1',
+												'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_fe_group_hide'),
+												'selected'	=> 0,
+											);
+						$arrMenu[]			= array(
+												'uid'		=> '-2',
+												'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_fe_group_show'),
+												'selected'	=> 0,
+											);
 					break;
 					case 'sys_language':
-						$arrMenu[]			= array('uid' => '0', 'LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_sys_language_default');
-						$arrMenu[]			= array('uid' => '-1', 'LLL:EXT:elemente_fenews/pi1/locallang.xml:ts_sys_language_all');
+						$arrMenu[]			= array(
+												'uid'		=> '0',
+												'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_sys_language_default'),
+												'selected'	=> 0,
+											);
+						$arrMenu[]			= array(
+												'uid'		=> '-1',
+												'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_sys_language_all'),
+												'selected'	=> 0,
+											);
 					break;
 				}
 			}
@@ -79,7 +98,7 @@
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			// skipFirst is used for category menu, it skips the root category - something like entrylevel ...
 			if ($lConf['skipFirst'] == 1) $arrMenu = $arrMenu[0]['_SUB_MENU'];
-
+//t3lib_div::debug($arrMenu);
 			// return
 			return $arrMenu;
 		}
@@ -95,7 +114,7 @@
 		 * 
 		 * @return	array		All categories in a nested array
 		 */
-		function getSubSelectionMenu($item, $lConf) {
+		public function getSubSelectionMenu($item, $lConf) {
 			$arrMenuSub					= array();
 			$res						= $GLOBALS['TYPO3_DB']->exec_SELECTquery($lConf['select'], $lConf['table'], $lConf['parent'].' IN ('.$item.')'.$this->cObj->enableFields($lConf['table']), '', $lConf['order']);
 			while (($row				= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
