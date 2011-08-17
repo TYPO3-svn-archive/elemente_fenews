@@ -79,7 +79,7 @@
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			// skipFirst is used for category menu, it skips the root category - something like entrylevel ...
 			if ($lConf['skipFirst'] == 1) $arrMenu = $arrMenu[0]['_SUB_MENU'];
-			t3lib_div::debug($arrMenu);
+
 			// return
 			return $arrMenu;
 		}
