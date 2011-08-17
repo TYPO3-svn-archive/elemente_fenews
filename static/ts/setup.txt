@@ -216,7 +216,7 @@ plugin.tx_elementefenews_pi1 {
 			special.userFunc.order			= title
 			special.userFunc.parent			= 
 			special.userFunc.skipFirst		= 0
-			special.userFunc.defaultItems	= 1
+			special.userFunc.staticItems	= 1
 			1 = TMENU
 	 		1 {
 				expAll = 1
@@ -274,7 +274,7 @@ plugin.tx_elementefenews_pi1 {
 			special.userFunc.order			= title
 			special.userFunc.parent			= 
 			special.userFunc.skipFirst		= 0
-			special.userFunc.defaultItems	= 1
+			special.userFunc.staticItems	= 1
 			1 = TMENU
 	 		1 {
 				expAll = 0

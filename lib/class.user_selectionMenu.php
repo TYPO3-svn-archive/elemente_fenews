@@ -47,32 +47,32 @@
 			$lConf							= $conf['userFunc.']; 
 			$arrMenu				 		= array();
 			
-			// Default items of a selection field
-			if ($lConf['defaultItems'] == 1) {
+			// Static items of a selection field
+			if ($lConf['staticItems'] == 1) {
 				switch ($lConf['table']) {
 					case 'fe_groups':
-						$arrMenu[]			= array(
-												'uid'		=> '-1',
-												'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_fe_group_hide'),
-												'selected'	=> 0,
-											);
-						$arrMenu[]			= array(
-												'uid'		=> '-2',
-												'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_fe_group_show'),
-												'selected'	=> 0,
-											);
+						$arrMenu[]	= array(
+										'uid'		=> '-1',
+										'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_fe_group_hide'),
+										'selected'	=> 0,
+									);
+						$arrMenu[]	= array(
+										'uid'		=> '-2',
+										'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_fe_group_show'),
+										'selected'	=> 0,
+									);
 					break;
 					case 'sys_language':
-						$arrMenu[]			= array(
-												'uid'		=> '0',
-												'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_sys_language_default'),
-												'selected'	=> 0,
-											);
-						$arrMenu[]			= array(
-												'uid'		=> '-1',
-												'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_sys_language_all'),
-												'selected'	=> 0,
-											);
+						$arrMenu[]	= array(
+										'uid'		=> '0',
+										'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_sys_language_default'),
+										'selected'	=> 0,
+									);
+						$arrMenu[]	= array(
+										'uid'		=> '-1',
+										'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_sys_language_all'),
+										'selected'	=> 0,
+									);
 					break;
 				}
 			}
@@ -96,9 +96,21 @@
 				}
 			}
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+			
+			// Static items, selected entries
+			if ($lConf['staticItems'] == 1) {
+				if (isset($lConf['selected'])) {
+					for($i=0; $i<=count($arrMenu); $i++) {
+						foreach($lConf['selected'] as $sel) {
+							if ($sel == $arrMenu[$i]['uid']) $arrMenu[$i]['selected'] = 1;
+						}	
+					}
+				}
+			}
+			
 			// skipFirst is used for category menu, it skips the root category - something like entrylevel ...
 			if ($lConf['skipFirst'] == 1) $arrMenu = $arrMenu[0]['_SUB_MENU'];
-//t3lib_div::debug($arrMenu);
+
 			// return
 			return $arrMenu;
 		}

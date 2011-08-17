@@ -694,7 +694,7 @@
 
 			// New record
 			if ($newsUID == 0) {
-				// DB: Insert news
+				// Insert news
 				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_news', $arrNews);
 				$newsUID = $GLOBALS['TYPO3_DB']->sql_insert_id();
 				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - new: record', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tt_news', $arrNews)));
@@ -702,17 +702,17 @@
 				// Default category
 				if (!empty($this->categoryDefault)) {
 					$arrCatDef = t3lib_div::trimExplode(',', $this->categoryDefault);
-					$this->handleRelation('new', $newsUID, 'tt_news_cat_mm', $arrCatDef, 'defaultCat');
+					$this->handleRelationNews('new', $newsUID, 'tt_news_cat_mm', $arrCatDef, 'defaultCat');
 				}
 				
 				// Selected category
 				if (is_array($this->piVars['category'])) {
-					$this->handleRelation('new', $newsUID, 'tt_news_cat_mm', $this->piVars['category'], 'category');
+					$this->handleRelationNews('new', $newsUID, 'tt_news_cat_mm', $this->piVars['category'], 'category');
 				}
 				
 				// Related news
 				if (is_array($this->piVars['related'])) {
-					$this->handleRelation('new', $newsUID, 'tt_news_related_mm', $this->piVars['related'], 'related');
+					$this->handleRelationNews('new', $newsUID, 'tt_news_related_mm', $this->piVars['related'], 'related');
 				}
 				
 				// Image DAM relation
@@ -727,31 +727,19 @@
 
 			// Edit record
 			} else {
-				// DB: Update news
+				// Update news
 				$GLOBALS['TYPO3_DB']->exec_UPDATEquery('tt_news', 'uid='.$newsUID, $arrNews);
 				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: record', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->UPDATEquery('tt_news', 'uid='.$newsUID, $arrNews)));
-/*
-				// DB: Delete image DAM relation
-				if (!empty($_FILES[$this->prefixId]['name']['image']) && $this->damUse == 1) {
-					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_images\'');
-					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: del dam img', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_images\'')));
-				}
 
-				// DB: Delete file DAM relation
-				if (!empty($_FILES[$this->prefixId]['name']['news_files']) && $this->damUse == 1) {
-					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_media\'');
-					if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - upd: del dam file', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->DELETEquery('tx_dam_mm_ref', 'uid_foreign='.$newsUID.' AND tablenames=\'tt_news\' AND ident=\''.$this->damIdent.'_dam_media\'')));
-				}
-*/
 				// Update selected category
 				if (is_array($this->piVars['category'])) {
 					$whereCatDef = !empty($this->categoryDefault)?' AND uid_foreign NOT IN ('.$this->categoryDefault.')':'';
-					$this->handleRelation('edit', $newsUID, 'tt_news_cat_mm', $this->piVars['category'], 'category', $whereCatDef);
+					$this->handleRelationNews('edit', $newsUID, 'tt_news_cat_mm', $this->piVars['category'], 'category', $whereCatDef);
 				}
 
 				// Update related news
 				if (is_array($this->piVars['related'])) {
-					$this->handleRelation('edit', $newsUID, 'tt_news_related_mm', $this->piVars['related'], 'related');
+					$this->handleRelationNews('edit', $newsUID, 'tt_news_related_mm', $this->piVars['related'], 'related');
 				}
 				
 				// Image DAM relation
@@ -764,21 +752,6 @@
 					$this->handleRelationDAM('new', $newsUID, array($damUidFile), 'media');
 				}
 			}
-/*
-			// DB: Insert image DAM relation
-			if (!empty($_FILES[$this->prefixId]['name']['image']) && $this->damUse == 1) {
-				$arrMM = array('uid_local' => $damUidImg, 'uid_foreign' => $newsUID, 'tablenames' => 'tt_news', 'ident' => $this->damIdent.'_dam_images', 'sorting' => 0, 'sorting_foreign' => 1);
-				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM);
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - dam: insert img', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tx_dam_mm_ref', $arrMM)));
-			}
-
-			// DB: Insert file DAM relation
-			if (!empty($_FILES[$this->prefixId]['name']['news_files']) && $this->damUse == 1) {
-				$arrMM = array('uid_local' => $damUidFile, 'uid_foreign' => $newsUID, 'tablenames' => 'tt_news', 'ident' => $this->damIdent.'_dam_media', 'sorting' => 0, 'sorting_foreign' => 1);
-				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_dam_mm_ref', $arrMM);
-				if ($this->conf['debug'] == 1) t3lib_div::devLog('saveForm - dam: insert file', 'elemente_fenews', 0, array('sql' => $GLOBALS['TYPO3_DB']->INSERTquery('tx_dam_mm_ref', $arrMM)));
-			}
-*/
 
 			// Mail: Alert publisher?
 			if ($this->queuePublish == 1) {
@@ -852,7 +825,7 @@
 		 *
 		 * @return		void
 		 */
-		function handleRelationDAM($mode, $newsUID, $arrFiles, $field) {
+		protected function handleRelationDAM($mode, $newsUID, $arrFiles, $field) {
 			// Delete old relation in edit mode or if user wish to delete the current file
 			// @TODO: Delete current files
 			if ($mode == 'edit') {
