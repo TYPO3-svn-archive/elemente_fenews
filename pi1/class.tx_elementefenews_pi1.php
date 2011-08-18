@@ -273,6 +273,10 @@
 			// Set flag/uid to differ between new/edit record mode
 			$editMode												= $this->piVars['edit']==1?$this->piVars['uid']:0;
 			
+			// Get language, must be an array in every mode!
+			// @TODO: Maybe other select field values have to transform first, if TS rendering is changed!
+			$this->piVars['sys_language_uid']						= is_array($this->piVars['sys_language_uid'])?$this->piVars['sys_language_uid']:array($this->piVars['sys_language_uid']);
+			
 			// Get record
 			if ($editMode > 0) {
 				$res												= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
@@ -302,9 +306,6 @@
 				// Get fe_group entries
 				$this->piVars['fe_group']							= t3lib_div::trimExplode(',', $this->piVars['fe_group']);
 				
-				// Get language
-				$this->piVars['sys_language_uid']					= array($this->piVars['sys_language_uid']);
-				
 				// Check current user or its group is owner of record
 				$this->piVars['owner']								= ($this->piVars['tx_elementefenews_feuser'] == $GLOBALS['TSFE']->fe_user->user['uid'] || t3lib_div::inList($GLOBALS['TSFE']->fe_user->user['usergroup'], $this->piVars['tx_elementefenews_fegroup']))?true:false;	
 			}
@@ -318,7 +319,7 @@
 			} else {
 				// Template
 				$subpart											= $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_FORM###');
-			
+	
 				// Marker
 				$markerArray										= array();
 				$markerArray['###PREFIX_ID###']						= $this->prefixId;
@@ -1169,6 +1170,24 @@ $cObj = t3lib_div::makeInstance('tslib_cObj');
 			return $path;
 		}
 
+		
+		
+		/**
+		 * Return all categories as array uid => title.
+		 * @TODO: Select cats only from a defiend PID list?
+		 *
+		 * @return		array 	All categories as uid => title
+		 */
+/*		function getCategories() {
+			$arrCats		= array();
+			$res			= $GLOBALS['TYPO3_DB']->exec_SELECTquery ('uid, title', 'tt_news_cat', $this->cObj->enableFields('tt_news_cat'), '', 'title');
+			while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
+				$arrCats[$row['uid']] = $row['title'];
+			}
+			// return
+			return $arrCats;
+		}
+*/
 		
 		/**
 		 *	Method to generate the plain text and HTML part for the mails based on a HTML template.
