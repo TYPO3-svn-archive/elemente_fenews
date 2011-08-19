@@ -272,11 +272,7 @@
 		protected function renderForm($error='') {
 			// Set flag/uid to differ between new/edit record mode
 			$editMode												= $this->piVars['edit']==1?$this->piVars['uid']:0;
-			
-			// Get language, must be an array in every mode!
-			// @TODO: Maybe other select field values have to transform first, if TS rendering is changed!
-			$this->piVars['sys_language_uid']						= is_array($this->piVars['sys_language_uid'])?$this->piVars['sys_language_uid']:array($this->piVars['sys_language_uid']);
-			
+
 			// Get record
 			if ($editMode > 0) {
 				$res												= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
@@ -302,6 +298,10 @@
 					}
 					$GLOBALS['TYPO3_DB']->sql_free_result($res);
 				}
+				
+				// Get language
+				// @TODO: Maybe other select field values have to transform first, if TS rendering is changed!
+				$this->piVars['sys_language_uid']					= is_array($this->piVars['sys_language_uid'])?$this->piVars['sys_language_uid']:array($this->piVars['sys_language_uid']);
 				
 				// Get fe_group entries
 				$this->piVars['fe_group']							= t3lib_div::trimExplode(',', $this->piVars['fe_group']);
@@ -368,7 +368,7 @@
 							}
 						}
 						// Render selection fields
-						if ($conf['sel'] == 1) {
+					if ($conf['sel'] == 1) {
 							$fieldArray['###'.$fieldUpper.'_SELECT###']	= $this->renderSelection($field);
 						}						
 						// Subpart substitution

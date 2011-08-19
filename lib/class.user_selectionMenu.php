@@ -46,31 +46,31 @@
 		public function getSelectionMenu($arrMenu, $conf) {
 			$lConf							= $conf['userFunc.']; 
 			$arrMenu				 		= array();
-			
+
 			// Static items of a selection field
 			if ($lConf['staticItems'] == 1) {
 				switch ($lConf['table']) {
 					case 'fe_groups':
 						$arrMenu[]	= array(
 										'uid'		=> '-1',
-										'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_fe_group_hide'),
+										'title'		=> $GLOBALS['TSFE']->sL($this->getLL.':ts_fe_group_hide'),
 										'selected'	=> 0,
 									);
 						$arrMenu[]	= array(
 										'uid'		=> '-2',
-										'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_fe_group_show'),
+										'title'		=> $GLOBALS['TSFE']->sL($this->getLL.':ts_fe_group_show'),
 										'selected'	=> 0,
 									);
 					break;
 					case 'sys_language':
 						$arrMenu[]	= array(
 										'uid'		=> '0',
-										'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_sys_language_default'),
+										'title'		=> $GLOBALS['TSFE']->sL($this->getLL.':ts_sys_language_default'),
 										'selected'	=> 0,
 									);
 						$arrMenu[]	= array(
 										'uid'		=> '-1',
-										'title'		=> $GLOBALS['LANG']->sL($this->getLL.':ts_sys_language_all'),
+										'title'		=> $GLOBALS['TSFE']->sL($this->getLL.':ts_sys_language_all'),
 										'selected'	=> 0,
 									);
 					break;
@@ -99,7 +99,7 @@
 			
 			// Static items, selected entries
 			if ($lConf['staticItems'] == 1) {
-				if (isset($lConf['selected'])) {
+				if (is_array($lConf['selected'])) {
 					for($i=0; $i<=count($arrMenu); $i++) {
 						foreach($lConf['selected'] as $sel) {
 							if ($sel == $arrMenu[$i]['uid']) $arrMenu[$i]['selected'] = 1;
