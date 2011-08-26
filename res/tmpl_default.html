@@ -11,7 +11,7 @@
 ###ADDITIONALJS_PRE###
 ###ERROR_MESSAGE###
 <form name="###PREFIX_ID###-form" method="post" action="###FORM_URL###" enctype="multipart/form-data" ###ADDITIONALJS_SUBMIT###>
-	<input type="hidden" name="###PREFIX_ID###[edit]" value="###FORM_EDIT###" />
+	<input type="hidden" name="###PREFIX_ID###[uid]" value="###VALUE_UID###" />
 	<fieldset class="mailform tx-elementefenews-form">
 		<legend>###LABEL_LEGEND###</legend>
 		<dl>
@@ -81,20 +81,23 @@
 				<dd>###SYS_LANGUAGE_UID_SELECT###</dd>
 				<!-- ###SYS_LANGUAGE_UID### end -->
 				
+				<!-- ###IMAGE### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-image">###LABEL_IMAGE###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[image]" id="###PREFIX_ID###-image" type="file" class="text" /></dd>
+				<!-- ###IMAGE### end -->
+				
 				<!-- ###CURRENT_IMAGE### begin - this subpart is removed if is not enabled! -->
 				<dt class="label">###LABEL_CURRENT_IMAGE###:</dt>
-				<dd>###VALUE_CURRENT_IMAGE###</dd>
+				<dd>
+					###VALUE_CURRENT_IMAGE###
+					<input type="hidden" name="###PREFIX_ID###[current_image]" value="1" />
+				</dd>
 				<!-- ###CURRENT_IMAGE### end -->
 				
 				<!-- ###DEL_CURRENT_IMAGE### begin - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-del_current_image">###LABEL_DEL_CURRENT_IMAGE###:</label></dt>
 				<dd><input name="###PREFIX_ID###[del_current_image]" id="###PREFIX_ID###-del_current_image" value="1" type="checkbox" class="check" /></dd>
 				<!-- ###DEL_CURRENT_IMAGE### end -->
-	
-				<!-- ###IMAGE### begin - this subpart is removed if is not enabled! -->
-				<dt class="label"><label for="###PREFIX_ID###-image">###LABEL_IMAGE###:</label>###REQMARKER###</dt>
-				<dd><input name="###PREFIX_ID###[image]" id="###PREFIX_ID###-image" type="file" class="text" /></dd>
-				<!-- ###IMAGE### end -->
 				
 				<!-- ###IMAGECAPTION### begin - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-imagecaption">###LABEL_IMAGECAPTION###:</label>###REQMARKER###</dt>
@@ -116,20 +119,23 @@
 				<dd><textarea name="###PREFIX_ID###[links]" id="###PREFIX_ID###-links" cols="70" rows="5" class="text">###VALUE_LINKS###</textarea></dd>
 				<!-- ###LINKS### end -->
 	
+				<!-- ###NEWS_FILES### begin - this subpart is removed if is not enabled! -->
+				<dt class="label"><label for="###PREFIX_ID###-news_files">###LABEL_NEWS_FILES###:</label>###REQMARKER###</dt>
+				<dd><input name="###PREFIX_ID###[news_files]" id="###PREFIX_ID###-news_files" type="file" class="text" /></dd>
+				<!-- ###NEWS_FILES### end -->
+	
 				<!-- ###CURRENT_NEWS_FILES### begin - this subpart is removed if is not enabled! -->
 				<dt class="label">###LABEL_CURRENT_NEWS_FILES###:</dt>
-				<dd>###VALUE_CURRENT_NEWS_FILES###</dd>
+				<dd>
+					###VALUE_CURRENT_NEWS_FILES###
+					<input type="hidden" name="###PREFIX_ID###[current_news_files]" value="1" />
+				</dd>
 				<!-- ###CURRENT_NEWS_FILES### end -->
 	
 				<!-- ###DEL_CURRENT_NEWS_FILES### begin - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-del_current_news_files">###LABEL_DEL_CURRENT_NEWS_FILES###:</label></dt>
 				<dd><input name="###PREFIX_ID###[del_current_news_files]" id="###PREFIX_ID###-del_current_news_files" value="1" type="checkbox" class="check" /></dd>
 				<!-- ###DEL_CURRENT_NEWS_FILES### end -->
-	
-				<!-- ###NEWS_FILES### begin - this subpart is removed if is not enabled! -->
-				<dt class="label"><label for="###PREFIX_ID###-news_files">###LABEL_NEWS_FILES###:</label>###REQMARKER###</dt>
-				<dd><input name="###PREFIX_ID###[news_files]" id="###PREFIX_ID###-news_files" type="file" class="text" /></dd>
-				<!-- ###NEWS_FILES### end -->
 				
 				<!-- ###CATEGORY### begin - this subpart is removed if is not enabled! -->
 				<dt class="label"><label for="###PREFIX_ID###-category">###LABEL_CATEGORY###:</label>###REQMARKER###</dt>

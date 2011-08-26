@@ -112,9 +112,9 @@
 
 			// Render/ Requierd fields
 			$renderFields					= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'renderFields', 'fieldConfig');
-			$renderFields					= $renderFields?t3lib_div::trimExplode(',', $renderFields):t3lib_div::trimExplode(',', 'title,archivedate,author,author_email,tx_elementefenews_author,short,bodytext,keywords,category,image,links');
+			$renderFields					= $renderFields?t3lib_div::trimExplode(',', $renderFields):t3lib_div::trimExplode(',', 'title,short,bodytext,no_auto_pb,datetime,archivedate,author,author_email,keywords,sys_language_uid,image,imagecaption,imagealttext,imagetitletext,links,news_files,category,related,starttime,endtime,fe_group,tx_elementefenews_author');
 			$requiredFields					= $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'requiredFields', 'fieldConfig');
-			$requiredFields					= $requiredFields?t3lib_div::trimExplode(',', $requiredFields):t3lib_div::trimExplode(',', 'title,author,author_email,bodytext');
+			$requiredFields					= $requiredFields?t3lib_div::trimExplode(',', $requiredFields):t3lib_div::trimExplode(',', 'title,bodytext');
 
 			$this->renderFields				= array(
 				'title'						=> array('render' => 0, 'req' => 0, 'file' => 0, 'sort' => 0, 'd2c' => 0, 'sel' => 0),
@@ -271,10 +271,10 @@
 		 */
 		protected function renderForm($error='') {
 			// Set flag/uid to differ between new/edit record mode
-			$editMode												= $this->piVars['edit']==1?$this->piVars['uid']:0;
+			$newsUID												= $this->piVars['uid']?intval($this->piVars['uid']):0;
 
 			// Get record
-			if ($editMode > 0) {
+			if ($newsUID > 0) {
 				$res												= $GLOBALS['TYPO3_DB']->exec_SELECTquery('tt_news.*', 'tt_news', 'tt_news.uid='.intval($this->piVars['uid']).$this->cObj->enableFields('tt_news'));
 				$this->piVars										= $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
@@ -311,7 +311,7 @@
 			}
 
 			// Throw error message if current user is not the owner of record
-			if ($editMode > 0 && $this->piVars['owner'] == false) {
+			if ($newsUID > 0 && $this->piVars['owner'] == false) {
 				$subpart											= $this->cObj->getSubpart($this->mainTMPL, '###TEMPLATE_NOACCESS###');
 				$markerArray										= array();
 				$markerArray['###NOACCESS###']						= $this->pi_getLL('l_error_noaccess');
@@ -324,7 +324,7 @@
 				$markerArray										= array();
 				$markerArray['###PREFIX_ID###']						= $this->prefixId;
 				$markerArray['###FORM_URL###']						= $this->pi_getPageLink($GLOBALS['TSFE']->id);
-				$markerArray['###FORM_EDIT###']						= $this->piVars['uid'];
+				$markerArray['###VALUE_UID###']						= $this->piVars['uid'];
 				$markerArray['###LABEL_LEGEND###']					= $this->pi_getLL('form_legend');
 				$markerArray['###LABEL_SUBMIT###']					= $this->pi_getLL('form_submit');
 				$markerArray['###LABEL_RESET###']					= $this->pi_getLL('form_reset');
@@ -377,8 +377,8 @@
 				}
 
 				// Render current image in edit mode
-				if ($this->piVars['uid'] && $this->renderFields['image']['render'] == 1) {
-					$currentImage											 = $this->getPreviewFile($this->piVars['uid'], 'image');
+				if ($newsUID > 0 && $this->renderFields['image']['render'] == 1) {
+					$currentImage											 = $this->getPreviewFile($newsUID, 'image');
 					if ($currentImage != false) {
 						// Render current image
 						$fieldSubpart										 = $this->cObj->getSubpart($subpart, '###CURRENT_IMAGE###');
@@ -393,8 +393,8 @@
 				}
 				
 				// Render current files in edit mode
-				if ($this->piVars['uid'] && $this->renderFields['news_files']['render'] == 1) {
-					$currentFile											= $this->getPreviewFile($this->piVars['uid'], 'news_files');
+				if ($newsUID > 0 && $this->renderFields['news_files']['render'] == 1) {
+					$currentFile											= $this->getPreviewFile($newsUID, 'news_files');
 					if ($currentFile != false) {
 						// Render current file
 						$fieldSubpart										 = $this->cObj->getSubpart($subpart, '###CURRENT_NEWS_FILES###');
@@ -522,7 +522,7 @@
 					$error	.= '<li>'.str_replace('###FIELD###', '<strong>'.$this->pi_getLL('l_'.$field).'</strong>', $this->pi_getLL('l_error_field')).'</li>'.chr(10);
 				}
 				// Upload fields
-				if ($_FILES[$this->prefixId]['error'][$field] > 0 && $conf['file'] == 1 && $conf['render']==1 && $conf['req']==1) { 
+				if (!$this->piVars['current_'.$field] && $_FILES[$this->prefixId]['error'][$field] > 0 && $conf['file'] == 1 && $conf['render']==1 && $conf['req']==1) { 
 						$error	.= '<li>'.str_replace('###FIELD###', '<strong>'.$this->pi_getLL('l_'.$field).'</strong>', $this->pi_getLL('l_error_field')).'</li>'.chr(10);
 				}
 				// Date fields
@@ -574,7 +574,7 @@
 		 */
 		protected function saveForm() {
 			// New or edit record
-			$newsUID						= $this->piVars['edit']>0?intval($this->piVars['edit']):false;
+			$newsUID						= $this->piVars['uid']?intval($this->piVars['uid']):0;
 
 			// Count categories & redirect settings
 			// TODO: Recursive search for shortcut page definitions, really?
