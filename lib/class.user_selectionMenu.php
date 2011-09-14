@@ -87,7 +87,7 @@
 				} else {
 					// Selected entries
 					$row['selected'] 		= 0;
-					if (isset($lConf['selected'])) {
+					if (is_array($lConf['selected'])) {
 						foreach($lConf['selected'] as $sel) {
 							if ($sel == $row['uid']) $row['selected'] = 1;
 						}
@@ -138,7 +138,7 @@
 				$arrSub['_SUB_MENU']	= $this->getSubSelectionMenu($row['uid'], $lConf);
 				// Selected entries
 				$row['selected'] 		= 0;
-				if (isset($lConf['selected'])) {
+				if (is_array($lConf['selected'])) {
 					foreach($lConf['selected'] as $sel) {
 						if ($sel == $row['uid']) $row['selected'] = 1;
 					}

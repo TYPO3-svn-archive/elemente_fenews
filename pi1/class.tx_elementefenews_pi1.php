@@ -337,7 +337,7 @@
 						$fieldSubpart									= $this->cObj->getSubpart($subpart, '###'.$fieldUpper.'###');
 						$fieldArray['###PREFIX_ID###']					= $this->prefixId;
 						$fieldArray['###LABEL_'.$fieldUpper.'###']		= $this->pi_getLL('l_'.$field);
-						$fieldArray['###VALUE_'.$fieldUpper.'###']		= $this->piVars[$field] ? stripslashes($this->piVars[$field]) : '';
+						$fieldArray['###VALUE_'.$fieldUpper.'###']		= $this->piVars[$field] ? (is_array($this->piVars[$field]) ? $this->piVars[$field] :stripslashes($this->piVars[$field])) : '';
 						$fieldArray['###CHECKED_'.$fieldUpper.'###']	= $this->piVars[$field] ? 'checked="checked"' : '';
 						$fieldArray['###REQMARKER###']					= $conf['req']==1 ? $this->spanReplace($this->pi_getLL('l_required'), ' class="hili"') : '';
 						$fieldArray['###FORMAT_DATETIME###']			= str_replace('###FORMAT###', $this->conf['dateConfig.']['constrain.']['format'], $this->pi_getLL('l_format_datetime'));
@@ -368,7 +368,7 @@
 							}
 						}
 						// Render selection fields
-					if ($conf['sel'] == 1) {
+						if ($conf['sel'] == 1) {
 							$fieldArray['###'.$fieldUpper.'_SELECT###']	= $this->renderSelection($field);
 						}						
 						// Subpart substitution
@@ -581,9 +581,7 @@
 			if (is_array($this->piVars['category'])) {
 				$arrCat						= t3lib_div::trimExplode(',', $this->piVars['category'][0]);
 				$redirectPID				= isset($arrCat[1])?$arrCat[1]:$this->redirectPID; // Redirect to the 1st category shortcut page, if set
-				$countCat					= count($this->piVars['category']);
 			} else {
-				$countCat					= 0;
 				$redirectPID				= $this->redirectPID;
 			}
 
@@ -593,8 +591,6 @@
 			$arrNews['tstamp']				= time();
 			$arrNews['crdate']				= time();
 			$arrNews['hidden']				= $this->queuePublish==1?1:0; // queuePublish?
-			$arrNews['datetime']			= time();
-			$arrNews['category']			= $countCat;
 	
 			// Unset not needed piVars & quote inputs
 			unset($this->piVars['edit']);
@@ -610,12 +606,12 @@
 					if (count($matches) > 0) {
 						$arrNews[$field] = mktime($matches[$this->conf['dateConfig.']['mktime.']['hour']], $matches[$this->conf['dateConfig.']['mktime.']['min']], 0, $matches[$this->conf['dateConfig.']['mktime.']['month']], $matches[$this->conf['dateConfig.']['mktime.']['day']], $matches[$this->conf['dateConfig.']['mktime.']['year']]);
 					} else {
-						$arrNews[$field] = 0;
+						$arrNews[$field] = time();
 					}
 
 				// All other fields
 				} else {
-					$arrNews[$field] = trim($input);
+					$arrNews[$field] = is_array($input) ? count($input) : trim($input);
 				}
 			}
 			
