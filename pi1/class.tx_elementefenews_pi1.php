@@ -593,6 +593,7 @@
 			$arrNews['hidden']				= $this->queuePublish==1?1:0; // queuePublish?
 	
 			// Unset not needed piVars & quote inputs
+			unset($this->piVars['captcha_response']);
 			unset($this->piVars['edit']);
 			unset($this->piVars['submit']);
 			foreach($this->piVars as $field => $input) {
