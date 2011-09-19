@@ -591,6 +591,7 @@
 			$arrNews['tstamp']				= time();
 			$arrNews['crdate']				= time();
 			$arrNews['hidden']				= $this->queuePublish==1?1:0; // queuePublish?
+			$arrNews['datetime']			= time();
 	
 			// Unset not needed piVars & quote inputs
 			unset($this->piVars['captcha_response']);
