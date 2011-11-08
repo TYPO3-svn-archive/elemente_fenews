@@ -180,10 +180,14 @@
 				$this->arrCaptcha['captcha']	= '<img src="'.t3lib_extMgm::siteRelPath('captcha').'captcha/captcha.php" alt="" />';
 			}
 			
-			// RTE support
+			// RTE support (rtehtmlarea or tinymce_rte)
 			$this->enableRTE = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'enableRTE', 'fieldConfig');
 			if ($this->enableRTE == 1) {
-				require_once(t3lib_extMgm::extPath('rtehtmlarea').'pi2/class.tx_rtehtmlarea_pi2.php');
+				if (t3lib_extMgm::isLoaded('rtehtmlarea')) {
+					require_once(t3lib_extMgm::extPath('rtehtmlarea').'pi2/class.tx_rtehtmlarea_pi2.php');
+				} else if (t3lib_extMgm::isLoaded('tinymce_rte')) {
+					require_once(t3lib_extMgm::extPath('tinymce_rte').'pi1/class.tx_tinymce_rte_pi1.php');
+				}
 			}
 			
 			// Date2Cal support
@@ -419,9 +423,11 @@
 					$subpartArray['###ARCHIVEDATE###']				= '';
 				}
 	
-				// Enable htmlAreaRTE (rtehtmlarea_api_manual v2.1.0)
+				// Enable RTE (rtehtmlarea or tinymce_rte)
 				if ($this->renderFields['bodytext']['render'] == 1 && $this->enableRTE == 1) {
-					if (!$this->RTEObj) $this->RTEObj				= t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
+					if (!$this->RTEObj && t3lib_extMgm::isLoaded('rtehtmlarea')) $this->RTEObj = t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
+						else if(!$this->RTEObj && t3lib_extMgm::isLoaded('tinymce_rte')) $this->RTEObj = t3lib_div::makeInstance('tx_tinymce_rte_pi1');
+					
 					if ($this->RTEObj->isAvailable()) {
 						$this->RTEcounter++;
 						$this->table								= 'tt_news';
@@ -590,13 +596,14 @@
 			$arrNews['pid']					= ($this->categoryShortcutStorage == 1 && isset($arrCat[1]))?$arrCat[1]:$this->storagePID; // Save news on category shortcut page, if set & multiSelection is off
 			$arrNews['tstamp']				= time();
 			$arrNews['crdate']				= time();
-			$arrNews['hidden']				= $this->queuePublish==1?1:0; // queuePublish?
 			$arrNews['datetime']			= time();
+			$arrNews['hidden']				= $this->queuePublish==1?1:0; // queuePublish?
 	
 			// Unset not needed piVars & quote inputs
 			unset($this->piVars['captcha_response']);
 			unset($this->piVars['edit']);
 			unset($this->piVars['submit']);
+			
 			foreach($this->piVars as $field => $input) {
 				// Field short preparation
 				if ($field == 'short' || $field == 'bodytext') {
@@ -637,9 +644,11 @@
 				$arrNews['author_email']				= $GLOBALS['TSFE']->fe_user->user['email'];
 			}
 
-			// RTE transformation (rtehtmlarea_api_manual v2.1.0)
+			// RTE transformation (rtehtmlarea or tinymce_rte)
 			if (!empty($this->piVars['bodytext']) && $this->enableRTE == 1) {
-				if (!$this->RTEObj) $this->RTEObj = t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
+				if (!$this->RTEObj && t3lib_extMgm::isLoaded('rtehtmlarea')) $this->RTEObj = t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
+					else if(!$this->RTEObj && t3lib_extMgm::isLoaded('tinymce_rte')) $this->RTEObj = t3lib_div::makeInstance('tx_tinymce_rte_pi1');
+				
 				if ($this->RTEObj->isAvailable()) {
 					$pageTSConfig			= $GLOBALS['TSFE']->getPagesTSconfig();
 					$RTEsetup				= $pageTSConfig['RTE.'];
